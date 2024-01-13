@@ -89,5 +89,30 @@ class Database:
         self.__close_conn_cur(conn, cur)
         return result
 
+    def delete(self, table, filters):
+        conn, cur = self.__get_conn_cur()
+        command = f"""DELETE FROM {table} WHERE {filters};"""
+        try:
+            cur.execute(command)
+            conn.commit()
+            result = True
+        except:
+            result = False
 
+        self.__close_conn_cur(conn, cur)
+        return result
+
+    def update(self, table, updates, filters=None):
+        conn, cur = self.__get_conn_cur()
+        upds = ', '.join([f"{k}='{v}'" for k, v in updates.items()])
+        command = f"""UPDATE {table} SET {upds} WHERE {filters};"""
+        try:
+            cur.execute(command)
+            conn.commit()
+            result = True
+        except:
+            result = False
+
+        self.__close_conn_cur(conn, cur)
+        return result
 
