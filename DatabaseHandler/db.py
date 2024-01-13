@@ -1,5 +1,4 @@
 import psycopg2
-import re
 
 
 class Database:
@@ -16,7 +15,7 @@ class Database:
                                     database=self._name)
             cursor = conn.cursor()
             return conn, cursor
-        except:
+        except Exception as e:
             return None
 
     def __close_conn_cur(self, conn, cur):
@@ -24,7 +23,7 @@ class Database:
             conn.close()
             cur.close()
             return True
-        except:
+        except Exception as e:
             return False
 
     def check_connection(self):
@@ -33,9 +32,33 @@ class Database:
             cur.execute("SELECT version();")
             result = cur.fetchone()
             if result:
-                return True
+                return True, result
         except:
             return False
+
+    def create_table(self, table_name, fields):
+        conn, cur = self.__get_conn_cur()
+        flds = ',\n'.join([f"{col} {dtype}" for col,dtype in fields.items()])
+        command = f"""CREATE TABLE {table_name} ({flds});"""
+        try:
+            cur.execute(command)
+            conn.commit()
+            return True, command
+        except Exception as e:
+            return False, command, e
+
+    def drop_table(self, table_name):
+        conn, cur = self.__get_conn_cur()
+        command = f"""DROP TABLE {table_name};"""
+        try:
+            cur.execute(command)
+            conn.commit()
+            result = True, command
+        except Exception as e:
+            result = False, command, e
+
+        self.__close_conn_cur(conn, cur)
+        return result
 
     def select(self, table, columns=None, filters=None):
         conn, cur = self.__get_conn_cur()
@@ -50,23 +73,21 @@ class Database:
 
         try:
             cur.execute(command)
-            result = cur.fetchall()
-            self.__close_conn_cur(conn, cur)
-            return result
-        except:
-            return None
+            result = cur.fetchall(), command
 
-    def exact_exec(self, command, force=False):
+        except Exception as e:
+            result = None, command, e
+
+        self.__close_conn_cur(conn, cur)
+        return result
+
+    def exact_exec(self, command):
         conn, cur = self.__get_conn_cur()
-        if force:
+        try:
             cur.execute(command)
-            result = cur.fetchall()
-        else:
-            try:
-                cur.execute(command)
-                result = cur.fetchall()
-            except:
-                result = None
+            result = cur.fetchall(), command
+        except Exception as e:
+            result = None, command, e
 
         self.__close_conn_cur(conn, cur)
         return result
@@ -82,9 +103,9 @@ class Database:
         try:
             cur.execute(command)
             conn.commit()
-            result = True
-        except:
-            result = None
+            result = True, command
+        except Exception as e:
+            result = None, command, e
 
         self.__close_conn_cur(conn, cur)
         return result
@@ -95,9 +116,9 @@ class Database:
         try:
             cur.execute(command)
             conn.commit()
-            result = True
-        except:
-            result = False
+            result = True, command
+        except Exception as e:
+            result = False, command, e
 
         self.__close_conn_cur(conn, cur)
         return result
@@ -109,9 +130,9 @@ class Database:
         try:
             cur.execute(command)
             conn.commit()
-            result = True
-        except:
-            result = False
+            result = True, command
+        except Exception as e:
+            result = False, command, e
 
         self.__close_conn_cur(conn, cur)
         return result
