@@ -81,10 +81,13 @@ class Database:
             command = f"""INSERT INTO {table} VALUES {data};"""
         try:
             cur.execute(command)
-            result = cur.fetchall()
+            conn.commit()
+            result = True
         except:
             result = None
 
+        self.__close_conn_cur(conn, cur)
         return result
+
 
 
