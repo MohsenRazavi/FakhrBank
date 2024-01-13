@@ -6,24 +6,24 @@
     <title>{% block page_title %}{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="static/styles/global_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/global_styles.css') }}">
 </head>
-<body>
+<body onload="clock()">
 
 <nav class="navbar navbar-expand-lg bg-primary" style="padding-left: 7%; padding-right: 7%">
-        <div class="container-fluid">
-            <a class="navbar-brand mb-0 text-light" href="#">بانک فخر</a>
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active text-light" aria-current="page" href="#">درباره فخر</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light" href="#">تماس با فخر</a>
-                    </li>
-                </ul>
-            </div>
+    <div class="container-fluid">
+        <a class="navbar-brand mb-0 text-light" href="#">بانک فخر</a>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active text-light" aria-current="page" href="#">درباره فخر</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#">تماس با فخر</a>
+                </li>
+            </ul>
         </div>
+    </div>
 </nav>
 
 <div class="container mt-3">
@@ -39,7 +39,7 @@
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
                         <a href="#" class="nav-link active" aria-current="page">
-                            وضعیت کلی
+                            داشبورد
                         </a>
                     </li>
                     {% block sidebar_menu %}{% endblock %}
@@ -63,6 +63,12 @@
             </div>
         </div>
         <div class="col-9">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="card-text" style="display: inline;">تاریخ : 1402/02/01</p>
+                    <p id="clock" class="mb-0" style="display: inline;"></p>
+                </div>
+            </div>
             {% block content %}{% endblock %}
         </div>
     </div>
@@ -71,5 +77,27 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+
+<script>
+    function clock() {
+        const today = new Date();
+        let h = today.getHours();
+        let m = today.getMinutes();
+        let s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById('clock').innerHTML = "ساعت : " + h + ":" + m + ":" + s;
+        setTimeout(clock, 1000);
+    }
+
+    function checkTime(i) {
+        if (i < 10) {
+            i = "0" + i
+        }
+        ;  // add zero in front of numbers < 10
+        return i;
+    }
+</script>
+
 </body>
 </html>
