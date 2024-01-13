@@ -1,0 +1,93 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    بانک فخر | ناحیه کاربری کاربر
+{% endblock %}
+
+{% block sidebar_menu %}
+    <li class="nav-item">
+        <a href="#" class="nav-link  text-dark" aria-current="page">
+            حساب ها
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a href="#" class="nav-link  text-dark" aria-current="page">
+            وام های من
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a href="#" class="nav-link  text-dark" aria-current="page">
+            تراکنش های من
+        </a>
+    </li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-4">
+            <div class="card card_hover">
+                <div class="card-body">
+                    <h5 class="card-title">حساب ۱</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">شماره حساب: 25646165416504681</h6>
+                    <p class="card-text display-1 text-center">1,200,000</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card card_hover">
+                <div class="card-body">
+                    <h5 class="card-title">حساب۲</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">شماره حساب: 545249566184646874</h6>
+                    <p class="card-text display-1 text-center">2,350,000</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card card_hover">
+                <div class="card-body">
+                    <h5 class="card-title">حساب۳</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">شماره حساب: 545249566184646874</h6>
+                    <p class="card-text display-1 text-center">6,250,000</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="card card_hover">
+                <div class="card-body">
+                    <h5 class="card-title">وام ۱</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">۱۲۰ میلیون تومان (۱۲ قسط)</h6>
+                    <span>تصفیه شده : </span>
+                    <p class="card-text display-1 text-center">20 میلیون تومان</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card card_hover">
+                <div class="card-body">
+                    <h5 class="card-title">وام 2</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">۱5۰ میلیون تومان (۱۲ قسط)</h6>
+                    <span>تصفیه شده : </span>
+                    <p class="card-text display-1 text-center">60 میلیون تومان</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+
+            <div class="card card_hover my-3">
+                <div class="card-body">
+                    <p class="card-text" style="display: inline;">مجموع مبلغ بدهی : 12,500,659,380</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
