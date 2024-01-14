@@ -4,19 +4,26 @@
     بانک فخر | ناحیه کاربری کاربر
 {% endblock %}
 
+{% block custom_style %}
+    <link rel="stylesheet" href="static/styles/card_styles.css">
+{% endblock %}
+
 {% block sidebar_menu %}
+    <li class="nav-item">
+        <a href="#" class="nav-link" aria-current="page">
+            داشبورد
+        </a>
+    </li>
     <li class="nav-item">
         <a href="#" class="nav-link  text-dark" aria-current="page">
             حساب ها
         </a>
     </li>
-
-    <li class="nav-item">
+    <li class="nav-item">active
         <a href="#" class="nav-link  text-dark" aria-current="page">
             وام های من
         </a>
     </li>
-
     <li class="nav-item">
         <a href="#" class="nav-link  text-dark" aria-current="page">
             تراکنش های من
@@ -27,52 +34,73 @@
 
 {% block content %}
     <div class="row mb-3">
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">حساب ۱</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">شماره حساب: 25646165416504681</h6>
-                    <p class="card-text display-1 text-center">1,200,000</p>
+        <p class="h3 mx-3">حساب ها :</p>
+        <div class="col-5">
+            <div class="credit_card card_hover">
+                <header>
+        <span class="logo">
+          <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
+          <h5 class="card_text">Fakhr Card</h5>
+        </span>
+                    <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
+                </header>
+
+                <div class="card-details">
+                    <div class="name-number">
+                        <h6 class="card_text">Card Number</h6>
+                        <h5 class="number card_text">8050 5040 2030 3020</h5>
+                        <h5 class="name card_text">Mostafa Fakhrahmad</h5>
+                    </div>
+                    <div class="valid-date">
+                        <h6 class="card_text">Expires at</h6>
+                        <h5 class="card_text">05/28</h5>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">حساب۲</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">شماره حساب: 545249566184646874</h6>
-                    <p class="card-text display-1 text-center">2,350,000</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">حساب۳</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">شماره حساب: 545249566184646874</h6>
-                    <p class="card-text display-1 text-center">6,250,000</p>
+        <div class="col-5">
+            <div class="credit_card">
+                <header>
+        <span class="logo">
+          <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
+          <h5 class="card_text">Fakhr Card</h5>
+        </span>
+                    <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
+                </header>
+
+                <div class="card-details">
+                    <div class="name-number">
+                        <h6 class="card_text">Card Number</h6>
+                        <h5 class="number card_text">8050 5040 2030 3020</h5>
+                        <h5 class="name card_text">Prem Kumar Shahi</h5>
+                    </div>
+                    <div class="valid-date">
+                        <h6 class="card_text">Valid Thru</h6>
+                        <h5 class="card_text">05/28</h5>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-6">
+        <p class="h3 mx-3 mt-4">وام ها :</p>
+        <div class="col-4">
             <div class="card card_hover">
                 <div class="card-body">
                     <h5 class="card-title">وام ۱</h5>
                     <h6 class="card-subtitle mb-2 text-body-secondary">۱۲۰ میلیون تومان (۱۲ قسط)</h6>
                     <span>تصفیه شده : </span>
-                    <p class="card-text display-1 text-center">20 میلیون تومان</p>
+                    <p class="card-text h3 text-center">20 میلیون تومان</p>
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <div class="card card_hover">
                 <div class="card-body">
                     <h5 class="card-title">وام 2</h5>
                     <h6 class="card-subtitle mb-2 text-body-secondary">۱5۰ میلیون تومان (۱۲ قسط)</h6>
                     <span>تصفیه شده : </span>
-                    <p class="card-text display-1 text-center">60 میلیون تومان</p>
+                    <p class="card-text h3 text-center">60 میلیون تومان</p>
                 </div>
             </div>
         </div>

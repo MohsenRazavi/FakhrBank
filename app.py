@@ -19,5 +19,17 @@ def employee_panel():
 def user_panel():
     return render_template('./user_dashboard.html')
 
+@app.route('/admin_profile')
+def admin_profile():
+    return render_template('./admin_profile.html')
+
+@app.route('/employee_profile')
+def employee_profile():
+    return render_template('./employee_profile.html')
+
+@app.route('/user_profile')
+def user_profile():
+    return render_template('./user_profile.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
