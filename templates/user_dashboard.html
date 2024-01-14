@@ -10,7 +10,7 @@
 
 {% block sidebar_menu %}
     <li class="nav-item">
-        <a href="#" class="nav-link" aria-current="page">
+        <a href="#" class="nav-link active" aria-current="page">
             داشبورد
         </a>
     </li>
@@ -19,7 +19,7 @@
             حساب ها
         </a>
     </li>
-    <li class="nav-item">active
+    <li class="nav-item">
         <a href="#" class="nav-link  text-dark" aria-current="page">
             وام های من
         </a>
@@ -36,46 +36,46 @@
     <div class="row mb-3">
         <p class="h3 mx-3">حساب ها :</p>
         <div class="col-5">
-            <div class="credit_card card_hover">
+            <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-2.jpg');">
                 <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
-          <h5 class="card_text">Fakhr Card</h5>
+          <h5 class="card_text">فخر کارت</h5>
         </span>
                     <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
                 </header>
 
                 <div class="card-details">
                     <div class="name-number">
-                        <h6 class="card_text">Card Number</h6>
+                        <h6 class="card_text">شماره حساب</h6>
                         <h5 class="number card_text">8050 5040 2030 3020</h5>
-                        <h5 class="name card_text">Mostafa Fakhrahmad</h5>
+                        <h5 class="name card_text">مصطفی فخراحمد</h5>
                     </div>
                     <div class="valid-date">
-                        <h6 class="card_text">Expires at</h6>
+                        <h6 class="card_text">تاریخ انقضا</h6>
                         <h5 class="card_text">05/28</h5>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-5">
-            <div class="credit_card">
+            <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-3.jpg');">
                 <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
-          <h5 class="card_text">Fakhr Card</h5>
+          <h5 class="card_text">فخر کارت</h5>
         </span>
                     <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
                 </header>
 
                 <div class="card-details">
                     <div class="name-number">
-                        <h6 class="card_text">Card Number</h6>
+                        <h6 class="card_text">شماره حساب</h6>
                         <h5 class="number card_text">8050 5040 2030 3020</h5>
-                        <h5 class="name card_text">Prem Kumar Shahi</h5>
+                        <h5 class="name card_text">مصطفی جنت مسلک</h5>
                     </div>
                     <div class="valid-date">
-                        <h6 class="card_text">Valid Thru</h6>
+                        <h6 class="card_text">تاریخ انقضا</h6>
                         <h5 class="card_text">05/28</h5>
                     </div>
                 </div>

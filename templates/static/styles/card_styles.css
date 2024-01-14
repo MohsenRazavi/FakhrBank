@@ -1,11 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
 
 .card_text{
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", "Yekan";
 }
 .credit_card {
   position: relative;
-  background-image: url("../img/card/vecteezy_blue-background-dark-blue-abstract-background-geometry_9751175.jpg");
   background-size: cover;
   padding: 25px;
   border-radius: 28px;
