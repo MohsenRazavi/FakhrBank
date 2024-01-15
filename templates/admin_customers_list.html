@@ -1,0 +1,98 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    بانک فخر | لیست مشتریان
+{% endblock %}
+
+{% block custom_style %}
+    <link rel="stylesheet" href="static/styles/jalalidatepicker.min.css">
+{% endblock %}
+
+{% block sidebar_menu %}
+    <li class="nav-item">
+        <a href="#" class="nav-link text-dark" aria-current="page">
+            داشبورد
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="nav-link text-dark" aria-current="page">
+            کارمندان
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="nav-link text-light active" aria-current="page">
+            مشتریان
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="nav-link  text-dark" aria-current="page">
+            حساب ها
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="nav-link  text-dark" aria-current="page">
+            وام ها
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="nav-link  text-dark" aria-current="page">
+            تراکنش ها
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h4 class="mt-4">لیست مشتریان</h4>
+    <form action="" style="display: inline">
+        <input class='btn btn-outline-secondary btn-sm' type="submit" value="لیست همه مشتریان">
+    </form>
+    <form action="" style="display: inline;">
+        <input class='btn btn-outline-secondary btn-sm' type="submit" value="لیست مشتریان بدهکار">
+    </form>
+{#    <div class="mt-3">#}
+        <h6 class='me-3 ' style="display: inline;">مرتب سازی براساس</h6>
+    <form action="" style="display: inline;">
+        <input class='btn btn-outline-danger btn-sm' type="submit" value="بیشترین موجودی">
+    </form>
+    <form action="" style="display: inline;">
+        <input class='btn btn-outline-success btn-sm' type="submit" value="کمترین موجودی">
+    </form>
+{#    </div>#}
+
+    <div class="table-responsive mt-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">شماره</th>
+                <th scope="col">نام کاربری</th>
+                <th scope="col">نام</th>
+                <th scope="col">نام خانوادگی</th>
+                <th scope="col">سن</th>
+                <th scope="col">تلفن همراه</th>
+                <th scope="col">زمان ثبت نام</th>
+                <th scope="col">موجودی</th>
+                <th scope="col">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mooosthtafaaaa</td>
+                <td>مصطفی</td>
+                <td>فخرجنت</td>
+                <td>21</td>
+                <td>0123456789</td>
+                <td>5 دی ۱۲۹۱</td>
+                <td>200 میلیون دلار آفریقا</td>
+                <td>
+                    <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
+                    <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                    <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

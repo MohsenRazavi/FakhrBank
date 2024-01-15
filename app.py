@@ -31,5 +31,9 @@ def employee_profile():
 def user_profile():
     return render_template('./user_profile.html')
 
+@app.route('/admin_customers_list')
+def admin_customer_list():
+    return render_template('./admin_customers_list.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
