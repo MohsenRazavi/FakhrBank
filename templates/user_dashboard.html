@@ -29,22 +29,28 @@
             تراکنش های من
         </a>
     </li>
-{% endblock %}
+{% endblock %}body {
+background-image: url("../img/login_bg.jpg");
+background-size: 100%;
+}
+
 
 
 {% block content %}
     <div class="row mb-3">
         <p class="h3 mx-3">حساب ها :</p>
-        <div class="col-5">
+        <div class="col-5 my-2">
             <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-2.jpg');">
                 <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
-          <h5 class="card_text">فخر کارت</h5>
+          <h5 class="card_text">فاخر کارت</h5>
         </span>
                     <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
                 </header>
-
+                <div class="card_balance">
+                <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
+                </div>
                 <div class="card-details">
                     <div class="name-number">
                         <h6 class="card_text">شماره حساب</h6>
@@ -58,12 +64,35 @@
                 </div>
             </div>
         </div>
-        <div class="col-5">
+        <div class="col-5 my-2">
             <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-3.jpg');">
                 <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
           <h5 class="card_text">فخر کارت</h5>
+        </span>
+                    <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
+                </header>
+
+                <div class="card-details">
+                    <div class="name-number">
+                        <h6 class="card_text">شماره حساب</h6>
+                        <h5 class="number card_text">8050 5040 2030 3020</h5>
+                        <h5 class="name card_text">مصطفی جنت مسلک</h5>
+                    </div>
+                    <div class="valid-date">
+                        <h6 class="card_text">تاریخ انقضا</h6>
+                        <h5 class="card_text">05/28</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5 my-2">
+            <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-4.jpg');">
+                <header>
+        <span class="logo">
+          <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
+          <h5 class="card_text">افتخار کارت</h5>
         </span>
                     <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
                 </header>

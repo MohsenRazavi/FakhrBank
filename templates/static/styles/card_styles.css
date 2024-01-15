@@ -1,51 +1,85 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
 
-.card_text{
-  font-family: "Poppins", "Yekan";
+.card_text {
+    font-family: "Poppins", "Yekan";
 }
+
 .credit_card {
-  position: relative;
-  background-size: cover;
-  padding: 25px;
-  border-radius: 28px;
-  max-width: 380px;
-  width: 100%;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background-size: cover;
+    padding: 25px;
+    border-radius: 28px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
+
 header,
 .logo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
 .logo img {
-  width: 48px;
-  margin-right: 10px;
+    width: 48px;
+    margin-right: 10px;
 }
+
 h5 {
-  font-size: 16px;
-  font-weight: 400;
-  color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
 }
+
 header .chip {
-  width: 60px;
+    width: 60px;
 }
+
 h6 {
-  color: #fff;
-  font-size: 10px;
-  font-weight: 400;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 400;
 }
+
 h5.number {
-  margin-top: 4px;
-  font-size: 18px;
-  letter-spacing: 1px;
+    margin-top: 4px;
+    font-size: 18px;
+    letter-spacing: 1px;
 }
+
 h5.name {
-  margin-top: 20px;
+    margin-top: 20px;
 }
+
 .container .card-details {
-  margin-top: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.credit_card:hover .card_balance{
+    backdrop-filter: blur(4px);
+    opacity: 1;
+}
+
+.card_balance {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.balance {
+    z-index: 2;
 }
