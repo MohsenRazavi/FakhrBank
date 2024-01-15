@@ -11,11 +11,11 @@
 
     {% endblock %}
 </head>
-<body onload="clock()">
+<body onload="date_time()">
 
 <nav class="navbar navbar-expand-lg bg-primary" style="padding-left: 7%; padding-right: 7%">
     <div class="container-fluid">
-            <img src="static/img/Flogo.png" alt="" style="width: 5%; height:5%;">
+        <img src="static/img/Flogo.png" alt="" style="width: 5%; height:5%;">
         <a class="navbar-brand mb-0 text-light" href="#">
             بانک فخر</a>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
@@ -40,6 +40,8 @@
                    class="d-flex align-items-center mb-md-0 me-md-auto link-dark text-decoration-none mx-auto fs-4">
                     ناحیه کاربری
                 </a>
+                <p id="date" class="mb-0 text-center mt-1" style="display: inline;"></p>
+                <p id="clock" class="mb-0 text-center mt-1" style="display: inline;"></p>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     {% block sidebar_menu %}{% endblock %}
@@ -63,12 +65,6 @@
             </div>
         </div>
         <div class="col-9">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <p class="card-text" style="display: inline;">تاریخ : 1402/02/01</p>
-                    <p id="clock" class="mb-0" style="display: inline;"></p>
-                </div>
-            </div>
             {% block content %}{% endblock %}
         </div>
     </div>
@@ -79,22 +75,25 @@
         crossorigin="anonymous"></script>
 
 <script>
-    function clock() {
+    function date_time() {
         const today = new Date();
+        let d = today.getDay();
+        let mo = today.getMonth() + 1;
+        let y = today.getFullYear();
         let h = today.getHours();
         let m = today.getMinutes();
         let s = today.getSeconds();
         m = checkTime(m);
-        s = checkTime(s);
-        document.getElementById('clock').innerHTML = "ساعت : " + h + ":" + m + ":" + s;
-        setTimeout(clock, 1000);
+        document.getElementById('date').innerHTML = "تاریخ: " + y + "/" + mo + "/" + d + "\t";
+        document.getElementById('clock').innerHTML = "ساعت: " + h + ":" + m + ":" + s
+        setTimeout(date_time, 1000);
     }
 
     function checkTime(i) {
         if (i < 10) {
             i = "0" + i
         }
-        ;  // add zero in front of numbers < 10
+        // add zero in front of numbers < 10
         return i;
     }
 </script>
