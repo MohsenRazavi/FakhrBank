@@ -77,24 +77,12 @@
 <script>
     function date_time() {
         const today = new Date();
-        let d = today.getDay();
-        let mo = today.getMonth() + 1;
-        let y = today.getFullYear();
-        let h = today.getHours();
-        let m = today.getMinutes();
-        let s = today.getSeconds();
-        m = checkTime(m);
-        document.getElementById('date').innerHTML = "تاریخ: " + y + "/" + mo + "/" + d + "\t";
-        document.getElementById('clock').innerHTML = "ساعت: " + h + ":" + m + ":" + s
-        setTimeout(date_time, 1000);
-    }
+        let time = today.toLocaleTimeString();
+        let date = today.toLocaleDateString('fa-IR');
 
-    function checkTime(i) {
-        if (i < 10) {
-            i = "0" + i
-        }
-        // add zero in front of numbers < 10
-        return i;
+        document.getElementById('date').innerHTML = "تاریخ: " + date;
+        document.getElementById('clock').innerHTML = "ساعت: " + time;
+        setTimeout(date_time, 1000);
     }
 </script>
 
