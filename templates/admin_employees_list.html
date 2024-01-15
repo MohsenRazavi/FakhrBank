@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block page_title %}
-    بانک فخر | لیست مشتریان
+    بانک فخر | لیست کارمندان
 {% endblock %}
 
 {% block custom_style %}
@@ -15,12 +15,12 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link text-dark" aria-current="page">
+        <a href="#" class="nav-link text-light active" aria-current="page">
             کارمندان
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link text-light active" aria-current="page">
+        <a href="#" class="nav-link text-dark" aria-current="page">
             مشتریان
         </a>
     </li>
@@ -44,10 +44,10 @@
 {% block content %}
     <div class="row">
         <div class="col-10">
-            <h4 class="mt-4">لیست مشتریان</h4>
+            <h4 class="mt-4">لیست کارمندان</h4>
         </div>
-        <div class="col-2 pt-3" style="padding-right: 3.8%;">
-            <button class="btn btn-success">افزودن مشتری</button>
+        <div class="col-2 pt-3" style="padding-right: 4.15%;">
+            <button class="btn btn-success">افزودن کارمند</button>
         </div>
     </div>
     <div class="row my-2">
@@ -58,7 +58,6 @@
             <button class="btn btn-primary btn-small">اعمال</button>
         </div>
     </div>
-
     <form action="">
         <div class="row">
             <div class="col">
@@ -70,7 +69,7 @@
             </div>
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره مشتری</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره کارمندی</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
@@ -109,12 +108,12 @@
             <thead>
             <tr>
                 <th scope="col">ردیف</th>
-                <th scope="col">شماره مشتری</th>
+                <th scope="col">شماره کارمندی</th>
                 <th scope="col">نام کاربری</th>
                 <th scope="col">نام</th>
                 <th scope="col">نام خانوادگی</th>
-                <th scope="col">سن</th>
                 <th scope="col">جنسیت</th>
+                <th scope="col">سن</th>
                 <th scope="col">تلفن همراه</th>
                 <th scope="col">زمان ثبت نام</th>
                 <th scope="col">عملیات</th>
@@ -123,12 +122,12 @@
             <tbody>
             <tr>
                 <th scope="row">1</th>
-                <td>2652659</td>
+                <td>123456</td>
                 <td>Mooosthtafaaaa</td>
                 <td>مصطفی</td>
                 <td>فخرجنت</td>
-                <td>21</td>
                 <td>آقا</td>
+                <td>21</td>
                 <td>0123456789</td>
                 <td>5 دی ۱۲۹۱</td>
                 <td>

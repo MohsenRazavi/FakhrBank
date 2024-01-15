@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block page_title %}
-    بانک فخر | لیست مشتریان
+    بانک فخر | لیست حساب ها
 {% endblock %}
 
 {% block custom_style %}
@@ -20,12 +20,12 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link text-light active" aria-current="page">
+        <a href="#" class="nav-link text-dark" aria-current="page">
             مشتریان
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-light active" aria-current="page">
             حساب ها
         </a>
     </li>
@@ -44,10 +44,10 @@
 {% block content %}
     <div class="row">
         <div class="col-10">
-            <h4 class="mt-4">لیست مشتریان</h4>
+            <h4 class="mt-4">لیست حساب ها</h4>
         </div>
-        <div class="col-2 pt-3" style="padding-right: 3.8%;">
-            <button class="btn btn-success">افزودن مشتری</button>
+        <div class="col-2 pt-3" style="padding-right: 4.34%;">
+            <button class="btn btn-success">افزودن حساب</button>
         </div>
     </div>
     <div class="row my-2">
@@ -58,33 +58,25 @@
             <button class="btn btn-primary btn-small">اعمال</button>
         </div>
     </div>
-
     <form action="">
         <div class="row">
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">نام کاربری</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">موجودی</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره مشتری</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مالک</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">سن</span>
-                    <input type="text" class="form-control" aria-label="Sizing example input"
-                           aria-describedby="inputGroup-sizing-sm">
-                </div>
-            </div>
-            <div class="col">
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">زمان ثبت نام</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">تاریخ ایجاد</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
@@ -92,45 +84,42 @@
         </div>
         <div class="row">
             <div class="col">
-                <div class="input-group mb-3">
-                    <button class="btn btn-outline-secondary" type="button">جنسیت</button>
-                    <select class="form-select" id="inputGroupSelect03" aria-label="Example select with button addon">
-                        <option selected>انتخاب</option>
-                        <option value="1">آقا</option>
-                        <option value="2">خانم</option>
-                    </select>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره حساب</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">نام حساب</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
         </div>
     </form>
-
     <div class="table-responsive mt-4">
         <table class="table">
             <thead>
             <tr>
                 <th scope="col">ردیف</th>
-                <th scope="col">شماره مشتری</th>
-                <th scope="col">نام کاربری</th>
-                <th scope="col">نام</th>
-                <th scope="col">نام خانوادگی</th>
-                <th scope="col">سن</th>
-                <th scope="col">جنسیت</th>
-                <th scope="col">تلفن همراه</th>
-                <th scope="col">زمان ثبت نام</th>
+                <th scope="col">شماره حساب</th>
+                <th scope="col">نام حساب</th>
+                <th scope="col">مالک</th>
+                <th scope="col">موجودی</th>
+                <th scope="col">زمان ایجاد</th>
                 <th scope="col">عملیات</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <th scope="row">1</th>
-                <td>2652659</td>
-                <td>Mooosthtafaaaa</td>
-                <td>مصطفی</td>
-                <td>فخرجنت</td>
-                <td>21</td>
-                <td>آقا</td>
-                <td>0123456789</td>
-                <td>5 دی ۱۲۹۱</td>
+                <td>1234-5678-9012-3456</td>
+                <td>حساب مادربزرگ عمه احمد</td>
+                <td>مصطفی احمدی</td>
+                <td>653,659,232</td>
+                <td>قبل از بیگ بنگ</td>
                 <td>
                     <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
                     <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>

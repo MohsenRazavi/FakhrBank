@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block page_title %}
-    بانک فخر | لیست مشتریان
+    بانک فخر | لیست وام ها
 {% endblock %}
 
 {% block custom_style %}
@@ -20,7 +20,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link text-light active" aria-current="page">
+        <a href="#" class="nav-link text-dark" aria-current="page">
             مشتریان
         </a>
     </li>
@@ -30,7 +30,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-light active" aria-current="page">
             وام ها
         </a>
     </li>
@@ -44,10 +44,10 @@
 {% block content %}
     <div class="row">
         <div class="col-10">
-            <h4 class="mt-4">لیست مشتریان</h4>
+            <h4 class="mt-4">لیست وام ها</h4>
         </div>
-        <div class="col-2 pt-3" style="padding-right: 3.8%;">
-            <button class="btn btn-success">افزودن مشتری</button>
+        <div class="col-2 pt-3" style="padding-right: 5%;">
+            <button class="btn btn-success">درخواست ها</button>
         </div>
     </div>
     <div class="row my-2">
@@ -63,28 +63,28 @@
         <div class="row">
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">نام کاربری</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره وام</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره مشتری</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره حساب</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">سن</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مالک</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
             <div class="col">
                 <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">زمان ثبت نام</span>
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مبلغ</span>
                     <input type="text" class="form-control" aria-label="Sizing example input"
                            aria-describedby="inputGroup-sizing-sm">
                 </div>
@@ -92,15 +92,32 @@
         </div>
         <div class="row">
             <div class="col">
-                <div class="input-group mb-3">
-                    <button class="btn btn-outline-secondary" type="button">جنسیت</button>
-                    <select class="form-select" id="inputGroupSelect03" aria-label="Example select with button addon">
-                        <option selected>انتخاب</option>
-                        <option value="1">آقا</option>
-                        <option value="2">خانم</option>
-                    </select>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">زمان درخواست</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
+            <div class="col">
+                <div class="input-group-sm mb-3">
+                    <label class="input-group-text" for="inputGroupSelect01">وضعیت</label>
+                    <select class="form-select" id="inputGroupSelect01">
+                        <option selected>انتخاب</option>
+                        <option value="1">درحال پرداخت</option>
+                        <option value="2">تصفیه شده</option>
+                    </select>
+                </div>
+
+            </div>
+                <div class="col">
+                    <div class="input-group-sm mb-3">
+                        <label class="input-group-text" for="inputGroupSelect01">سود</label>
+                        <select class="form-select" id="inputGroupSelect01">
+                            <option selected>انتخاب</option>
+                            <option value="1">20 درصد</option>
+                        </select>
+                    </div>
+                </div>
         </div>
     </form>
 
@@ -109,14 +126,15 @@
             <thead>
             <tr>
                 <th scope="col">ردیف</th>
-                <th scope="col">شماره مشتری</th>
-                <th scope="col">نام کاربری</th>
-                <th scope="col">نام</th>
-                <th scope="col">نام خانوادگی</th>
-                <th scope="col">سن</th>
-                <th scope="col">جنسیت</th>
-                <th scope="col">تلفن همراه</th>
-                <th scope="col">زمان ثبت نام</th>
+                <th scope="col">شماره وام</th>
+                <th scope="col">شماره حساب</th>
+                <th scope="col">مالک</th>
+                <th scope="col">مبلغ</th>
+                <th scope="col">مدت</th>
+                <th scope="col">سود</th>
+                <th scope="col">وضعیت</th>
+                <th scope="col">زمان درخواست</th>
+                <th scope="col">پرداخت شده</th>
                 <th scope="col">عملیات</th>
             </tr>
             </thead>
@@ -124,17 +142,16 @@
             <tr>
                 <th scope="row">1</th>
                 <td>2652659</td>
-                <td>Mooosthtafaaaa</td>
-                <td>مصطفی</td>
-                <td>فخرجنت</td>
-                <td>21</td>
-                <td>آقا</td>
-                <td>0123456789</td>
-                <td>5 دی ۱۲۹۱</td>
+                <td>6659-5265-1639-1369</td>
+                <td>مصطفی فخرجنت مسلک</td>
+                <td>12000000</td>
+                <td>۱۲ ماه</td>
+                <td>20 درصد</td>
+                <td>درحال پرداخت</td>
+                <td>1 ثانیه قبل از بیگ بنگ</td>
+                <td>200000</td>
                 <td>
-                    <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
                     <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                    <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
                 </td>
             </tr>
             </tbody>
