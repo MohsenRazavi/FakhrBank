@@ -7,106 +7,130 @@
 
 {% block sidebar_menu %}
     <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
+        <a href="#" class="nav-link active" aria-current="page" id="sidebar-Dashboard" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Customers',
+'sidebar-Accounts',
+'sidebar-Loans',
+'sidebar-Transactions')">
             داشبورد
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link text-dark" aria-current="page">
+        <a href="#" class="nav-link text-dark" aria-current="page" id="sidebar-Employees" onclick="sidebar_menu(this, 'sidebar-Dashboard', 'sidebar-Customers',
+'sidebar-Accounts',
+'sidebar-Loans',
+'sidebar-Transactions')">
             کارمندان
         </a>
     </li>
 
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Customers" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Dashboard',
+'sidebar-Accounts',
+'sidebar-Loans',
+'sidebar-Transactions')">
             مشتریان
         </a>
     </li>
 
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Accounts" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Customers',
+'sidebar-Dashboard',
+'sidebar-Loans',
+'sidebar-Transactions')">
             حساب ها
         </a>
     </li>
 
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Loans" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Customers',
+'sidebar-Accounts',
+'sidebar-Dashboard',
+'sidebar-Transactions')">
             وام ها
         </a>
     </li>
 
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Transactions" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Customers',
+'sidebar-Accounts',
+'sidebar-Loans',
+'sidebar-Dashboard')">
             تراکنش ها
         </a>
     </li>
 {% endblock %}
 
 {% block content %}
-    <div class="row mb-3">
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">کارمندان</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کارمندان مشغول به کار</h6>
-                    <p class="card-text display-1 text-center">3235+</p>
+    <div id="Dashboard">
+        <div class="row mb-3">
+            <div class="col-4">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">کارمندان</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کارمندان مشغول به کار</h6>
+                        <p class="card-text display-1 text-center">3235+</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">مشتریان</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد مشتریان بانک</h6>
+                        <p class="card-text display-1 text-center">235+</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">حساب ها</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد حساب های بانکی فعال</h6>
+                        <p class="card-text display-1 text-center">2650+</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">مشتریان</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">تعداد مشتریان بانک</h6>
-                    <p class="card-text display-1 text-center">235+</p>
+        <div class="row">
+            <div class="col-6">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">وام ها</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل وام های داده شده</h6>
+                        <p class="card-text display-1 text-center">56+</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">تراکنش ها</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل تراکنش های انجام شده</h6>
+                        <p class="card-text display-1 text-center">256+</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">حساب ها</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">تعداد حساب های بانکی فعال</h6>
-                    <p class="card-text display-1 text-center">2650+</p>
+        <div class="row">
+            <div class="col">
+                <div class="card card_hover my-3">
+                    <div class="card-body">
+                        <p class="card-text" style="display: inline;">تعداد مشتریان بدهکار : 120</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card card_hover my-3">
+                    <div class="card-body">
+                        <p class="card-text" style="display: inline;">مجموع مبلغ بدهکاران : 12,500,659,380</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-6">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">وام ها</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل وام های داده شده</h6>
-                    <p class="card-text display-1 text-center">56+</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">تراکنش ها</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل تراکنش های انجام شده</h6>
-                    <p class="card-text display-1 text-center">256+</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-    <div class="col">
-        <div class="card card_hover my-3">
-                <div class="card-body">
-                    <p class="card-text" style="display: inline;">تعداد مشتریان بدهکار : 120</p>
-                </div>
-            </div>
-    </div>
-    <div class="col">
-        <div class="card card_hover my-3">
-                <div class="card-body">
-                    <p class="card-text" style="display: inline;">مجموع مبلغ بدهکاران : 12,500,659,380</p>
-                </div>
-            </div>
-    </div>
-    </div>
-
+    <div id="Employees" style="display: ;"></div>
+    <div id="Customers" style="display: none;"></div>
+    <div id="Accounts"></div>
+    <div id="Loans" style="display: none;"></div>
+    <div id="Transactions" style="display: none;"></div>
 {% endblock %}

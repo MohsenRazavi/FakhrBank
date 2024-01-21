@@ -79,11 +79,34 @@
         const today = new Date();
         let time = today.toLocaleTimeString();
         let date = today.toLocaleDateString('fa-IR');
-
-        document.getElementById('date').innerHTML = "تاریخ: " + date;
-        document.getElementById('clock').innerHTML = "ساعت: " + time;
+        let am_pm = time.split(' ')[1];
+        if (am_pm === 'AM') {
+            time = time.split(' ')[0]+ ' قبل از ظهر'
+        } else {
+            time = time.split(' ')[0]+ ' بعد از ظهر'
+        }
+        document.getElementById('date').innerHTML = " تاریخ: " + date;
+        document.getElementById('clock').innerHTML = " ساعت: " + time;
         setTimeout(date_time, 1000);
     }
+
+    function sidebar_menu(clicked_item, ...others) {
+        clicked_item.classList.remove("text-dark");
+        clicked_item.classList.add("active");
+        let div_content_id = clicked_item.id.split('-')[1];
+        let div_content = document.getElementById(div_content_id);
+        div_content.style.display = 'block';
+        for (let i = 0; i < others.length; i++) {
+            let sidebar_item = document.getElementById(others[i]);
+            sidebar_item.classList.remove('active');
+            sidebar_item.classList.add('text-dark');
+            let div_content_id = sidebar_item.id.split('-')[1];
+            console.log(sidebar_item);
+            let div_content = document.getElementById(div_content_id);
+            div_content.style.display = 'none';
+        }
+    }
+
 </script>
 
 {% block custom_script %}
