@@ -23,46 +23,5 @@ def employee_panel():
 def user_panel():
     return render_template('./user_dashboard.html')
 
-
-@app.route('/admin_profile')
-def admin_profile():
-    return render_template('./admin_profile.html')
-
-
-@app.route('/employee_profile')
-def employee_profile():
-    return render_template('./employee_profile.html')
-
-
-@app.route('/user_profile')
-def user_profile():
-    return render_template('./user_profile.html')
-
-
-@app.route('/admin_customers_list')
-def admin_customer_list():
-    return render_template('./admin_customers_list.html')
-
-
-@app.route('/admin_employees_list')
-def admin_employees_list():
-    return render_template('./admin_employees_list.html')
-
-
-@app.route('/admin_accounts_list')
-def admin_accounts_list():
-    return render_template('./admin_accounts_list.html')
-
-
-@app.route('/admin_loans_list')
-def admin_loans_list():
-    return render_template('./admin_loans_list.html')
-
-
-@app.route('/admin_transactions_list')
-def admin_transactions_list():
-    return render_template('./admin_transactions_list.html')
-
-
 if __name__ == "__main__":
     app.run(debug=True)

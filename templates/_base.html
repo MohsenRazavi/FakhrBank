@@ -55,7 +55,11 @@
                         <strong>یوزرنیم</strong>
                     </a>
                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                        <li><a class="dropdown-item text-end" href="#">نمایه</a></li>
+                        <li><a class="dropdown-item text-end" href="#" id="sidebar-Profile" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Customers',
+'sidebar-Accounts',
+'sidebar-Dashboard',
+'sidebar-Transactions',
+'sidebar-Loans')">نمایه</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -81,9 +85,9 @@
         let date = today.toLocaleDateString('fa-IR');
         let am_pm = time.split(' ')[1];
         if (am_pm === 'AM') {
-            time = time.split(' ')[0]+ ' قبل از ظهر'
+            time = time.split(' ')[0] + ' قبل از ظهر'
         } else {
-            time = time.split(' ')[0]+ ' بعد از ظهر'
+            time = time.split(' ')[0] + ' بعد از ظهر'
         }
         document.getElementById('date').innerHTML = " تاریخ: " + date;
         document.getElementById('clock').innerHTML = " ساعت: " + time;
@@ -91,8 +95,10 @@
     }
 
     function sidebar_menu(clicked_item, ...others) {
-        clicked_item.classList.remove("text-dark");
-        clicked_item.classList.add("active");
+        if (clicked_item.id !== "sidebar-Profile") {
+            clicked_item.classList.remove("text-dark");
+            clicked_item.classList.add("active");
+        }
         let div_content_id = clicked_item.id.split('-')[1];
         let div_content = document.getElementById(div_content_id);
         div_content.style.display = 'block';
