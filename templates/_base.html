@@ -103,13 +103,14 @@
         let div_content = document.getElementById(div_content_id);
         div_content.style.display = 'block';
         for (let i = 0; i < others.length; i++) {
-            let sidebar_item = document.getElementById(others[i]);
-            sidebar_item.classList.remove('active');
-            sidebar_item.classList.add('text-dark');
-            let div_content_id = sidebar_item.id.split('-')[1];
-            console.log(sidebar_item);
-            let div_content = document.getElementById(div_content_id);
-            div_content.style.display = 'none';
+            try {
+                let sidebar_item = document.getElementById(others[i]);
+                sidebar_item.classList.remove('active');
+                sidebar_item.classList.add('text-dark');
+                let div_content_id = sidebar_item.id.split('-')[1];
+                let div_content = document.getElementById(div_content_id);
+                div_content.style.display = 'none';
+            } catch (err) {}
         }
     }
 

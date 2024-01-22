@@ -10,22 +10,26 @@
 
 {% block sidebar_menu %}
     <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
+        <a href="#" class="nav-link active" aria-current="page" id="sidebar-Dashboard"
+           onclick="sidebar_menu(this, 'sidebar-Accounts', 'sidebar-Loans', 'sidebar-Transactions', 'sidebar-Profile')">
             داشبورد
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Accounts"
+           onclick="sidebar_menu(this, 'sidebar-Dashboard', 'sidebar-Loans', 'sidebar-Transactions', 'sidebar-Profile')">
             حساب های من
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Loans"
+           onclick="sidebar_menu(this, 'sidebar-Accounts', 'sidebar-Dashboard', 'sidebar-Transactions', 'sidebar-Profile')">
             وام های من
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link  text-dark" aria-current="page">
+        <a href="#" class="nav-link  text-dark" aria-current="page" id="sidebar-Transactions"
+           onclick="sidebar_menu(this, 'sidebar-Accounts', 'sidebar-Loans', 'sidebar-Dashboard', 'sidebar-Profile')">
             تراکنش های من
         </a>
     </li>
@@ -33,127 +37,481 @@
 
 
 {% block content %}
-    <div class="row mb-3">
-        <p class="h3 mx-3">حساب ها :</p>
-        <div class="col-5 my-2">
-            <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-2.jpg');">
-                <header>
+    <div id="Dashboard">
+        <div class="row mb-3">
+            <p class="h3 mx-3">حساب ها :</p>
+            <div class="col-5 my-2">
+                <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-2.jpg');">
+                    <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
           <h5 class="card_text">فاخر کارت</h5>
         </span>
-                    <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
-                </header>
-                <div class="card_balance">
-                    <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
-                </div>
-                <div class="card-details">
-                    <div class="name-number">
-                        <h6 class="card_text">شماره حساب</h6>
-                        <h5 class="number card_text">8050 5040 2030 3020</h5>
-                        <h5 class="name card_text">مصطفی فخراحمد</h5>
+                        <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
+                    </header>
+                    <div class="card_balance">
+                        <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
                     </div>
-                    <div class="valid-date">
-                        <h6 class="card_text">تاریخ انقضا</h6>
-                        <h5 class="card_text">05/28</h5>
+                    <div class="card-details">
+                        <div class="name-number">
+                            <h6 class="card_text">شماره حساب</h6>
+                            <h5 class="number card_text">8050 5040 2030 3020</h5>
+                            <h5 class="name card_text">مصطفی فخراحمد</h5>
+                        </div>
+                        <div class="valid-date">
+                            <h6 class="card_text">تاریخ انقضا</h6>
+                            <h5 class="card_text">05/28</h5>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-5 my-2">
-            <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-3.jpg');">
-                <header>
+            <div class="col-5 my-2">
+                <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-3.jpg');">
+                    <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
           <h5 class="card_text">فخر کارت</h5>
         </span>
-                    <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
-                </header>
-                <div class="card_balance">
-                    <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
-                </div>
-                <div class="card-details">
-                    <div class="name-number">
-                        <h6 class="card_text">شماره حساب</h6>
-                        <h5 class="number card_text">8050 5040 2030 3020</h5>
-                        <h5 class="name card_text">مصطفی جنت مسلک</h5>
+                        <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
+                    </header>
+                    <div class="card_balance">
+                        <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
                     </div>
-                    <div class="valid-date">
-                        <h6 class="card_text">تاریخ انقضا</h6>
-                        <h5 class="card_text">05/28</h5>
+                    <div class="card-details">
+                        <div class="name-number">
+                            <h6 class="card_text">شماره حساب</h6>
+                            <h5 class="number card_text">8050 5040 2030 3020</h5>
+                            <h5 class="name card_text">مصطفی جنت مسلک</h5>
+                        </div>
+                        <div class="valid-date">
+                            <h6 class="card_text">تاریخ انقضا</h6>
+                            <h5 class="card_text">05/28</h5>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-5 my-2">
-            <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-4.jpg');">
-                <header>
+            <div class="col-5 my-2">
+                <div class="credit_card card_hover" style="background-image: url('static/img/card/bg-4.jpg');">
+                    <header>
 
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
           <h5 class="card_text">افتخار کارت</h5>
         </span>
-                    <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
-                </header>
-                <div class="card_balance">
-                    <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
-                </div>
-                <div class="card-details">
-                    <div class="name-number">
-                        <h6 class="card_text">شماره حساب</h6>
-                        <h5 class="number card_text">8050 5040 2030 3020</h5>
-                        <h5 class="name card_text">مصطفی جنت مسلک</h5>
+                        <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
+                    </header>
+                    <div class="card_balance">
+                        <p class="text-light balance">موجودی ۵۰۰۰۰۰۰۰</p>
                     </div>
-                    <div class="valid-date">
-                        <h6 class="card_text">تاریخ انقضا</h6>
-                        <h5 class="card_text">05/28</h5>
+                    <div class="card-details">
+                        <div class="name-number">
+                            <h6 class="card_text">شماره حساب</h6>
+                            <h5 class="number card_text">8050 5040 2030 3020</h5>
+                            <h5 class="name card_text">مصطفی جنت مسلک</h5>
+                        </div>
+                        <div class="valid-date">
+                            <h6 class="card_text">تاریخ انقضا</h6>
+                            <h5 class="card_text">05/28</h5>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <p class="h3 mx-3 mt-4">وام ها :</p>
+            <div class="col-4">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">۱۲۰ میلیون تومان | ۱۲ قسط</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">۵ قسط پرداخت شده</h6>
+                        <span>تصفیه شده : </span>
+                        <p class="card-text h3 text-center">20 میلیون تومان</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example"
+                             aria-valuenow="75"
+                             aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 style="width: {{ 20/120*100 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card card_hover">
+                    <div class="card-body">
+                        <h5 class="card-title">150 میلیون تومان | ۱۲ قسط</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">۵ قسط پرداخت شده</h6>
+                        <span>تصفیه شده : </span>
+                        <p class="card-text h3 text-center">20 میلیون تومان</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example"
+                             aria-valuenow="75"
+                             aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 style="width: {{ 20/120*100 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+
+                <div class="card card_hover my-3">
+                    <div class="card-body">
+                        <p class="card-text" style="display: inline;">مجموع مبلغ بدهی : 12,500,659,380</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="Accounts" style="display:none;">
+      <div class="row">
+        <div class="col-10">
+            <h4 class="mt-4">لیست حساب های من</h4>
+        </div>
+        <div class="col-2 pt-3" style="padding-right: 4.34%;">
+            <button class="btn btn-success">افزودن حساب</button>
         </div>
     </div>
-    <div class="row">
-        <p class="h3 mx-3 mt-4">وام ها :</p>
-        <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">۱۲۰ میلیون تومان | ۱۲ قسط</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">۵ قسط پرداخت شده</h6>
-                    <span>تصفیه شده : </span>
-                    <p class="card-text h3 text-center">20 میلیون تومان</p>
-                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75"
-                         aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ 20/120*100 }}%"></div>
-                    </div>
-                </div>
-            </div>
+    <div class="row my-2">
+        <div class="col-11 pt-2">
+            <h6 style="vertical-align: middle;">فیلتر ها:</h6>
         </div>
-    <div class="col-4">
-            <div class="card card_hover">
-                <div class="card-body">
-                    <h5 class="card-title">150 میلیون تومان | ۱۲ قسط</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">۵ قسط پرداخت شده</h6>
-                    <span>تصفیه شده : </span>
-                    <p class="card-text h3 text-center">20 میلیون تومان</p>
-                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75"
-                         aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ 20/120*100 }}%"></div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-1">
+            <button class="btn btn-primary btn-small">اعمال</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-
-            <div class="card card_hover my-3">
-                <div class="card-body">
-                    <p class="card-text" style="display: inline;">مجموع مبلغ بدهی : 12,500,659,380</p>
+    <form action="">
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">موجودی</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مالک</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">تاریخ ایجاد</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره حساب</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">نام حساب</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+
+            <div class="input-group-sm mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">نوع حساب</label>
+                <select class="form-select" id="inputGroupSelect01">
+                    <option selected>انتخاب</option>
+                    <option value="1">حساب فخر</option>
+                    <option value="2">حساب فاخر</option>
+                    <option value="3">حساب افتخار</option>
+                </select>
+            </div>
+
+        </div>
+    </form>
+    <div class="table-responsive mt-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">ردیف</th>
+                <th scope="col">شماره حساب</th>
+                <th scope="col">نوع حساب</th>
+                <th scope="col">نام حساب</th>
+                <th scope="col">مالک</th>
+                <th scope="col">موجودی</th>
+                <th scope="col">زمان ایجاد</th>
+                <th scope="col">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>1234-5678-9012-3456</td>
+                <td>حساب فاخر</td>
+                <td>حساب مادربزرگ عمه احمد</td>
+                <td>مصطفی احمدی</td>
+                <td>653,659,232</td>
+                <td>قبل از بیگ بنگ</td>
+                <td>
+                    <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
+                    <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                    <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
     </div>
 
+    </div>
+    <div id="Loans" style="display:none;">
+     <div class="row">
+        <div class="col-10">
+            <h4 class="mt-4">لیست وام های من</h4>
+        </div>
+        <div class="col-2 pt-3" style="padding-right: 5%;">
+            <button class="btn btn-success">درخواست ها</button>
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-11 pt-2">
+            <h6 style="vertical-align: middle;">فیلتر ها:</h6>
+        </div>
+        <div class="col-1">
+            <button class="btn btn-primary btn-small">اعمال</button>
+        </div>
+    </div>
 
+    <form action="">
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره وام</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره حساب</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مالک</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مبلغ</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">زمان درخواست</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group-sm mb-3">
+                    <label class="input-group-text" for="inputGroupSelect01">وضعیت</label>
+                    <select class="form-select" id="inputGroupSelect01">
+                        <option selected>انتخاب</option>
+                        <option value="1">درحال پرداخت</option>
+                        <option value="2">تصفیه شده</option>
+                    </select>
+                </div>
 
+            </div>
+                <div class="col">
+                    <div class="input-group-sm mb-3">
+                        <label class="input-group-text" for="inputGroupSelect01">سود</label>
+                        <select class="form-select" id="inputGroupSelect01">
+                            <option selected>انتخاب</option>
+                            <option value="1">20 درصد</option>
+                        </select>
+                    </div>
+                </div>
+        </div>
+    </form>
+
+    <div class="table-responsive mt-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">ردیف</th>
+                <th scope="col">شماره وام</th>
+                <th scope="col">شماره حساب</th>
+                <th scope="col">مالک</th>
+                <th scope="col">مبلغ</th>
+                <th scope="col">مدت</th>
+                <th scope="col">سود</th>
+                <th scope="col">وضعیت</th>
+                <th scope="col">زمان درخواست</th>
+                <th scope="col">پرداخت شده</th>
+                <th scope="col">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>2652659</td>
+                <td>6659-5265-1639-1369</td>
+                <td>مصطفی فخرجنت مسلک</td>
+                <td>12000000</td>
+                <td>۱۲ ماه</td>
+                <td>20 درصد</td>
+                <td>درحال پرداخت</td>
+                <td>1 ثانیه قبل از بیگ بنگ</td>
+                <td>200000</td>
+                <td>
+                    <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    </div>
+    <div id="Transactions" style="display:none;">
+        <h4 class="mt-4">لیست تراکنش های من</h4>
+    <div class="row my-2">
+        <div class="col-11 pt-2">
+            <h6 style="vertical-align: middle;">فیلتر ها:</h6>
+        </div>
+        <div class="col-1">
+            <button class="btn btn-primary btn-small">اعمال</button>
+        </div>
+    </div>
+
+    <form action="">
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره حساب مبدا</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">شماره حساب مقصد</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">زمان</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">مبلغ</span>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive mt-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">ردیف</th>
+                <th scope="col">شماره تراکنش</th>
+                <th scope="col">شماره حساب مبدا</th>
+                <th scope="col">شماره حساب مقصد</th>
+                <th scope="col">مبلغ</th>
+                <th scope="col">زمان</th>
+                <th scope="col">وضعیت</th>
+                <th scope="col">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>2652659</td>
+                <td>6659-5265-1639-1369</td>
+                <td>6659-5265-1639-1369</td>
+                <td>12000000</td>
+                <td>سالروز فرار شاه</td>
+                <td>موفق</td>
+                <td>
+                    <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
+                    <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    </div>
+    <div id="Profile" style="display: none;">
+    <h5>مشخصات کاربر</h5>
+    <form action="">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                   value="Mostafa Fakhr">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام کاربری</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                   value="مصطفی">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                   value="بهشت احمد">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام خانوادگی</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                   value="0952652626943">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن همراه</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                   value="1402/02/23">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تاریخ تولد</label>
+        </div>
+        <button type="submit" class="btn btn-success mt-1 mb-4">ذخیره</button>
+    </form>
+
+        <div class="h5">تغییر کلمه عبور</div>
+    <form action="">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">کلمه عبور فعلی</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">کلمه عبور جدید</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تکرار کلمه عبور جدید</label>
+        </div>
+        <button type="submit" class="btn btn-primary mt-1 mb-4">تغییر کلمه عبور</button>
+
+    </form>
+    </div>
 {% endblock %}
