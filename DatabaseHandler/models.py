@@ -11,7 +11,7 @@ class User:
         self._password = password
         self.first_name = first_name
         self.last_name = last_name
-        self.birthdate = birthdate.strftime("%d")
+        self.birthdate = birthdate
         self.phone_number = phone_number
         self.created_at = created_at
         self.type = user_type
@@ -43,6 +43,35 @@ class User:
             return True
         else:
             print(res)
+
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'username': self.username,
+            'password': self._password,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'birthdate': self.birthdate,
+            'gender': self.gender,
+            'phone_number': self.phone_number,
+            'created_at': self.created_at,
+            'user_type': self.type,
+        }
+
+    @classmethod
+    def from_dict(cls, user_dict):
+        return cls(
+            user_dict['user_id'],
+            user_dict['username'],
+            user_dict['password'],
+            user_dict['first_name'],
+            user_dict['last_name'],
+            user_dict['birthdate'],
+            user_dict['gender'],
+            user_dict['phone_number'],
+            user_dict['created_at'],
+            user_dict['user_type'],
+        )
 
     class Accounts:
         def __init__(self, account_id, account_number, user_id, balance, account_type, created_at, name, status):

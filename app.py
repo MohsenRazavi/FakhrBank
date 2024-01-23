@@ -1,6 +1,6 @@
 import hashlib
 
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 
 from DatabaseHandler import Database
 from DatabaseHandler.models import User
@@ -13,13 +13,21 @@ app.template_folder = "templates"
 app.secret_key = '1234'
 
 db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
-USER = None
 
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    global USER
     if request.method == "GET":
+        if 'user' in session:   # user already logged in !
+            user = User.from_dict(session['user'])
+            if user.type == "admin":
+                return redirect(url_for('admin_panel'))
+            elif user.type == "employee":
+                return render_template('./employee_dashboard.html', user=user)
+            elif user.type == "user":
+                return render_template('./user_dashboard.html', user=user)
+            else:
+                return "<h1>Invalid usertype</h1>"
         return render_template('./login.html')
     else:  # POST
         username = request.form['username']
@@ -28,7 +36,7 @@ def login():
         res = db.select('Users', Model=User, filters=f"username = '{username}' AND passwordHash = '{pswd_hash}'")
         if res[0]:  # login successful !
             obj = res[0][0]
-            USER = obj
+            session['user'] = obj.to_dict()
             if obj.first_name and obj.last_name:
                 flash(f'{obj.first_name} {obj.last_name}  خوش آمدید !', 'success')
             else:
@@ -48,38 +56,51 @@ def login():
 
 @app.route('/logout')
 def logout():
+    if 'user' in session:
+        del session['user']
     return redirect(url_for('login'))
 
 
 @app.route('/update_profile/', methods=['POST'])
 def update_profile():
-    global USER
-    USER.username = request.form['username']
-    USER.first_name = request.form['first_name']
-    USER.last_name = request.form['last_name']
-    USER.phone_number = request.form['phone_number']
-    USER.birthdate = request.form['birthdate']
-    USER.save('Users')
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        print(request.form['birthdate'])
+        user.username = request.form['username']
+        user.first_name = request.form['first_name']
+        user.last_name = request.form['last_name']
+        user.phone_number = request.form['phone_number']
+        user.birthdate = request.form['birthdate']
+        user.save('Users')
 
-    if USER.type == 'admin':
-        return redirect(url_for('admin_panel'))
-    elif USER.type == 'employee':
-        return render_template('./employee_dashboard.html', user=USER)
-    elif USER.type == 'user':
-        return render_template('./user_dashboard.html', user=USER)
+        if user.type == 'admin':
+            return redirect(url_for('admin_panel'))
+        elif user.type == 'employee':
+            return render_template('./employee_dashboard.html', user=user)
+        elif user.type == 'user':
+            return render_template('./user_dashboard.html', user=user)
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
 
 
 @app.route('/admin/')
 def admin_panel():
-    global USER
-    context = {
-        'user': USER,
-    }
-    return render_template('./admin_dashboard.html', **context)
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        context = {
+            'user': user,
+        }
+        return render_template('./admin_dashboard.html', **context)
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
 
 
 @app.route('/employee')
 def employee_panel():
+    if 'user' in session:
+        del session['user']
     return render_template('./employee_dashboard.html')
 
 

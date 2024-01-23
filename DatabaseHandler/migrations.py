@@ -30,7 +30,7 @@ user_fields = {
     'passwordHash': 'VARCHAR (260)',
     'firstName': 'VARCHAR (50)',
     'lastName': 'VARCHAR (50)',
-    'birthdate': 'DATE',
+    'birthdate': 'VARCHAR (12)',
     'gender': 'VARCHAR (5)',
     'phoneNumber': 'VARCHAR (13)',
     'createdAt': 'TIMESTAMP',
