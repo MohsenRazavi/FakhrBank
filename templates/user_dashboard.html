@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block custom_style %}
-    <link rel="stylesheet" href="static/styles/card_styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/card_styles.css') }}">
 {% endblock %}
 
 {% block sidebar_menu %}

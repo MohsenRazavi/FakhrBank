@@ -848,31 +848,30 @@
     </div>
     <div id="Profile" style="display: none;">
         <h5>مشخصات مدیر</h5>
-        <form action="">
+        <form method="POST" action="/update_profile/">
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                       value="Mostafa Fakhr">
+                <input type="text" class="form-control" id="floatingInput" placeholder="username"
+                       value="{{ user.username }}" name="username">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام کاربری</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                       value="مصطفی">
+                <input type="text" class="form-control" id="floatingInput" placeholder="name"
+                       value="{{ user.first_name }}" name="first_name">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                       value="بهشت احمد">
+                <input type="text" class="form-control" id="floatingInput" placeholder="family"
+                       value="{{ user.last_name }}" name="last_name">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام خانوادگی</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                       value="0952652626943">
+                <input type="text" class="form-control" id="floatingInput" placeholder="000000000000"
+                       value="{{ user.phone_number }}" name="phone_number">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن همراه</label>
             </div>
-            <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                       value="1402/02/23">
-                <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تاریخ تولد</label>
+            <div class="form-floating my-3">
+                <input type="date" class="form-control" id="birthdate" value="{{ user.birthdate }}" name="birthdate">
+                <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ تولد</label>
             </div>
             <button type="submit" class="btn btn-success mt-1 mb-4">ذخیره</button>
         </form>
