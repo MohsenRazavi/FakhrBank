@@ -1,4 +1,5 @@
 import hashlib
+import datetime
 
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 
@@ -18,7 +19,7 @@ db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == "GET":
-        if 'user' in session:   # user already logged in !
+        if 'user' in session:  # user already logged in !
             user = User.from_dict(session['user'])
             if user.type == "admin":
                 return redirect(url_for('admin_panel'))
@@ -65,7 +66,6 @@ def logout():
 def update_profile():
     if 'user' in session:
         user = User.from_dict(session['user'])
-        print(request.form['birthdate'])
         user.username = request.form['username']
         user.first_name = request.form['first_name']
         user.last_name = request.form['last_name']
@@ -121,6 +121,56 @@ def user_panel():
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
+
+
+
+@app.route('/add_employee', methods=['POST'])
+def add_employee():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type != 'admin':
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+
+        emp_username = request.form['username']
+        emp_firstname = request.form['first_name']
+        emp_lastname = request.form['last_name']
+        emp_gender = request.form['gender']
+        emp_birthdate = request.form['birth_date']
+        emp_phone_number = request.form['phone_number']
+        emp_password1 = request.form['password1']
+        emp_password2 = request.form['password2']
+
+        records = db.select('Users', ['username'])[0]
+        usernames = [record[0] for record in records]
+        context = {
+            'user': user,
+        }
+        if emp_username in usernames:
+            context['emp_username'] = emp_username
+            context['emp_firstname'] = emp_firstname
+            context['emp_lastname'] = emp_lastname
+            context['emp_phone_number'] = emp_phone_number
+            flash('این نام کاربری قبلا استفاده شده', 'danger')
+            return redirect(url_for('admin_panel', **context))
+        if emp_password1 != emp_password2:
+            context['emp_username'] = emp_username
+            context['emp_firstname'] = emp_firstname
+            context['emp_lastname'] = emp_lastname
+            context['emp_phone_number'] = emp_phone_number
+            flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
+            return redirect(url_for('admin_panel', **context))
+        else:
+            pswd_hash = hashlib.sha256(emp_password1.encode('utf-8')).hexdigest()
+        created_at = datetime.datetime.now()
+        res = db.insert('Users', ('username', 'passwordHash', 'firstname', 'lastname', 'birthdate', 'gender', 'phonenumber', 'createdat', 'type'),
+                  (emp_username, pswd_hash, emp_firstname, emp_lastname, emp_birthdate, emp_gender, emp_phone_number, created_at, 'employee'))
+
+        if res[0]:
+            flash('کارمند با موفقیت اضافه شد', 'success')
+            return redirect(url_for('admin_panel', **context))
+        else:
+            print(res)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
