@@ -100,14 +100,27 @@ def admin_panel():
 @app.route('/employee')
 def employee_panel():
     if 'user' in session:
-        del session['user']
-    return render_template('./employee_dashboard.html')
+        user = User.from_dict(session['user'])
+        context = {
+            'user': user,
+        }
+        return render_template('./employee_dashboard.html', **context)
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
 
 
 @app.route('/user')
 def user_panel():
-    return render_template('./user_dashboard.html')
-
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        context = {
+            'user': user,
+        }
+        return render_template('./employee_dashboard.html', **context)
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(debug=True)
