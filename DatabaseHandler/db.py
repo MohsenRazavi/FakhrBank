@@ -36,6 +36,16 @@ class Database:
         except:
             return False
 
+    def create_database(self, name):
+        conn, cur = self.__get_conn_cur()
+        command = f"CREATE DATABASE {name};"
+        try:
+            cur.execute(command)
+            conn.commit()
+            return True, command
+        except Exception as e:
+            return False, command, e
+
     def create_table(self, table_name, fields):
         conn, cur = self.__get_conn_cur()
         flds = ',\n'.join([f"{col} {dtype}" for col,dtype in fields.items()])
