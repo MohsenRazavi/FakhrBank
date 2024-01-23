@@ -75,7 +75,7 @@ class Database:
         self.__close_conn_cur(conn, cur)
         return result
 
-    def select(self, table, columns=None, filters=None):
+    def select(self, table, columns=None, filters=None, Model=None):
         conn, cur = self.__get_conn_cur()
         if columns:
             cols = ', '.join([f'{c}' for c in columns])
@@ -84,11 +84,19 @@ class Database:
             command = f"""SELECT * FROM {table};"""
 
         if filters:
-            command = command[:-1] + f"""WHERE {filters};"""
+            command = command[:-1] + f""" WHERE {filters};"""
 
         try:
             cur.execute(command)
-            result = cur.fetchall(), command
+            if Model:
+                objects = []
+                records = cur.fetchall()
+                for record in records:
+                    objects.append(Model(*record))
+                result = objects, command
+            else:
+                result = cur.fetchall(), command
+
 
         except Exception as e:
             result = None, command, e

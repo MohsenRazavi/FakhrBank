@@ -1,19 +1,13 @@
 from db import Database
 import hashlib
 from datetime import datetime
-
-CRED = '\033[91m'
-CGRN = '\033[92m'
-CEND = '\033[0m'
+from constants import CGRN, CRED, CEND, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 
 print('Fakhr Bank Database Configuration')
-DB_HOST = input("host: ")
-DB_PORT = input("port: ")
-DB_USER = input("username: ")
-DB_PASSWORD = input("password: ")
-DB_NAME = "FakhrBank"
+print(f'Connecting to database {DB_NAME} on {DB_HOST}:{DB_PORT} with {DB_USER}')
 
-db = Database(DB_HOST, DB_PORT, "", DB_USER, DB_PASSWORD)
+
+db = Database(DB_HOST, DB_PORT, "", DB_USER, DB_PASS)
 res = db.create_database(DB_NAME)
 
 if res[0]:
@@ -135,7 +129,7 @@ else:
     print(f'{CRED}AccountLoans table creation failed. more details: \n{res}{CEND}')
 
 if res0 and res1 and res2 and res3 and res4 :
-    print(f'{CGRN}DATABASE SCHEMA CREATED SUCCESSFULLY{CEND}')
+    print(f'\n{CGRN}DATABASE SCHEMA CREATED SUCCESSFULLY{CEND}\n')
 
     admin_username = input('Enter admin username: ')
     admin_password = input('Enter admin password: ')

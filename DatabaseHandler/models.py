@@ -2,8 +2,8 @@ from datetime import date
 
 
 class User:
-    def __init__(self, user_id, username, password, first_name, last_name, birthdate, phone_number, created_at,
-                 user_type, gender):
+    def __init__(self, user_id, username, password, first_name, last_name, birthdate, gender, phone_number, created_at,
+                 user_type):
         self.user_id = user_id
         self.username = username
         self._password = password
@@ -15,7 +15,7 @@ class User:
         self.type = user_type
         self.gender = gender
 
-    def __str__(self):
+    def __repr__(self):
         return f"{self.type} - {self.first_name} {self.last_name} ({self.username})"
 
     def get_age(self):

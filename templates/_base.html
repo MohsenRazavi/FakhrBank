@@ -32,6 +32,25 @@
 </nav>
 
 <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert" id="message" style="width: 30%; position: absolute; z-index: 2; opacity: 80%; backdrop-filter: blur(20px);">
+                    <div class="row">
+                        <div class="col-11 align-middle">
+                            <div>
+                                {{ message }}
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <button type="button" class="btn-close align-middle" data-bs-dismiss="alert" aria-label="Close"
+                                    style="margin-right: 5%;"></button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <div class="row">
         <div class="col-3">
             <div class="d-flex flex-column flex-shrink-0 p-3"
@@ -52,7 +71,7 @@
                        id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="https://github.com/mdo.png" alt="" width="32" height="32"
                              class="rounded-circle me-2 mx-2">
-                        <strong>یوزرنیم</strong>
+                        <strong>{{ user_obj.username }}</strong>
                     </a>
                     <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                         <li><a class="dropdown-item text-end" href="#" id="sidebar-Profile" onclick="sidebar_menu(this, 'sidebar-Employees', 'sidebar-Customers',
@@ -63,7 +82,7 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item text-end" href="#">خروج</a></li>
+                        <li><a class="dropdown-item text-end" href="/logout">خروج</a></li>
                     </ul>
                 </div>
             </div>
@@ -114,7 +133,6 @@
             }
         }
     }
-
 </script>
 {% block custom_script %}
 
