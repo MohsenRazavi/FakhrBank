@@ -38,13 +38,15 @@ class Database:
 
     def create_database(self, name):
         conn, cur = self.__get_conn_cur()
+        conn.autocommit = True
         command = f"CREATE DATABASE {name};"
         try:
             cur.execute(command)
-            conn.commit()
-            return True, command
+            result = True, command
         except Exception as e:
-            return False, command, e
+            result = False, command, e
+        self.__close_conn_cur(conn, cur)
+        return result
 
     def create_table(self, table_name, fields):
         conn, cur = self.__get_conn_cur()
@@ -53,9 +55,12 @@ class Database:
         try:
             cur.execute(command)
             conn.commit()
-            return True, command
+            result = True, command
         except Exception as e:
-            return False, command, e
+            result = False, command, e
+
+        self.__close_conn_cur(conn, cur)
+        return result
 
     def drop_table(self, table_name):
         conn, cur = self.__get_conn_cur()
@@ -104,12 +109,12 @@ class Database:
 
     def insert(self, table, columns, data):
         conn, cur = self.__get_conn_cur()
-        data = ',\n'.join(str(d) for d in data)
+        data = ', '.join([f"""'{str(d)}'""" for d in data])
         if columns:
             cols = ', '.join(columns)
-            command = f"""INSERT INTO {table} ({cols}) VALUES {data};"""
+            command = f"""INSERT INTO {table} ({cols}) VALUES ({data});"""
         else:
-            command = f"""INSERT INTO {table} VALUES {data};"""
+            command = f"""INSERT INTO {table} VALUES ({data});"""
         try:
             cur.execute(command)
             conn.commit()

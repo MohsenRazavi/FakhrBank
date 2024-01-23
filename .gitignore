@@ -1,3 +1,5 @@
 venv/
 Test/
 .idea/
+*.pyc
+*.log

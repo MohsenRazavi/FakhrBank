@@ -1,0 +1,161 @@
+from db import Database
+import hashlib
+from datetime import datetime
+
+CRED = '\033[91m'
+CGRN = '\033[92m'
+CEND = '\033[0m'
+
+print('Fakhr Bank Database Configuration')
+DB_HOST = input("host: ")
+DB_PORT = input("port: ")
+DB_USER = input("username: ")
+DB_PASSWORD = input("password: ")
+DB_NAME = "FakhrBank"
+
+db = Database(DB_HOST, DB_PORT, "", DB_USER, DB_PASSWORD)
+res = db.create_database(DB_NAME)
+
+if res[0]:
+    print(f'{CGRN}Database created successfully!{CEND}')
+    db._name = DB_NAME.lower()
+else:
+    print(f'{CRED}Database creation failed. more details: \n{res}{CEND}')
+    exit()
+
+"""
+Users Table
+
+userId | username | passwordHash | firstName | lastName | birthdate | gender | phoneNumber | createdAt | type
+=======|==========|==============|===========|==========|===========|========|=============|===========|=========
+       |          |              |           |          |           |        |             |           |
+"""
+user_fields = {
+    'userId': 'SERIAL PRIMARY KEY',
+    'username': 'VARCHAR (50) UNIQUE',
+    'passwordHash': 'VARCHAR (260)',
+    'firstName': 'VARCHAR (50)',
+    'lastName': 'VARCHAR (50)',
+    'birthdate': 'DATE',
+    'gender': 'VARCHAR (5)',
+    'phoneNumber': 'VARCHAR (13)',
+    'createdAt': 'TIMESTAMP',
+    'type': 'VARCHAR (10)'
+}
+res0 = db.create_table('Users', user_fields)
+
+if res0[0]:
+    print(f'{CGRN}Users table created successfully!{CEND}')
+else:
+    print(f'{CRED}Users table creation failed. more details: \n{res}{CEND}')
+
+"""
+Accounts Table
+
+accountId | userId | accountNumber | balance | type | createdAt | name | status 
+==========|========|===============|=========|======|===========|======|===========
+          |        |               |         |      |           |      |
+"""
+
+account_fields = {
+    'accountId': 'SERIAL PRIMARY KEY',
+    'userId': 'INTEGER REFERENCES Users(userId)',
+    'accountNumber': 'VARCHAR(20) UNIQUE',
+    'balance': 'BIGINT',
+    'type': 'VARCHAR(10)',
+    'createdAt': 'TIMESTAMP',
+    'name': 'VARCHAR (50)',
+    'status': 'BOOLEAN DEFAULT True'
+}
+res1 = db.create_table('Accounts', account_fields)
+if res1[0]:
+    print(f'{CGRN}Accounts table created successfully!{CEND}')
+else:
+    print(f'{CRED}Accounts table creation failed. more details: \n{res}{CEND}')
+
+"""
+Transactions Table
+
+transactionId | srcAccount | dstAccount | amount | status 
+==============|============|============|========|==========
+              |            |            |        |
+"""
+transaction_fields = {
+    'transactionId': 'SERIAL PRIMARY KEY',
+    'srcAccount': 'INTEGER REFERENCES Accounts(accountId)',
+    'dstAccount': 'INTEGER REFERENCES Accounts(accountId)',
+    'amount': 'BIGINT',
+    'status': 'BOOLEAN'
+}
+res2 = db.create_table('Transactions', transaction_fields)
+if res2[0]:
+    print(f'{CGRN}Transactions table created successfully!{CEND}')
+else:
+    print(f'{CRED}Transactions table creation failed. more details: \n{res}{CEND}')
+
+"""
+Loans Table
+
+loanId | profit | deadline | atLeastIncome 
+=======|========|==========|====================
+       |        |          |          
+"""
+loan_fields = {
+    'loanId': 'SERIAL PRIMARY KEY',
+    'profit': 'SMALLINT',
+    'deadline': 'SMALLINT',
+    'atLeastIncome': 'BIGINT'
+}
+res3 = db.create_table('Loans', loan_fields)
+if res3[0]:
+    print(f'{CGRN}Loans table created successfully!{CEND}')
+else:
+    print(f'{CRED}Loans table creation failed. more details: \n{res}{CEND}')
+
+"""
+AccountLoans Table
+
+accountLoanId | accountId | loanId | amount | paid | acceptor | status 
+==============|===========|========|========|======|==========|===========
+              |           |        |        |      |          |          
+"""
+account_loan_fields = {
+    'accountLoanId': 'SERIAL PRIMARY KEY',
+    'accountId': 'INTEGER REFERENCES Accounts(accountId)',
+    'loanId': 'INTEGER REFERENCES Loans(loanId)',
+    'amount': 'BIGINT',
+    'paid': 'BIGINT',
+    'acceptor': 'INTEGER REFERENCES USERS(userId)',
+    'status': 'SMALLINT'
+}
+res4 = db.create_table('AccountLoans', account_loan_fields)
+if res4[0]:
+    print(f'{CGRN}AccountLoans table created successfully!{CEND}')
+else:
+    print(f'{CRED}AccountLoans table creation failed. more details: \n{res}{CEND}')
+
+if res0 and res1 and res2 and res3 and res4 :
+    print(f'{CGRN}DATABASE SCHEMA CREATED SUCCESSFULLY{CEND}')
+
+    admin_username = input('Enter admin username: ')
+    admin_password = input('Enter admin password: ')
+    pswd_hash = hashlib.sha256(admin_password.encode('utf-8')).hexdigest()
+    creation_time = datetime.now()
+    res = db.insert('Users', ('username', 'passwordHash', 'createdAt', 'type'), (admin_username, pswd_hash, creation_time, 'admin'))
+
+    if res[0]:
+        print(f'{CGRN}Admin {admin_username} created successfully. Now you can login to your account !{CEND}')
+        with open('FakhrBank.log', 'w') as file:
+            text = f"""
+FAKHR BANK PROJECT REPORT
+
+The project is started at {creation_time}
+Admin: {admin_username}
+Password: {'*'*len(admin_password)} :)
+Password hash: {pswd_hash}
+
+have a good day 😉😉
+            """
+            file.write(text)
+    else:
+        print(f'{CRED}Admin creation failed. more details:\n{res}{CEND}')
