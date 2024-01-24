@@ -581,8 +581,10 @@
                             <td>{{ customer.phone_number }}</td>
                             <td>{{ customer.created_at }}</td>
                             <td>
-                                <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                                <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                                <a type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                   data-bs-target="#deleteCustomer{{ customer.user_id }}Modal">حذف</a>
+                                <a type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
+                                   data-bs-target="#editCustomer{{ customer.user_id }}Modal">تغییر</a>
                             </td>
                         </tr>
 
@@ -591,7 +593,117 @@
                 {% endif %}
                 </tbody>
             </table>
+            {% if not customers %}
+                <p class="text-center text-muted">مشتری ای یافت نشد. یک مشتری اضافه کنید !</p>
+            {% endif %}
+            {% if customers %}
+                {% for customer in customers %}
+                    <div class="modal fade" id="editCustomer{{ customer.user_id }}Modal" data-bs-backdrop="static"
+                         data-bs-keyboard="false"
+                         tabindex="-1"
+                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">ویرایش مشتری</h1>
+                                </div>
 
+                                <form method="POST" action="/edit_user/{{ customer.user_id }}">
+                                    <div class="modal-body">
+                                        <div class="form-floating my-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                   placeholder="یک نام‌کاربری انگلیسی" name="username"
+                                                   value="{{ customer.username }}">
+                                            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام
+                                                کاربری</label>
+                                        </div>
+                                        <div class="form-floating my-3">
+                                            <input type="text" class="form-control" id="firstname" name="first_name"
+                                                   required
+                                                   placeholder="اسم"
+                                                   value="{{ customer.first_name }}">
+                                            <label for="firstname"
+                                                   style="right:0; transform-origin: 100% 0;">نام</label>
+                                        </div>
+                                        <div class="form-floating my-3">
+                                            <input type="text" class="form-control" id="lastname" name="last_name"
+                                                   required
+                                                   placeholder="فامیل"
+                                                   value="{{ customer.last_name }}">
+                                            <label for="lastname" style="right:0; transform-origin: 100% 0;">نام
+                                                خانوادگی</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                   placeholder="000000000000"
+                                                   name="phone_number" required
+                                                   value="{{ customer.phone_number }}">
+                                            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن
+                                                همراه</label>
+                                        </div>
+                                        <p>جنسیت :</p>
+                                        <div class="form-check form-check-inline">
+
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                   value="آقا" id="gender-man"
+                                                    {% if customer.gender == 'آقا' %} checked {% endif %}  disabled>
+                                            <label class="form-check-label" for="gender-man">
+                                                اقا
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                   id="gender-woman" value="خانم" {% if customer.gender == 'خانم' %}
+                                                   checked {% endif %} disabled>
+                                            <label class="form-check-label" for="gender-woman">
+                                                خانم
+                                            </label>
+                                        </div>
+                                        <div class="form-floating my-3">
+                                            <input type="date" class="form-control" id="birthdate" name="birthdate"
+                                                   value="{{ customer.birthdate }}" required>
+                                            <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ
+                                                تولد</label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                        </button>
+                                        <button type="submit" class="btn btn-success">ویرایش</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="deleteCustomer{{ customer.user_id }}Modal" data-bs-backdrop="static"
+                         data-bs-keyboard="false"
+                         tabindex="-1"
+                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">حذف مشتری</h1>
+                                </div>
+
+                                <form method="POST" action="/delete_user/{{ customer.user_id }}">
+                                    <div class="modal-body">
+                                        <h4>آیا مطمئنید ؟؟</h4>
+                                        <p>آیا از حذف کارمند "{{ customer }}" با شماره مشتری {{ customer.user_id }}
+                                            مطمئنید ؟</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                        </button>
+                                        <button type="submit" class="btn btn-danger">حذف</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
         </div>
     </div>
     <div id="Accounts" style="display: none;">
