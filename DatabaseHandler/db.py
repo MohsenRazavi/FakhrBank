@@ -50,7 +50,7 @@ class Database:
 
     def create_table(self, table_name, fields):
         conn, cur = self.__get_conn_cur()
-        flds = ',\n'.join([f"{col} {dtype}" for col,dtype in fields.items()])
+        flds = ',\n'.join([f"{col} {dtype}" for col, dtype in fields.items()])
         command = f"""CREATE TABLE {table_name} ({flds});"""
         try:
             cur.execute(command)
@@ -96,7 +96,6 @@ class Database:
                 result = objects, command
             else:
                 result = cur.fetchall(), command
-
 
         except Exception as e:
             result = None, command, e
@@ -162,4 +161,3 @@ class Database:
 
         self.__close_conn_cur(conn, cur)
         return result
-

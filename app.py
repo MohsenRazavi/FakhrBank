@@ -1,8 +1,6 @@
 import datetime
 import hashlib
-
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-
 from DatabaseHandler import Database
 from DatabaseHandler.models import User
 from constants import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
@@ -25,7 +23,7 @@ def login():
                 return redirect(url_for('admin_panel'))
             elif user.type == "employee":
                 return render_template('./employee_dashboard.html', user=user)
-            elif user.type == "user":
+            elif user.type == "customer":
                 return render_template('./customer_dashboard.html', user=user)
             else:
                 return "<h1>Invalid usertype</h1>"
@@ -46,7 +44,7 @@ def login():
                 return redirect(url_for('admin_panel'))
             elif obj.type == "employee":
                 return render_template('./employee_dashboard.html', user=obj)
-            elif obj.type == "user":
+            elif obj.type == "customer":
                 return render_template('./customer_dashboard.html', user=obj)
             else:
                 return "<h1>Invalid usertype</h1>"
