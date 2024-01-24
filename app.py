@@ -24,9 +24,9 @@ def login():
             if user.type == "admin":
                 return redirect(url_for('admin_panel'))
             elif user.type == "employee":
-                return render_template('./employee_dashboard.html', user=user)
-            elif user.type == "user":
-                return render_template('./customer_dashboard.html', user=user)
+                return redirect(url_for('employee_panel'))
+            elif user.type == "customer":
+                return redirect(url_for('customer_panel'))
             else:
                 return "<h1>Invalid usertype</h1>"
         return render_template('./login.html')
@@ -46,7 +46,7 @@ def login():
                 return redirect(url_for('admin_panel'))
             elif obj.type == "employee":
                 return render_template('./employee_dashboard.html', user=obj)
-            elif obj.type == "user":
+            elif obj.type == "customer":
                 return render_template('./customer_dashboard.html', user=obj)
             else:
                 return "<h1>Invalid usertype</h1>"
