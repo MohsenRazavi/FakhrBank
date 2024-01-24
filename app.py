@@ -1,5 +1,5 @@
-import hashlib
 import datetime
+import hashlib
 
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 
@@ -97,6 +97,43 @@ def update_profile():
         return redirect(url_for('login'))
 
 
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        old_password = request.form['old_password']
+        new_password1 = request.form['password1']
+        new_password2 = request.form['password2']
+        user_pass = db.select('Users', ('passwordHash',), f"username = '{user.username}'")[0][0][0]
+        old_pswd_hash = hashlib.sha256(old_password.encode('utf-8')).hexdigest()
+        if old_pswd_hash != user_pass:
+            flash('کلمه عبور فعلی اشتباه است', 'danger')
+            if user.type == 'admin':
+                return redirect(url_for('admin_panel'))
+            elif user.type == 'employee':
+                return redirect(url_for('employee_panel'))
+            else:
+                return redirect(url_for('user_panel'))
+        if new_password1 != new_password2:
+            flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
+            if user.type == 'admin':
+                return redirect(url_for('admin_panel'))
+            elif user.type == 'employee':
+                return redirect(url_for('employee_panel'))
+            else:
+                return redirect(url_for('user_panel'))
+
+        pswd_hash = hashlib.sha256(new_password1.encode('utf-8')).hexdigest()
+        res = db.exact_exec(f"UPDATE Users SET passwordHash = '{pswd_hash}' WHERE username = '{user.username}';")[0]
+        if res:
+            del session['user']
+            flash('کلمه عبور با موفقیت تغییر کرد. دوباره وارد شوید.', 'success')
+            return redirect(url_for('login'))
+    else:
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
 @app.route('/admin/')
 def admin_panel():
     if 'user' in session:
@@ -134,7 +171,6 @@ def user_panel():
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
-
 
 
 @app.route('/add_employee', methods=['POST'])
@@ -175,8 +211,10 @@ def add_employee():
         else:
             pswd_hash = hashlib.sha256(emp_password1.encode('utf-8')).hexdigest()
         created_at = datetime.datetime.now()
-        res = db.insert('Users', ('username', 'passwordHash', 'firstname', 'lastname', 'birthdate', 'gender', 'phonenumber', 'createdat', 'type'),
-                  (emp_username, pswd_hash, emp_firstname, emp_lastname, emp_birthdate, emp_gender, emp_phone_number, created_at, 'employee'))
+        res = db.insert('Users', (
+        'username', 'passwordHash', 'firstname', 'lastname', 'birthdate', 'gender', 'phonenumber', 'createdat', 'type'),
+                        (emp_username, pswd_hash, emp_firstname, emp_lastname, emp_birthdate, emp_gender,
+                         emp_phone_number, created_at, 'employee'))
 
         if res[0]:
             flash('کارمند با موفقیت اضافه شد', 'success')

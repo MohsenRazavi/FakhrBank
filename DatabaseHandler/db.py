@@ -104,11 +104,14 @@ class Database:
         self.__close_conn_cur(conn, cur)
         return result
 
-    def exact_exec(self, command):
+    def exact_exec(self, command, fetch=False):
         conn, cur = self.__get_conn_cur()
         try:
             cur.execute(command)
-            result = cur.fetchall(), command
+            result = True, command
+            if fetch:
+                result = True, cur.fetchall(), command
+            conn.commit()
         except Exception as e:
             result = None, command, e
 
