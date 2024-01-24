@@ -212,12 +212,63 @@ def add_employee():
             pswd_hash = hashlib.sha256(emp_password1.encode('utf-8')).hexdigest()
         created_at = datetime.datetime.now()
         res = db.insert('Users', (
-        'username', 'passwordHash', 'firstname', 'lastname', 'birthdate', 'gender', 'phonenumber', 'createdat', 'type'),
+            'username', 'passwordHash', 'firstname', 'lastname', 'birthdate', 'gender', 'phonenumber', 'createdat',
+            'type'),
                         (emp_username, pswd_hash, emp_firstname, emp_lastname, emp_birthdate, emp_gender,
                          emp_phone_number, created_at, 'employee'))
 
         if res[0]:
             flash('کارمند با موفقیت اضافه شد', 'success')
+            return redirect(url_for('admin_panel', **context))
+        else:
+            print(res)
+
+
+@app.route('/add_customer', methods=['POST'])
+def add_customer():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type != 'admin' and user.type != 'employee':
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+        cstmr_username = request.form['username']
+        cstmr_firstname = request.form['firstname']
+        cstmr_lastname = request.form['lastname']
+        cstmr_gender = request.form['gender']
+        cstmr_birthdate = request.form['birthdate']
+        cstmr_phone_number = request.form['phone_number']
+        cstmr_password1 = request.form['password1']
+        cstmr_password2 = request.form['password2']
+
+        records = db.select('Users', ['username'])[0]
+        usernames = [record[0] for record in records]
+        context = {
+            'user': user,
+        }
+        if cstmr_username in usernames:
+            context['cstmr_username'] = cstmr_username
+            context['cstmr_firstname'] = cstmr_firstname
+            context['cstmr_lastname'] = cstmr_lastname
+            context['cstmr_phone_number'] = cstmr_phone_number
+            flash('این نام کاربری قبلا استفاده شده', 'danger')
+            return redirect(url_for('admin_panel', **context))
+        if cstmr_password1 != cstmr_password2:
+            context['cstmr_username'] = cstmr_username
+            context['cstmr_firstname'] = cstmr_firstname
+            context['cstmr_lastname'] = cstmr_lastname
+            context['cstmr_phone_number'] = cstmr_phone_number
+            flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
+            return redirect(url_for('admin_panel', **context))
+        else:
+            pswd_hash = hashlib.sha256(cstmr_password1.encode('utf-8')).hexdigest()
+        created_at = datetime.datetime.now()
+        res = db.insert('Users', (
+            'username', 'passwordHash', 'firstname', 'lastname', 'birthdate', 'gender', 'phonenumber', 'createdat',
+            'type'),
+                        (cstmr_username, pswd_hash, cstmr_firstname, cstmr_lastname, cstmr_birthdate, cstmr_gender,
+                         cstmr_phone_number, created_at, 'customer'))
+
+        if res[0]:
+            flash('مشتری با موفقیت اضافه شد', 'success')
             return redirect(url_for('admin_panel', **context))
         else:
             print(res)

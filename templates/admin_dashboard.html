@@ -321,59 +321,67 @@
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">افزودن مشتری</h1>
                         </div>
-                        <form action="">
+                        <form method="POST" action="/add_customer">
                             <div class="modal-body">
                                 <div class="form-floating my-3">
                                     <input type="text" class="form-control" id="floatingInput"
-                                           placeholder="یک نام‌کاربری انگلیسی" name="username">
+                                           placeholder="یک نام‌کاربری انگلیسی" name="username" required>
                                     <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام
                                         کاربری</label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="firstname"
-                                           placeholder="اسم">
+                                    <input type="text" class="form-control" id="firstname" name="firstname"
+                                           placeholder="اسم" required>
                                     <label for="firstname" style="right:0; transform-origin: 100% 0;">نام</label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="lastname"
-                                           placeholder="فامیل">
+                                    <input type="text" class="form-control" id="lastname" name="lastname"
+                                           placeholder="فامیل" required>
                                     <label for="lastname" style="right:0; transform-origin: 100% 0;">نام
                                         خانوادگی</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="floatingInput"
+                                           placeholder="000000000000"
+                                           name="phone_number" required
+                                           >
+                                    <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن
+                                        همراه</label>
                                 </div>
                                 <p>جنسیت :</p>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender"
-                                           id="gender-man">
+                                           id="gender-man" required value="man">
                                     <label class="form-check-label" for="gender-man">
                                         اقا
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender"
-                                           id="gender-woman" checked>
+                                           id="gender-woman" value="woman" checked>
                                     <label class="form-check-label" for="gender-woman">
                                         خانم
                                     </label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="date" class="form-control" id="birthdate">
+                                    <input type="date" class="form-control" id="birthdate" name="birthdate" required>
                                     <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ تولد</label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="password" class="form-control" id="password1"
-                                           placeholder="Password">
+                                    <input type="password" class="form-control" id="password1" name="password1"
+                                           placeholder="Password" required>
                                     <label for="password1" style="right:0; transform-origin: 100% 0;">کلمه عبور</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input type="password" class="form-control" id="password2"
-                                           placeholder="Password">
+                                    <input type="password" class="form-control" id="password2" name="password2"
+                                           placeholder="Password" required>
                                     <label for="password2" style="right:0; transform-origin: 100% 0;">تکرار کلمه
                                         عبور</label>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                                <button type="button" class="btn btn-success">افزودن</button>
+                                <button type="submit" class="btn btn-success">افزودن</button>
                             </div>
                         </form>
                     </div>
@@ -908,15 +916,18 @@
         <h5>تغییر کلمه عبور</h5>
         <form method="POST" action="/change_password">
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com" name="old_password">
+                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com"
+                       name="old_password">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">کلمه عبور فعلی</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com" name="password1">
+                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com"
+                       name="password1">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">کلمه عبور جدید</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com" name="password2">
+                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com"
+                       name="password2">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تکرار کلمه عبور جدید</label>
             </div>
             <button type="submit" class="btn btn-primary mt-1 mb-4">تغییر کلمه عبور</button>
