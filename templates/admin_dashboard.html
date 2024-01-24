@@ -147,29 +147,34 @@
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">افزودن کارمند</h1>
                         </div>
+
                         <form method="POST" action="/add_employee">
                             <div class="modal-body">
                                 <div class="form-floating my-3">
                                     <input type="text" class="form-control" id="floatingInput"
-                                           placeholder="یک نام‌کاربری انگلیسی" name="username" {% if emp_username%}value="{{ emp_username }}"{% endif %}>
+                                           placeholder="یک نام‌کاربری انگلیسی" name="username"
+                                           {% if emp_username %}value="{{ emp_username }}"{% endif %}>
                                     <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام
                                         کاربری</label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="firstname" name="first_name"
-                                           placeholder="اسم" {% if emp_firstname%}value="{{ emp_firstname }}"{% endif %}>
+                                    <input type="text" class="form-control" id="firstname" name="first_name" required
+                                           placeholder="اسم"
+                                           {% if emp_firstname %}value="{{ emp_firstname }}"{% endif %}>
                                     <label for="firstname" style="right:0; transform-origin: 100% 0;">نام</label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="lastname" name="last_name"
-                                           placeholder="فامیل" {% if emp_lastname%}value="{{ emp_lastname }}"{% endif %}>
+                                    <input type="text" class="form-control" id="lastname" name="last_name" required
+                                           placeholder="فامیل"
+                                           {% if emp_lastname %}value="{{ emp_lastname }}"{% endif %}>
                                     <label for="lastname" style="right:0; transform-origin: 100% 0;">نام
                                         خانوادگی</label>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput"
                                            placeholder="000000000000"
-                                           name="phone_number" {% if emp_phone_number %}value="{{ emp_phone_number }}"{% endif %}>
+                                           name="phone_number" required
+                                           {% if emp_phone_number %}value="{{ emp_phone_number }}"{% endif %}>
                                     <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن
                                         همراه</label>
                                 </div>
@@ -189,16 +194,16 @@
                                     </label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="date" class="form-control" id="birthdate" name="birth_date">
+                                    <input type="date" class="form-control" id="birthdate" name="birth_date" required>
                                     <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ تولد</label>
                                 </div>
                                 <div class="form-floating my-3">
-                                    <input type="password" class="form-control" id="password1"
+                                    <input type="password" class="form-control" id="password1" required
                                            placeholder="Password" name="password1">
                                     <label for="password1" style="right:0; transform-origin: 100% 0;">کلمه عبور</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input type="password" class="form-control" id="password2"
+                                    <input type="password" class="form-control" id="password2" required
                                            placeholder="Password" name="password2">
                                     <label for="password2" style="right:0; transform-origin: 100% 0;">تکرار کلمه
                                         عبور</label>
@@ -870,6 +875,23 @@
                 <input type="text" class="form-control" id="floatingInput" placeholder="family"
                        value="{{ user.last_name }}" name="last_name">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام خانوادگی</label>
+            </div>
+            <div>
+                <p style="display: inline;">جنسیت :</p>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDisabled" id="flexRadioDisabled"
+                           {% if user.gender=='man' %}checked{% endif %} disabled>
+                    <label class="form-check-label" for="flexRadioDisabled">
+                        آقا
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDisabled" id="flexRadioCheckedDisabled"
+                           {% if user.gender == 'woman' %}checked{% endif %} disabled>
+                    <label class="form-check-label" for="flexRadioCheckedDisabled">
+                        خانم
+                    </label>
+                </div>
             </div>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="floatingInput" placeholder="000000000000"
