@@ -534,7 +534,97 @@
 
     </div>
     <div id="Transactions" style="display: none;">
-        <h4 class="mt-4">لیست تراکنش ها</h4>
+        <div class="row">
+            <div class="col-10">
+                <h4 class="mt-4">تراکنش های من</h4>
+            </div>
+            <div class="col-2 pt-3" style="padding-right: 4.34%;">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newTransactionModal">تراکنش جدید
+                </button>
+            </div>
+            <div class="modal fade" id="newTransactionModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                 tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">تراکنش جدید</h1>
+                        </div>
+                        <form>
+                            <div class="modal-body">
+                                <p>حساب مبدا</p>
+                                <select class="form-select my-3" name="src_account_number" id="srcAccountNum">
+                                    <option selected disabled>انتخاب</option>
+                                    {% for account in accounts %}
+                                        <option value="{{ account.account_id }}">{{ account.account_number }}
+                                            ({{ account.name }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-floating my-3">
+                                    <input type="text" class="form-control" id="dstAccountNum"
+                                           placeholder="1234-5678-9012-3456"
+                                           name="dst_account_number"
+                                           style="height:2px !important;" required>
+                                    <label for="floatingInput"
+                                           style="right:0; transform-origin: 100% 0;">شماره حساب مقصد(با خط
+                                        تیره)</label>
+                                </div>
+                                <div class="form-floating my-3">
+                                    <input type="text" class="form-control" id="trxAmount"
+                                           placeholder="123456789"
+                                           name="amount"
+                                           style="height:2px !important;" required>
+                                    <label for="floatingInput"
+                                           style="right:0; transform-origin: 100% 0;">مبلغ (تومان)</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                <button type="button" class="btn btn-primary" onclick="checkTransactionData()"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#payModal">بررسی
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="payModal" data-bs-backdrop="static"
+                 data-bs-keyboard="false"
+                 tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">تایید تراکنش</h1>
+                        </div>
+                        <form method="POST" action="">
+                            <div class="modal-body">
+                                <p>مبلغ</p>
+                                <input class="form-control" id='trxAmountConfirm' type="text" value=""
+                                       aria-label="Disabled input example" disabled readonly>
+                                <p>از حساب</p>
+                                <input class="form-control" type="text" value="" id="trxSrcAccount"
+                                       aria-label="Disabled input example" disabled readonly>
+                                <p>به نام <span id="trxSrcAccountOwner"></span></p>
+                                <p>به حساب</p>
+                                <input class="form-control" id="trxDstAccount" type="text" value=""
+                                       aria-label="Disabled input example" disabled readonly>
+                                <p>به نام <span id="trxDstAccountOwner"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                </button>
+                                <button type="submit" class="btn btn-success">انجام تراکنش</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
         <div class="row my-2">
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
@@ -678,4 +768,43 @@
 
         </form>
     </div>
+{% endblock %}
+
+{% block custom_script %}
+    <script>
+        function checkTransactionData() {
+            let src_account_field = document.getElementById('srcAccountNum');
+            let src_account = src_account_field.options[src_account_field.selectedIndex].text;
+            let dst_account = document.getElementById('dstAccountNum');
+            let amount = document.getElementById('trxAmount');
+
+            fetch("/check_transaction", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    "src_account": src_account,
+                    "dst_account": dst_account.value,
+                    "amount": amount.value
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                }).then(function (resp) {
+                if (resp['status'] == 'Ok') {
+                        let amountTag = document.getElementById('trxAmountConfirm');
+                        let srcAccountTag = document.getElementById('trxSrcAccount');
+                        let dstAccountTag = document.getElementById('trxDstAccount');
+                        let dstAccountOwner = document.getElementById('trxDstAccountOwner');
+                        let srcAccountOwner = document.getElementById('trxSrcAccountOwner');
+
+                        amountTag.value = resp['amount'];
+                        srcAccountTag.value = resp['src_account_number'];
+                        dstAccountTag.value = resp['dst_account_number'];
+                        srcAccountOwner.innerHTML = resp['src_account_owner'];
+                        dstAccountOwner.innerHTML = resp['dst_account_owner'];
+                }
+            });
+
+        }
+    </script>
 {% endblock %}

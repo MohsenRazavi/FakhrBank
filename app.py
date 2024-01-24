@@ -2,7 +2,7 @@ import datetime
 import hashlib
 import random
 
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 
 from DatabaseHandler import Database
 from DatabaseHandler.models import User, Account
@@ -453,6 +453,32 @@ def delete_account(account_id):
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/check_transaction', methods=['POST'])
+def check_transaction():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'customer':
+            src_account_number = request.json['src_account'].split(' ')[0]
+            dst_account_number = request.json['dst_account']
+            amount = int(request.json['amount'])
+            src_account_obj = \
+                db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
+            dst_account_obj = \
+                db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0][0]
+            if src_account_obj.balance >= amount:
+                return jsonify(
+                    {'status': 'Ok', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
+                     'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
+                     'src_account_owner': src_account_obj.get_owner().__repr__()})
+            else:
+                return jsonify({'status': 'Sorry!', 'src_account_owner': dst_account_obj.get_owner().__repr__()})
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
