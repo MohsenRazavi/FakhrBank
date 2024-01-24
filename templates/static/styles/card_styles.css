@@ -78,6 +78,7 @@ h5.name {
     color: white;
     opacity: 0;
     transition: opacity 0.3s ease;
+    flex-direction: column;
 }
 
 .balance {

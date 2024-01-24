@@ -398,19 +398,24 @@ def delete_user(user_id):
 def edit_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
-        if user.type in ('admin', 'employee'):
-            editing_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
-            user_id = request.form['user_id']
-            type = request.form['type']
-            account_number = request.form['account_number']
-            balance = request.form['balance']
-            status = request.form['status']
-
-            editing_account.user_id = user_id
-            editing_account.type = type
-            editing_account.account_number = account_number
-            editing_account.balance = balance
-            editing_account.status = status
+        editing_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+        if user.type in ('admin', 'employee') or (user.type == 'customer' and editing_account.user_id == user.user_id):
+            if user.type == 'customer':
+                name = request.form['name']
+                editing_account.name = name
+            else:
+                user_id = request.form['user_id']
+                type = request.form['type']
+                account_number = request.form['account_number']
+                balance = request.form['balance']
+                status = request.form['status']
+                name = request.form['name']
+                editing_account.user_id = user_id
+                editing_account.type = type
+                editing_account.account_number = account_number
+                editing_account.balance = balance
+                editing_account.name = name
+                editing_account.status = status
             editing_account.save()
 
             flash('حساب با موفقیت به روز شد', 'success')
@@ -418,6 +423,8 @@ def edit_account(account_id):
                 return redirect(url_for('admin_panel'))
             elif user.type == 'employee':
                 return redirect(url_for('employee_panel'))
+            else:
+                return redirect(url_for('customer_panel'))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 

@@ -520,7 +520,8 @@
                                 </h5>
                             </td>
                         {% endif %}
-                        <td>{% if account.name and account.name != 'None' %}{{ account.name }}{% else %}بی نام{% endif %}</td>
+                        <td>{% if account.name and account.name != 'None' %}{{ account.name }}{% else %}بی
+                            نام{% endif %}</td>
                         <td>{{ account.get_owner() }}</td>
                         <td>{{ account.balance }}</td>
                         <td>{{ account.get_created_at() }}</td>
@@ -594,14 +595,24 @@
                                     </div>
                                     <div class="form-floating my-3">
                                         <input type="text" class="form-control" id="floatingInput"
-                                               placeholder="1234-5678-9012-3456" value="{{ account.account_number }}" name="account_number"
+                                               placeholder="1234-5678-9012-3456" value="{{ account.account_number }}"
+                                               name="account_number"
                                                style="height:2px !important;" required>
                                         <label for="floatingInput"
                                                style="right:0; transform-origin: 100% 0;">شماره حساب</label>
                                     </div>
                                     <div class="form-floating my-3">
                                         <input type="text" class="form-control" id="floatingInput"
-                                               placeholder="1234-5678-9012-3456" value="{{ account.balance }}" name="balance"
+                                               placeholder="1234-5678-9012-3456" value="{{ account.name }}"
+                                               name="name"
+                                               style="height:2px !important;" required>
+                                        <label for="floatingInput"
+                                               style="right:0; transform-origin: 100% 0;">نام حساب</label>
+                                    </div>
+                                    <div class="form-floating my-3">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                               placeholder="1234-5678-9012-3456" value="{{ account.balance }}"
+                                               name="balance"
                                                style="height:2px !important;" required>
                                         <label for="floatingInput"
                                                style="right:0; transform-origin: 100% 0;">موجودی</label>
@@ -609,9 +620,9 @@
                                     <p>وضعیت حساب :</p>
                                     <select class="form-select my-3" name="status">
                                         <option disabled>انتخاب</option>
-                                            <option value="True" {% if account.status %}selected{% endif %}>باز</option>
-                                            <option value="False" {% if not account.status %}selected{% endif %}>مسدود
-                                            </option>
+                                        <option value="True" {% if account.status %}selected{% endif %}>باز</option>
+                                        <option value="False" {% if not account.status %}selected{% endif %}>مسدود
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="modal-footer">

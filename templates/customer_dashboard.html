@@ -43,7 +43,7 @@
             {% for account in accounts %}
                 <div class="col-5 my-2">
                     <div class="credit_card card_hover"
-                         style="background-image: url('static/img/card/bg-{% if account.type == 'فخر' %}2{% elif account.type == 'فاخر' %}3{% else %}4{% endif %}.jpg');">
+                         style="background-image: url('static/img/card/bg-{% if account.type == 'فخر' %}3{% elif account.type == 'فاخر' %}2{% else %}4{% endif %}.jpg');">
                         <header>
         <span class="logo">
           <img src="{{ url_for('static', filename='img/card/logo.png') }}" alt=""/>
@@ -52,6 +52,11 @@
                             <img src="{{ url_for('static', filename='img/card/chip.png') }}" alt="" class="chip"/>
                         </header>
                         <div class="card_balance">
+                            <p class="text-light balance">
+                                {% if account.name and account.name != 'None' %}
+                                    {{ account.name }}
+                                {% endif %}
+                            </p>
                             <p class="text-light balance">موجودی حساب : {{ account.balance }} تومان</p>
                         </div>
                         <div class="card-details">
@@ -62,7 +67,7 @@
                             </div>
                             <div class="valid-date">
                                 <h6 class="card_text">تاریخ افتتاح</h6>
-                                <h5 class="card_text">{{ account.get_get_created_at()_date() }}</h5>
+                                <h5 class="card_text">{{ account.get_created_at_date() }}</h5>
                             </div>
                         </div>
                     </div>
@@ -121,149 +126,233 @@
                 <h4 class="mt-4">لیست حساب ها</h4>
             </div>
         </div>
-    <div class="row my-2">
-        <div class="col-11 pt-2">
-            <h6 style="vertical-align: middle;">فیلتر ها:</h6>
-        </div>
-        <div class="col-1">
-            <button class="btn btn-primary btn-small">اعمال</button>
-        </div>
-    </div>
-    <form action="">
-        <div class="row">
-            <div class="col">
-
-                <div class="form-floating">
-                    <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com"
-                           style="height:2px !important;">
-                    <label for="floatingInput" style="right:0; transform-origin: 100% 0;">موجودی</label>
-                </div>
+        <div class="row my-2">
+            <div class="col-11 pt-2">
+                <h6 style="vertical-align: middle;">فیلتر ها:</h6>
             </div>
-            <div class="col">
-                <div class="form-floating">
-                    <input type="date" class="form-control" id="creationTime">
-                    <label for="creationTime" style="right:0; transform-origin: 100% 0;">تاریخ ایجاد</label>
-                </div>
+            <div class="col-1">
+                <button class="btn btn-primary btn-small">اعمال</button>
             </div>
         </div>
+        <form action="">
+            <div class="row">
+                <div class="col">
 
-        <div class="row">
-            <div class="col my-3">
-
-                <div class="form-floating">
-                    <input type="number" class="form-control" id="account_number"
-                           placeholder="account_number">
-                    <label for="account_number" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com"
+                               style="height:2px !important;">
+                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">موجودی</label>
+                    </div>
                 </div>
-            </div>
-            <div class="col my-auto">
-                <div class="input-group">
-                    <select class="form-select form-select">
-                        <option selected>نوع حساب</option>
-                        <option value="1">حساب فخر</option>
-                        <option value="2">حساب فاخر</option>
-                        <option value="3">حساب افتخار</option>
-                    </select>
-                </div>
-            </div>
-
-        </div>
-    </form>
-    <div class="table-responsive mt-4">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">ردیف</th>
-                <th scope="col">شماره حساب</th>
-                <th scope="col">نوع حساب</th>
-                <th scope="col">نام حساب</th>
-                <th scope="col">مالک</th>
-                <th scope="col">موجودی</th>
-                <th scope="col">زمان ایجاد</th>
-                <th scope="col">وضعیت</th>
-                <th scope="col">عملیات</th>
-
-            </tr>
-            </thead>
-            <tbody>
-            {% for account in accounts %}
-                <tr>
-                    <th scope="row">{{ loop.index }}</th>
-                    <td>{{ account.account_number }}</td>
-                    {% if account.type == 'فخر' %}
-                        <td>
-                            <h5>
-                                <span class="badge text-bg-success">حساب {{ account.type }}</span>
-                            </h5>
-                        </td>
-                    {% elif account.type == 'فاخر' %}
-                        <td>
-                            <h5>
-                                <span class="badge text-bg-warning">حساب {{ account.type }}</span>
-                            </h5>
-                        </td>
-                    {% else %}
-                        <td>
-                            <h5>
-                                <span class="badge text-bg-info">حساب {{ account.type }}</span>
-                            </h5>
-                        </td>
-                    {% endif %}
-                    <td>{% if account.name and account.name != 'None' %}{{ account.name }}{% else %}بی
-                        نام{% endif %}</td>
-                    <td>{{ account.get_owner() }}</td>
-                    <td>{{ account.balance }}</td>
-                    <td>{{ account.get_created_at() }}</td>
-                    <td>
-                        {% if account.status %}
-                            <h5><span class="badge bg-primary">باز</span></h5>
-                        {% else %}
-                            <h5><span class="badge bg-danger">مسدود</span></h5>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
-                           data-bs-target="#deleteAccount{{ account.account_id }}Modal">حذف</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% if not accounts %}
-            <p class="text-center text-muted">حسابی یافت نشد. یک حساب جدید ایجاد کنید !</p>
-        {% endif %}
-    </div>
-    {% if accounts %}
-        {% for account in accounts %}
-            <div class="modal fade" id="deleteAccount{{ account.account_id }}Modal" data-bs-backdrop="static"
-                 data-bs-keyboard="false"
-                 tabindex="-1"
-                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">حذف حساب</h1>
-                        </div>
-
-                        <form method="POST" action="/delete_account/{{ account.account_id }}">
-                            <div class="modal-body">
-                                <h4>آیا مطمئنید ؟؟</h4>
-                                <p>آیا از حذف حساب "{{ account }}" مربوط به "{{ account.get_owner() }}" با شماره
-                                    حساب {{ account.account_number }} مطمئنید ؟</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
-                                </button>
-                                <button type="submit" class="btn btn-danger">حذف</button>
-                            </div>
-                        </form>
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="date" class="form-control" id="creationTime">
+                        <label for="creationTime" style="right:0; transform-origin: 100% 0;">تاریخ ایجاد</label>
                     </div>
                 </div>
             </div>
 
-        {% endfor %}
+            <div class="row">
+                <div class="col my-3">
 
-    {% endif %}
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="account_number"
+                               placeholder="account_number">
+                        <label for="account_number" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
+                    </div>
+                </div>
+                <div class="col my-auto">
+                    <div class="input-group">
+                        <select class="form-select form-select">
+                            <option selected>نوع حساب</option>
+                            <option value="1">حساب فخر</option>
+                            <option value="2">حساب فاخر</option>
+                            <option value="3">حساب افتخار</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+        <div class="table-responsive mt-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ردیف</th>
+                    <th scope="col">شماره حساب</th>
+                    <th scope="col">نوع حساب</th>
+                    <th scope="col">نام حساب</th>
+                    <th scope="col">مالک</th>
+                    <th scope="col">موجودی</th>
+                    <th scope="col">زمان ایجاد</th>
+                    <th scope="col">وضعیت</th>
+                    <th scope="col">عملیات</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for account in accounts %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ account.account_number }}</td>
+                        {% if account.type == 'فخر' %}
+                            <td>
+                                <h5>
+                                    <span class="badge text-bg-success">حساب {{ account.type }}</span>
+                                </h5>
+                            </td>
+                        {% elif account.type == 'فاخر' %}
+                            <td>
+                                <h5>
+                                    <span class="badge text-bg-warning">حساب {{ account.type }}</span>
+                                </h5>
+                            </td>
+                        {% else %}
+                            <td>
+                                <h5>
+                                    <span class="badge text-bg-info">حساب {{ account.type }}</span>
+                                </h5>
+                            </td>
+                        {% endif %}
+                        <td>{% if account.name and account.name != 'None' %}{{ account.name }}{% else %}بی
+                            نام{% endif %}</td>
+                        <td>{{ account.get_owner() }}</td>
+                        <td>{{ account.balance }}</td>
+                        <td>{{ account.get_created_at_date() }}</td>
+                        <td>
+                            {% if account.status %}
+                                <h5><span class="badge bg-primary">باز</span></h5>
+                            {% else %}
+                                <h5><span class="badge bg-danger">مسدود</span></h5>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a type="button" class="btn btn-outline-warning btn-sm m-1" data-bs-toggle="modal"
+                               data-bs-target="#editAccount{{ account.account_id }}Modal">ویرایش</a>
+                            <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
+                               data-bs-target="#deleteAccount{{ account.account_id }}Modal">حذف</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if not accounts %}
+                <p class="text-center text-muted">حسابی یافت نشد. یک حساب جدید ایجاد کنید !</p>
+            {% endif %}
+        </div>
+        {% if accounts %}
+            {% for account in accounts %}
+                <div class="modal fade" id="editAccount{{ account.account_id }}Modal" data-bs-backdrop="static"
+                     data-bs-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">ویرایش حساب</h1>
+                            </div>
+                            <form method="POST" action="/edit_account/{{ account.account_id }}">
+                                <div class="modal-body">
+                                    <p>مالک :</p>
+                                    <select class="form-select my-3" name="user_id" disabled>
+                                        <option value="{{ user.user_id }}" selected>{{ user }}</option>
+                                    </select>
+                                    <p>نوع حساب :</p>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type"
+                                               id="type-fakhr" value="فخر"
+                                               {% if account.type == 'فخر' %}checked{% endif %} disabled>
+                                        <label class="form-check-label" for="type-fakhr">
+                                            حساب فخر
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type"
+                                               id="type-fakher" value="فاخر"
+                                               {% if account.type == 'فاخر' %}checked{% endif %} disabled>
+                                        <label class="form-check-label" for="type-fakher">
+                                            حساب فاخر
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type"
+                                               id="type-eftekhar" value="افتخار"
+                                               {% if account.type == 'افتخار' %}checked{% endif %} disabled>
+                                        <label class="form-check-label" for="type-eftekhar">
+                                            حساب افتخار
+                                        </label>
+                                    </div>
+                                    <div class="form-floating my-3">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                               placeholder="1234-5678-9012-3456" value="{{ account.account_number }}"
+                                               name="account_number"
+                                               style="height:2px !important;" required disabled>
+                                        <label for="floatingInput"
+                                               style="right:0; transform-origin: 100% 0;">شماره حساب</label>
+                                    </div>
+                                    <div class="form-floating my-3">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                               placeholder="1234-5678-9012-3456" value="{{ account.name }}"
+                                               name="name"
+                                               style="height:2px !important;" required>
+                                        <label for="floatingInput"
+                                               style="right:0; transform-origin: 100% 0;">نام حساب</label>
+                                    </div>
+                                    <div class="form-floating my-3">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                               placeholder="1234-5678-9012-3456" value="{{ account.balance }}"
+                                               name="balance"
+                                               style="height:2px !important;" required disabled>
+                                        <label for="floatingInput"
+                                               style="right:0; transform-origin: 100% 0;">موجودی</label>
+                                    </div>
+                                    <p>وضعیت حساب :</p>
+                                    <select class="form-select my-3" name="status" disabled>
+                                        <option disabled>انتخاب</option>
+                                        <option value="True" {% if account.status %}selected{% endif %}>باز</option>
+                                        <option value="False" {% if not account.status %}selected{% endif %}>مسدود
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                    </button>
+                                    <button type="submit" class="btn btn-success">ویرایش</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteAccount{{ account.account_id }}Modal" data-bs-backdrop="static"
+                     data-bs-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">حذف حساب</h1>
+                            </div>
+
+                            <form method="POST" action="/delete_account/{{ account.account_id }}">
+                                <div class="modal-body">
+                                    <h4>آیا مطمئنید ؟؟</h4>
+                                    <p>آیا از حذف حساب "{{ account }}" مربوط به "{{ account.get_owner() }}" با شماره
+                                        حساب {{ account.account_number }} مطمئنید ؟</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">حذف</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
     </div>
     <div id="Loans" style="display: none;">
         <div class="row">
