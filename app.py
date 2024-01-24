@@ -160,9 +160,13 @@ def admin_panel():
 def employee_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
+        accounts = db.select('Accounts', Model=Account)[0]
         if user.type == 'employee':
             context = {
                 'user': user,
+                'customers': customers,
+                'accounts': accounts,
             }
             return render_template('./employee_dashboard.html', **context)
         else:  # user is not employee
@@ -178,9 +182,11 @@ def employee_panel():
 def customer_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        accounts = db.select('Accounts', filters=f"userId = {user.user_id}", Model=Account)[0]
         if user.type == 'customer':
             context = {
                 'user': user,
+                'accounts': accounts,
             }
             return render_template('./customer_dashboard.html', **context)
         else:  # user is not customer
@@ -275,7 +281,10 @@ def add_customer():
 
         if res[0]:
             flash('مشتری با موفقیت اضافه شد', 'success')
-            return redirect(url_for('admin_panel', **context))
+            if user.type == 'admin':
+                return redirect(url_for('admin_panel'))
+            else:
+                return redirect(url_for('employee_panel'))
         else:
             print(res)
     else:  # user not authenticated

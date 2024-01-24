@@ -296,9 +296,9 @@
                             <td>{{ employee.phone_number }}</td>
                             <td>{{ employee.created_at }}</td>
                             <td>
-                                <a type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
                                    data-bs-target="#deleteEmployee{{ employee.user_id }}Modal">حذف</a>
-                                <a type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
+                                <a type="button" class="btn btn-outline-warning btn-sm m-1" data-bs-toggle="modal"
                                    data-bs-target="#editEmployee{{ employee.user_id }}Modal">ویرایش</a>
                             </td>
                         </tr>
@@ -581,10 +581,10 @@
                             <td>{{ customer.phone_number }}</td>
                             <td>{{ customer.created_at }}</td>
                             <td>
-                                <a type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
                                    data-bs-target="#deleteCustomer{{ customer.user_id }}Modal">حذف</a>
-                                <a type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
-                                   data-bs-target="#editCustomer{{ customer.user_id }}Modal">تغییر</a>
+                                <a type="button" class="btn btn-outline-warning btn-sm m-1" data-bs-toggle="modal"
+                                   data-bs-target="#editCustomer{{ customer.user_id }}Modal">ویرایش</a>
                             </td>
                         </tr>
 
@@ -866,9 +866,9 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                            <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
                                data-bs-target="#deleteAccount{{ account.account_id }}Modal">حذف</a>
-                            <a type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
+                            <a type="button" class="btn btn-outline-warning btn-sm m-1" data-bs-toggle="modal"
                                data-bs-target="#editAccount{{ account.account_id }}Modal">ویرایش</a>
                         </td>
                     </tr>
@@ -876,7 +876,7 @@
                 </tbody>
             </table>
             {% if not accounts %}
-                <p class="text-center text-muted">حساب یافت نشد. یک حساب جدید ایجاد کنید !</p>
+                <p class="text-center text-muted">حسابی یافت نشد. یک حساب جدید ایجاد کنید !</p>
             {% endif %}
         </div>
         {% if accounts %}
