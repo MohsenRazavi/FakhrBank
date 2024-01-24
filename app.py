@@ -357,7 +357,7 @@ def edit_user(user_id):
 
 
 @app.route('/delete_user/<int:user_id>/', methods=['POST'])
-def delete(user_id):
+def delete_user(user_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
         if user.type in ('admin', 'employee'):
@@ -368,6 +368,61 @@ def delete(user_id):
                     flash(f'کارمند "{deleted_user}" با موفقیت حذف شد', 'success')
                 else:
                     flash(f'مشتری "{deleted_user}" با موفقیت حذف شد', 'success')
+                if user.type == 'admin':
+                    return redirect(url_for('admin_panel'))
+                elif user.type == 'employee':
+                    return redirect(url_for('employee_panel'))
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/edit_account/<int:account_id>', methods=['POST'])
+def edit_account(account_id):
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type in ('admin', 'employee'):
+            editing_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+            user_id = request.form['user_id']
+            type = request.form['type']
+            account_number = request.form['account_number']
+            balance = request.form['balance']
+            status = request.form['status']
+
+            editing_account.user_id = user_id
+            editing_account.type = type
+            editing_account.account_number = account_number
+            editing_account.balance = balance
+            editing_account.status = status
+            editing_account.save()
+
+            flash('حساب با موفقیت به روز شد', 'success')
+            if user.type == 'admin':
+                return redirect(url_for('admin_panel'))
+            elif user.type == 'employee':
+                return redirect(url_for('employee_panel'))
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/delete_account/<int:account_id>/', methods=['POST'])
+def delete_account(account_id):
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type in ('admin', 'employee'):
+            deleted_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+            res = db.delete('Accounts', filters=f"accountId = {account_id}")[0]
+            if res:
+                flash(
+                    f'حساب "{deleted_account.get_owner()}" با شماره حساب {deleted_account.account_number} با موفقیت حذف شد',
+                    'success')
                 if user.type == 'admin':
                     return redirect(url_for('admin_panel'))
                 elif user.type == 'employee':

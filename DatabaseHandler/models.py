@@ -88,13 +88,35 @@ class Account:
         self.status = status
 
     def __repr__(self):
-        return f"{self.type} - {self.name} ({self.status})"
+        if self.name and self.name!='None':
+            return self.name
+        else:
+            return ''
 
     def get_owner(self):
         from DatabaseHandler import Database
         db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
         owner = db.select('Users', filters=f"userId = {self.user_id}", Model=User)[0][0]
         return owner
+
+    def save(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        update_list = {
+            'accountId': self.account_id,
+            'accountNumber': self.account_number,
+            'userId': self.user_id,
+            'balance': self.balance,
+            'type': self.type,
+            'createdAt': self.created_at,
+            'name': self.name,
+            'status': self.status,
+        }
+        res = db.update('Accounts', update_list, filters=f"accountId = '{self.account_id}'")
+        if res[0]:
+            return True
+        else:
+            print(res)
 
 
 class Transactions:
