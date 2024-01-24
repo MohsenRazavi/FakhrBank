@@ -18,14 +18,16 @@ class User:
         self.gender = gender
 
     def __repr__(self):
-        return f"{self.type} - {self.first_name} {self.last_name} ({self.username})"
+        if self.first_name and self.last_name:
+            return f'{self.first_name} {self.last_name}'
+        return f"{self.username}"
 
     def get_age(self):
         today = date.today().year
         age = today - int(self.birthdate.split('-')[0])
         return age
 
-    def save(self, table_name):
+    def save(self):
         from DatabaseHandler import Database
         db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
         update_list = {
@@ -38,7 +40,7 @@ class User:
             'gender': self.gender,
             'createdAt': self.created_at,
         }
-        res = db.update(table_name, update_list, f'userId = {self.user_id}')
+        res = db.update('Users', update_list, f'userId = {self.user_id}')
         if res[0]:
             return True
         else:
@@ -73,48 +75,58 @@ class User:
             user_dict['user_type'],
         )
 
-    class Accounts:
-        def __init__(self, account_id, account_number, user_id, balance, account_type, created_at, name, status):
-            self.account_id = account_id
-            self.account_number = account_number
-            self.user_id = user_id
-            self.balance = balance
-            self.type = account_type
-            self.created_at = created_at
-            self.name = name
-            self.status = status
 
-        def __str__(self):
-            return f"{self.type} - {self.name} ({self.status})"
+class Account:
+    def __init__(self, account_id, user_id, account_number, balance, account_type, created_at, name, status):
+        self.account_id = account_id
+        self.account_number = account_number
+        self.user_id = user_id
+        self.balance = balance
+        self.type = account_type
+        self.created_at = created_at
+        self.name = name
+        self.status = status
 
-    class Transactions:
-        def __init__(self, transaction_id, src_account, dst_account, amount, transaction_dt, status):
-            self.transaction_id = transaction_id
-            self.src_account = src_account
-            self.dst_account = dst_account
-            self.amount = amount
-            self.date_time = transaction_dt
-            self.status = status
+    def __repr__(self):
+        return f"{self.type} - {self.name} ({self.status})"
 
-        def __str__(self):
-            return f"{self.src_account} to {self.dst_account} at {self.date_time} ({self.status})"
+    def get_owner(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        owner = db.select('Users', filters=f"userId = {self.user_id}", Model=User)[0][0]
+        return owner
 
-    class Loans:
-        def __init__(self, loan_id, profit, dead_line, at_least_income):
-            self.loan_id = loan_id
-            self.profit = profit
-            self.dead_line = dead_line
-            self.at_least_income = at_least_income
 
-        def __str__(self):
-            return f"{self.dead_line} - {self.profit}"
+class Transactions:
+    def __init__(self, transaction_id, src_account, dst_account, amount, transaction_dt, status):
+        self.transaction_id = transaction_id
+        self.src_account = src_account
+        self.dst_account = dst_account
+        self.amount = amount
+        self.date_time = transaction_dt
+        self.status = status
 
-    class LoansAccounts:
-        def __init__(self, loan_account_id, loan_type, account_id, amount, paid, acceptor, status):
-            self.loan_account_id = loan_account_id
-            self.loan_type = loan_type
-            self.account_id = account_id
-            self.amount = amount
-            self.paid = paid
-            self.acceptor = acceptor
-            self.status = status
+    def __str__(self):
+        return f"{self.src_account} to {self.dst_account} at {self.date_time} ({self.status})"
+
+
+class Loans:
+    def __init__(self, loan_id, profit, dead_line, at_least_income):
+        self.loan_id = loan_id
+        self.profit = profit
+        self.dead_line = dead_line
+        self.at_least_income = at_least_income
+
+    def __str__(self):
+        return f"{self.dead_line} - {self.profit}"
+
+
+class LoansAccounts:
+    def __init__(self, loan_account_id, loan_type, account_id, amount, paid, acceptor, status):
+        self.loan_account_id = loan_account_id
+        self.loan_type = loan_type
+        self.account_id = account_id
+        self.amount = amount
+        self.paid = paid
+        self.acceptor = acceptor
+        self.status = status

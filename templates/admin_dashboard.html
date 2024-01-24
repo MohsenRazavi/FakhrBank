@@ -181,14 +181,14 @@
                                 <p>جنسیت :</p>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender"
-                                           value="man" id="gender-man">
+                                           value="آقا" id="gender-man">
                                     <label class="form-check-label" for="gender-man">
                                         اقا
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender"
-                                           id="gender-woman" value="woman" checked>
+                                           id="gender-woman" value="خانم" checked>
                                     <label class="form-check-label" for="gender-woman">
                                         خانم
                                     </label>
@@ -296,17 +296,127 @@
                             <td>{{ employee.phone_number }}</td>
                             <td>{{ employee.created_at }}</td>
                             <td>
-                                <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
-                                <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                                <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                                <a type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                   data-bs-target="#deleteEmployee{{ employee.user_id }}Modal">حذف</a>
+                                <a type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal"
+                                   data-bs-target="#editEmployee{{ employee.user_id }}Modal">ویرایش</a>
                             </td>
                         </tr>
                     {% endfor %}
-
                 {% endif %}
                 </tbody>
             </table>
+            {% if not employees %}
+                <p class="text-center text-muted">کارمندی یافت نشد. یک کارمند اضافه کنید !</p>
+            {% endif %}
+            {% if employees %}
+                {% for employee in employees %}
+                    <div class="modal fade" id="editEmployee{{ employee.user_id }}Modal" data-bs-backdrop="static"
+                         data-bs-keyboard="false"
+                         tabindex="-1"
+                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">ویرایش کارمند</h1>
+                                </div>
 
+                                <form method="POST" action="/edit_user/{{ employee.user_id }}">
+                                    <div class="modal-body">
+                                        <div class="form-floating my-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                   placeholder="یک نام‌کاربری انگلیسی" name="username"
+                                                   value="{{ employee.username }}">
+                                            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام
+                                                کاربری</label>
+                                        </div>
+                                        <div class="form-floating my-3">
+                                            <input type="text" class="form-control" id="firstname" name="first_name"
+                                                   required
+                                                   placeholder="اسم"
+                                                   value="{{ employee.first_name }}">
+                                            <label for="firstname"
+                                                   style="right:0; transform-origin: 100% 0;">نام</label>
+                                        </div>
+                                        <div class="form-floating my-3">
+                                            <input type="text" class="form-control" id="lastname" name="last_name"
+                                                   required
+                                                   placeholder="فامیل"
+                                                   value="{{ employee.last_name }}">
+                                            <label for="lastname" style="right:0; transform-origin: 100% 0;">نام
+                                                خانوادگی</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                   placeholder="000000000000"
+                                                   name="phone_number" required
+                                                   value="{{ employee.phone_number }}">
+                                            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن
+                                                همراه</label>
+                                        </div>
+                                        <p>جنسیت :</p>
+                                        <div class="form-check form-check-inline">
+
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                   value="آقا" id="gender-man"
+                                                    {% if employee.gender == 'آقا' %} checked {% endif %}  disabled>
+                                            <label class="form-check-label" for="gender-man">
+                                                اقا
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                   id="gender-woman" value="خانم" {% if employee.gender == 'خانم' %}
+                                                   checked {% endif %} disabled>
+                                            <label class="form-check-label" for="gender-woman">
+                                                خانم
+                                            </label>
+                                        </div>
+                                        <div class="form-floating my-3">
+                                            <input type="date" class="form-control" id="birthdate" name="birthdate"
+                                                   value="{{ employee.birthdate }}" required>
+                                            <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ
+                                                تولد</label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                        </button>
+                                        <button type="submit" class="btn btn-success">ویرایش</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="deleteEmployee{{ employee.user_id }}Modal" data-bs-backdrop="static"
+                         data-bs-keyboard="false"
+                         tabindex="-1"
+                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">حذف کارمند</h1>
+                                </div>
+
+                                <form method="POST" action="/delete_user/{{ employee.user_id }}">
+                                    <div class="modal-body">
+                                        <h4>آیا مطمئنید ؟؟</h4>
+                                        <p>آیا از حذف کارمند "{{ employee }}" با شماره کارمندی {{ employee.user_id }}
+                                            مطمئنید ؟</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                        </button>
+                                        <button type="submit" class="btn btn-danger">حذف</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
         </div>
     </div>
     <div id="Customers" style="display: none;">
@@ -356,14 +466,14 @@
                                 <p>جنسیت :</p>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender"
-                                           id="gender-man" required value="man">
+                                           id="gender-man" required value="آقا">
                                     <label class="form-check-label" for="gender-man">
                                         اقا
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender"
-                                           id="gender-woman" value="woman" checked>
+                                           id="gender-woman" value="خانم" checked>
                                     <label class="form-check-label" for="gender-woman">
                                         خانم
                                     </label>
@@ -471,7 +581,6 @@
                             <td>{{ customer.phone_number }}</td>
                             <td>{{ customer.created_at }}</td>
                             <td>
-                                <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
                                 <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
                                 <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
                             </td>
@@ -503,32 +612,32 @@
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">افزودن حساب</h1>
                         </div>
-                        <form action="">
+                        <form method="POST" action="/add_account">
                             <div class="modal-body">
-                                <select class="form-select my-3" aria-label="کاربر حساب را انتخاب کنید">
-                                    <option selected>کاربر</option>
-                                    <option value="1">مصطفی</option>
-                                    <option value="2">احمد</option>
-                                    <option value="3">فخری</option>
+                                <select class="form-select my-3" aria-label="کاربر حساب را انتخاب کنید" name="user_id">
+                                    <option selected disabled>کاربر</option>
+                                    {% for customer in customers %}
+                                        <option value="{{ customer.user_id }}">{{ customer }}</option>
+                                    {% endfor %}
                                 </select>
                                 <p>نوع حساب :</p>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type"
-                                           id="type-fakhr">
+                                           id="type-fakhr" value="فخر" checked>
                                     <label class="form-check-label" for="type-fakhr">
                                         حساب فخر
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type"
-                                           id="type-fakher" checked>
+                                           id="type-fakher" value="فاخر">
                                     <label class="form-check-label" for="type-fakher">
                                         حساب فاخر
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type"
-                                           id="type-eftekhar" checked>
+                                           id="type-eftekhar" value="افتخار">
                                     <label class="form-check-label" for="type-eftekhar">
                                         حساب افتخار
                                     </label>
@@ -536,7 +645,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                                <button type="button" class="btn btn-success">افزودن</button>
+                                <button type="submit" class="btn btn-success">افزودن</button>
                             </div>
                         </form>
                     </div>
@@ -607,20 +716,39 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>1234-5678-9012-3456</td>
-                    <td>حساب فاخر</td>
-                    <td>حساب مادربزرگ عمه احمد</td>
-                    <td>مصطفی احمدی</td>
-                    <td>653,659,232</td>
-                    <td>قبل از بیگ بنگ</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
-                        <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                        <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
-                    </td>
-                </tr>
+                {% for account in accounts %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ account.account_number }}</td>
+                        {% if account.type == 'فخر' %}
+                            <td>
+                                <h5>
+                                    <span class="badge text-bg-success">حساب {{ account.type }}</span>
+                                </h5>
+                            </td>
+                        {% elif account.type == 'فاخر' %}
+                            <td>
+                                <h5>
+                                    <span class="badge text-bg-warning">حساب {{ account.type }}</span>
+                                </h5>
+                            </td>
+                        {% else %}
+                            <td>
+                                <h5>
+                                    <span class="badge text-bg-info">حساب {{ account.type }}</span>
+                                </h5>
+                            </td>
+                        {% endif %}
+                        <td>{% if account.name %}{{ account.name }}{% else %}بی نام{% endif %}</td>
+                        <td>{{ account.get_owner() }}</td>
+                        <td>{{ account.balance }}</td>
+                        <td>{{ account.created_at }}</td>
+                        <td>
+                            <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                            <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
 
@@ -900,14 +1028,14 @@
                 <p style="display: inline;">جنسیت :</p>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="flexRadioDisabled" id="flexRadioDisabled"
-                           {% if user.gender=='man' %}checked{% endif %} disabled>
+                           {% if user.gender=='آقا' %}checked{% endif %} disabled>
                     <label class="form-check-label" for="flexRadioDisabled">
                         آقا
                     </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="flexRadioDisabled" id="flexRadioCheckedDisabled"
-                           {% if user.gender == 'woman' %}checked{% endif %} disabled>
+                           {% if user.gender == 'خانم' %}checked{% endif %} disabled>
                     <label class="form-check-label" for="flexRadioCheckedDisabled">
                         خانم
                     </label>
