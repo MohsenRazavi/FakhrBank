@@ -653,17 +653,17 @@
         </form>
 
         <h5>تغییر کلمه عبور</h5>
-        <form action="">
+        <form method="POST" action="/change_password">
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com" name="old_password">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">کلمه عبور فعلی</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com" name="password1">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">کلمه عبور جدید</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <input type="password" class="form-control" id="floatingInput" placeholder="name@example.com" name="password2">
                 <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تکرار کلمه عبور جدید</label>
             </div>
             <button type="submit" class="btn btn-primary mt-1 mb-4">تغییر کلمه عبور</button>
