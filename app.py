@@ -69,7 +69,7 @@ def update_profile():
         test_username = request.form['username']
         records = db.select('Users', ['username'])[0]
         usernames = [record[0] for record in records]
-        if test_username in usernames:
+        if test_username in usernames and test_username != user.username:
             flash('این نام کاربری قبلا استفاده شده', 'danger')
             if user.type == 'admin':
                 return redirect(url_for('admin_panel'))
@@ -140,7 +140,6 @@ def admin_panel():
         user = User.from_dict(session['user'])
         employees = db.select('Users', filters="type = 'employee'", Model=User)[0]
         customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
-        print(customers)
         context = {
             'user': user,
             'employees': employees,

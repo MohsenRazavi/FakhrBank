@@ -4,9 +4,5 @@ CRED = '\033[91m'
 CGRN = '\033[92m'
 CEND = '\033[0m'
 
-# ========== DATABASE NAME ===========
-DB_HOST = "localhost"
-DB_PORT = "5432"
-DB_NAME = "FakhrBank"
-DB_USER = "postgres"
-DB_PASS = "testtesttest"
+# ========== DATABASE CONFIG ===========
+from DatabaseHandler.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
