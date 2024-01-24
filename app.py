@@ -66,19 +66,32 @@ def logout():
 def update_profile():
     if 'user' in session:
         user = User.from_dict(session['user'])
-        user.username = request.form['username']
-        user.first_name = request.form['first_name']
-        user.last_name = request.form['last_name']
-        user.phone_number = request.form['phone_number']
-        user.birthdate = request.form['birthdate']
-        user.save('Users')
-
-        if user.type == 'admin':
-            return redirect(url_for('admin_panel'))
-        elif user.type == 'employee':
-            return render_template('./employee_dashboard.html', user=user)
-        elif user.type == 'user':
-            return render_template('./user_dashboard.html', user=user)
+        test_username = request.form['username']
+        records = db.select('Users', ['username'])[0]
+        usernames = [record[0] for record in records]
+        if test_username in usernames:
+            flash('این نام کاربری قبلا استفاده شده', 'danger')
+            if user.type == 'admin':
+                return redirect(url_for('admin_panel'))
+            elif user.type == 'employee':
+                return redirect(url_for('employee_panel'))
+            else:
+                return redirect(url_for('user_panel'))
+        else:
+            user.username = test_username
+            user.first_name = request.form['first_name']
+            user.last_name = request.form['last_name']
+            user.phone_number = request.form['phone_number']
+            user.birthdate = request.form['birthdate']
+            user.save('Users')
+            session['user'] = user.to_dict()
+            flash('مشخصات کاربری با موفقیت به روز شدند', 'success')
+            if user.type == 'admin':
+                return redirect(url_for('admin_panel'))
+            elif user.type == 'employee':
+                return redirect(url_for('employee_panel'))
+            elif user.type == 'user':
+                return redirect(url_for('user_panel'))
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
