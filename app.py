@@ -143,8 +143,11 @@ def admin_panel():
             context = {
                 'user': user,
                 'employees': employees,
+                'employees_count': len(employees),
                 'customers': customers,
+                'customers_count': len(customers),
                 'accounts': accounts,
+                'accounts_count': len(accounts),
             }
             return render_template('./admin_dashboard.html', **context)
         else:  # user is not admin
@@ -166,7 +169,9 @@ def employee_panel():
             context = {
                 'user': user,
                 'customers': customers,
+                'customers_count': len(customers),
                 'accounts': accounts,
+                'accounts_count': len(accounts),
             }
             return render_template('./employee_dashboard.html', **context)
         else:  # user is not employee
@@ -425,8 +430,8 @@ def edit_account(account_id):
 def delete_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
-        if user.type in ('admin', 'employee'):
-            deleted_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+        deleted_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+        if user.type in ('admin', 'employee') or (user.type == 'customer' and deleted_account.user_id == user.user_id):
             res = db.delete('Accounts', filters=f"accountId = {account_id}")[0]
             if res:
                 flash(
@@ -436,6 +441,8 @@ def delete_account(account_id):
                     return redirect(url_for('admin_panel'))
                 elif user.type == 'employee':
                     return redirect(url_for('employee_panel'))
+                else:
+                    return redirect(url_for('customer_panel'))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 

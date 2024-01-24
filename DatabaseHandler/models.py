@@ -27,6 +27,9 @@ class User:
         age = today - int(self.birthdate.split('-')[0])
         return age
 
+    def get_created_at(self):
+        return self.created_at.strftime('%Y/%m/%d %H:%M:%S')
+
     def save(self):
         from DatabaseHandler import Database
         db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
@@ -88,7 +91,7 @@ class Account:
         self.status = status
 
     def __repr__(self):
-        if self.name and self.name!='None':
+        if self.name and self.name != 'None':
             return self.name
         else:
             return ''
@@ -98,6 +101,15 @@ class Account:
         db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
         owner = db.select('Users', filters=f"userId = {self.user_id}", Model=User)[0][0]
         return owner
+
+    def get_account_number(self):
+        return self.account_number.replace('-', ' ')
+
+    def get_created_at_date(self):
+        return self.created_at.date()
+
+    def get_created_at(self):
+        return self.created_at.strftime('%Y/%m/%d %H:%M:%S')
 
     def save(self):
         from DatabaseHandler import Database

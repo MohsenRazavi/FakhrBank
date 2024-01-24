@@ -68,7 +68,7 @@
                     <div class="card-body">
                         <h5 class="card-title">کارمندان</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کارمندان مشغول به کار</h6>
-                        <p class="card-text display-1 text-center">3235+</p>
+                        <p class="card-text display-1 text-center">{{ employees_count }}</p>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@
                     <div class="card-body">
                         <h5 class="card-title">مشتریان</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary">تعداد مشتریان بانک</h6>
-                        <p class="card-text display-1 text-center">235+</p>
+                        <p class="card-text display-1 text-center">{{ customers_count }}</p>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     <div class="card-body">
                         <h5 class="card-title">حساب ها</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary">تعداد حساب های بانکی فعال</h6>
-                        <p class="card-text display-1 text-center">2650+</p>
+                        <p class="card-text display-1 text-center">{{ accounts_count }}</p>
                     </div>
                 </div>
             </div>
@@ -294,7 +294,7 @@
                             <td>{{ employee.gender }}</td>
                             <td>{{ employee.get_age() }}</td>
                             <td>{{ employee.phone_number }}</td>
-                            <td>{{ employee.created_at }}</td>
+                            <td>{{ employee.get_created_at() }}</td>
                             <td>
                                 <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
                                    data-bs-target="#deleteEmployee{{ employee.user_id }}Modal">حذف</a>
@@ -579,7 +579,7 @@
                             <td>{{ customer.get_age() }}</td>
                             <td>{{ customer.gender }}</td>
                             <td>{{ customer.phone_number }}</td>
-                            <td>{{ customer.created_at }}</td>
+                            <td>{{ customer.get_created_at() }}</td>
                             <td>
                                 <a type="button" class="btn btn-outline-danger btn-sm m-1" data-bs-toggle="modal"
                                    data-bs-target="#deleteCustomer{{ customer.user_id }}Modal">حذف</a>
@@ -857,7 +857,7 @@
                         <td>{% if account.name and account.name != 'None' %}{{ account.name }}{% else %}بی نام{% endif %}</td>
                         <td>{{ account.get_owner() }}</td>
                         <td>{{ account.balance }}</td>
-                        <td>{{ account.created_at }}</td>
+                        <td>{{ account.get_created_at() }}</td>
                         <td>
                             {% if account.status %}
                                 <h5><span class="badge bg-primary">باز</span></h5>
