@@ -26,7 +26,7 @@ def login():
             elif user.type == "employee":
                 return render_template('./employee_dashboard.html', user=user)
             elif user.type == "user":
-                return render_template('./user_dashboard.html', user=user)
+                return render_template('./customer_dashboard.html', user=user)
             else:
                 return "<h1>Invalid usertype</h1>"
         return render_template('./login.html')
@@ -47,7 +47,7 @@ def login():
             elif obj.type == "employee":
                 return render_template('./employee_dashboard.html', user=obj)
             elif obj.type == "user":
-                return render_template('./user_dashboard.html', user=obj)
+                return render_template('./customer_dashboard.html', user=obj)
             else:
                 return "<h1>Invalid usertype</h1>"
         else:  # login failed :(
@@ -76,7 +76,7 @@ def update_profile():
             elif user.type == 'employee':
                 return redirect(url_for('employee_panel'))
             else:
-                return redirect(url_for('user_panel'))
+                return redirect(url_for('customer_panel'))
         else:
             user.username = test_username
             user.first_name = request.form['first_name']
@@ -91,7 +91,7 @@ def update_profile():
             elif user.type == 'employee':
                 return redirect(url_for('employee_panel'))
             elif user.type == 'user':
-                return redirect(url_for('user_panel'))
+                return redirect(url_for('customer_panel'))
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
@@ -113,7 +113,7 @@ def change_password():
             elif user.type == 'employee':
                 return redirect(url_for('employee_panel'))
             else:
-                return redirect(url_for('user_panel'))
+                return redirect(url_for('customer_panel'))
         if new_password1 != new_password2:
             flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
             if user.type == 'admin':
@@ -121,7 +121,7 @@ def change_password():
             elif user.type == 'employee':
                 return redirect(url_for('employee_panel'))
             else:
-                return redirect(url_for('user_panel'))
+                return redirect(url_for('customer_panel'))
 
         pswd_hash = hashlib.sha256(new_password1.encode('utf-8')).hexdigest()
         res = db.exact_exec(f"UPDATE Users SET passwordHash = '{pswd_hash}' WHERE username = '{user.username}';")[0]
@@ -138,8 +138,13 @@ def change_password():
 def admin_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        employees = db.select('Users', filters="type = 'employee'", Model=User)[0]
+        customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
+        print(customers)
         context = {
             'user': user,
+            'employees': employees,
+            'customers': customers,
         }
         return render_template('./admin_dashboard.html', **context)
     else:  # user not authenticated
@@ -160,14 +165,14 @@ def employee_panel():
         return redirect(url_for('login'))
 
 
-@app.route('/user')
-def user_panel():
+@app.route('/customer')
+def customer_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
         context = {
             'user': user,
         }
-        return render_template('./employee_dashboard.html', **context)
+        return render_template('./customer_dashboard.html', **context)
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))

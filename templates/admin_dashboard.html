@@ -283,22 +283,27 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>123456</td>
-                    <td>Mooosthtafaaaa</td>
-                    <td>مصطفی</td>
-                    <td>فخرجنت</td>
-                    <td>آقا</td>
-                    <td>21</td>
-                    <td>0123456789</td>
-                    <td>5 دی ۱۲۹۱</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
-                        <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                        <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
-                    </td>
-                </tr>
+                {% if employees %}
+                    {% for employee in employees %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ employee.user_id }}</td>
+                            <td>{{ employee.username }}</td>
+                            <td>{{ employee.first_name }}</td>
+                            <td>{{ employee.last_name }}</td>
+                            <td>{{ employee.gender }}</td>
+                            <td>{{ employee.get_age() }}</td>
+                            <td>{{ employee.phone_number }}</td>
+                            <td>{{ employee.created_at }}</td>
+                            <td>
+                                <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
+                                <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                                <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                {% endif %}
                 </tbody>
             </table>
 
@@ -344,7 +349,7 @@
                                     <input type="text" class="form-control" id="floatingInput"
                                            placeholder="000000000000"
                                            name="phone_number" required
-                                           >
+                                    >
                                     <label for="floatingInput" style="right:0; transform-origin: 100% 0;">تلفن
                                         همراه</label>
                                 </div>
@@ -452,22 +457,29 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2652659</td>
-                    <td>Mooosthtafaaaa</td>
-                    <td>مصطفی</td>
-                    <td>فخرجنت</td>
-                    <td>21</td>
-                    <td>آقا</td>
-                    <td>0123456789</td>
-                    <td>5 دی ۱۲۹۱</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
-                        <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                        <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
-                    </td>
-                </tr>
+                {% if customers %}
+                    {% for customer in customers %}
+
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ customer.user_id }}</td>
+                            <td>{{ customer.username }}</td>
+                            <td>{{ customer.first_name }}</td>
+                            <td>{{ customer.last_name }}</td>
+                            <td>{{ customer.get_age() }}</td>
+                            <td>{{ customer.gender }}</td>
+                            <td>{{ customer.phone_number }}</td>
+                            <td>{{ customer.created_at }}</td>
+                            <td>
+                                <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
+                                <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
+                                <a type="button" class="btn btn-outline-warning btn-sm">تغییر</a>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                {% endif %}
                 </tbody>
             </table>
 

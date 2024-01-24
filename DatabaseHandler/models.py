@@ -21,8 +21,8 @@ class User:
         return f"{self.type} - {self.first_name} {self.last_name} ({self.username})"
 
     def get_age(self):
-        today = date.today()
-        age = today - self.birthdate
+        today = date.today().year
+        age = today - int(self.birthdate.split('-')[0])
         return age
 
     def save(self, table_name):
