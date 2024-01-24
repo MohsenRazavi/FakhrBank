@@ -6,7 +6,6 @@ from constants import CGRN, CRED, CEND, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_P
 print('Fakhr Bank Database Configuration')
 print(f'Connecting to database {DB_NAME} on {DB_HOST}:{DB_PORT} with {DB_USER}')
 
-
 db = Database(DB_HOST, DB_PORT, "", DB_USER, DB_PASS)
 res = db.create_database(DB_NAME)
 
@@ -128,14 +127,15 @@ if res4[0]:
 else:
     print(f'{CRED}AccountLoans table creation failed. more details: \n{res}{CEND}')
 
-if res0 and res1 and res2 and res3 and res4 :
+if res0 and res1 and res2 and res3 and res4:
     print(f'\n{CGRN}DATABASE SCHEMA CREATED SUCCESSFULLY{CEND}\n')
 
     admin_username = input('Enter admin username: ')
     admin_password = input('Enter admin password: ')
     pswd_hash = hashlib.sha256(admin_password.encode('utf-8')).hexdigest()
     creation_time = datetime.now()
-    res = db.insert('Users', ('username', 'passwordHash', 'createdAt', 'type'), (admin_username, pswd_hash, creation_time, 'admin'))
+    res = db.insert('Users', ('username', 'passwordHash', 'createdAt', 'type'),
+                    (admin_username, pswd_hash, creation_time, 'admin'))
 
     if res[0]:
         print(f'{CGRN}Admin {admin_username} created successfully. Now you can login to your account !{CEND}')
@@ -145,7 +145,7 @@ FAKHR BANK PROJECT REPORT
 
 The project is started at {creation_time}
 Admin: {admin_username}
-Password: {'*'*len(admin_password)} :)
+Password: {'*' * len(admin_password)} :)
 Password hash: {pswd_hash}
 
 have a good day 😉😉

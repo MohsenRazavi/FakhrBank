@@ -45,9 +45,9 @@ def login():
             if obj.type == "admin":
                 return redirect(url_for('admin_panel'))
             elif obj.type == "employee":
-                return render_template('./employee_dashboard.html', user=obj)
+                return redirect(url_for('employee_panel'))
             elif obj.type == "customer":
-                return render_template('./customer_dashboard.html', user=obj)
+                return redirect(url_for('customer_panel'))
             else:
                 return "<h1>Invalid usertype</h1>"
         else:  # login failed :(
