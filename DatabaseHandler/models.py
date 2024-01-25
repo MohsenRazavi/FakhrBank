@@ -167,15 +167,39 @@ class Loan:
         self.at_least_income = at_least_income
 
     def __repr__(self):
-        return f"{self.dead_line} ماهه با {self.profit} درصد سود"
+        return f"{self.dead_line} ماهه با {self.profit} درصد سود و حداقل مقدار واریز در ماه {self.at_least_income} تومان"
 
 
-class LoansAccounts:
-    def __init__(self, loan_account_id, loan_type, account_id, amount, paid, acceptor, status):
-        self.loan_account_id = loan_account_id
-        self.loan_type = loan_type
+class AccountLoan:
+    def __init__(self, loan_account_id, account_id, loan_id, amount, paid, acceptor, status):
+        self.account_loan_id = loan_account_id
+        self.loan_id = loan_id
         self.account_id = account_id
         self.amount = amount
         self.paid = paid
         self.acceptor = acceptor
         self.status = status
+
+    def get_account(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        account = db.select('Accounts', filters=f"accountId = '{self.account_id}'", Model=Account)[0][0]
+        return account
+
+    def get_loan(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        loan = db.select('Loans', filters=f"loanId = '{self.loan_id}'", Model=Loan)[0][0]
+        return loan
+
+    def get_amount_with_profit(self):
+        return int((100 + self.get_loan().profit)/100 * self.amount)
+
+    def get_acceptor(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        if self.acceptor and self.acceptor != 'None':
+            acceptor = db.select('Users', filters=f"userId = '{self.acceptor}'", Model=User)[0][0]
+            return acceptor
+        else:
+            return "-"

@@ -5,7 +5,7 @@ import random
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 
 from DatabaseHandler import Database
-from DatabaseHandler.models import User, Account, Transaction, Loan
+from DatabaseHandler.models import User, Account, Transaction, Loan, AccountLoan
 from constants import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 
 app = Flask(__name__)
@@ -142,6 +142,18 @@ def admin_panel():
             accounts = db.select('Accounts', Model=Account)[0]
             transactions = db.select('Transactions', Model=Transaction)[0]
             loans = db.select('Loans', Model=Loan)[0]
+            account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
+            try:
+                debtors_count = \
+                    db.exact_exec(f"SELECT COUNT(accountLoanId) FROM AccountLoans WHERE status = 2", fetch=True)[1][0][0]
+            except IndexError:
+                debtors_count = 0
+            try:
+                sum_of_debts = \
+                    db.exact_exec(f"SELECT amount-paid AS Debt FROM AccountLoans WHERE status = 2", fetch=True)[1][0][0]
+            except IndexError:
+                sum_of_debts = 0
+
             context = {
                 'user': user,
                 'employees': employees,
@@ -153,6 +165,10 @@ def admin_panel():
                 'transactions': transactions,
                 'transactions_count': len(transactions),
                 'loans': loans,
+                'account_loans': account_loans,
+                'account_loans_count': len(account_loans),
+                'debtors_count': debtors_count,
+                'sum_of_debts': sum_of_debts
             }
             return render_template('./admin_dashboard.html', **context)
         else:  # user is not admin
@@ -172,6 +188,7 @@ def employee_panel():
         accounts = db.select('Accounts', Model=Account)[0]
         transactions = db.select('Transactions', Model=Transaction)[0]
         loans = db.select('Loans', Model=Loan)[0]
+        account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
         if user.type == 'employee':
             context = {
                 'user': user,
@@ -181,7 +198,9 @@ def employee_panel():
                 'accounts_count': len(accounts),
                 'transactions': transactions,
                 'transactions_count': len(transactions),
-                'loans': loans
+                'loans': loans,
+                'account_loans': account_loans,
+                'account_loans_count': len(account_loans)
             }
             return render_template('./employee_dashboard.html', **context)
         else:  # user is not employee
@@ -206,12 +225,19 @@ def customer_panel():
         for record in transaction_records:
             transactions.append(Transaction(*record))
 
+        account_loans_records = db.exact_exec(
+            f"SELECT AccountLoans.* FROM AccountLoans INNER JOIN Accounts ON AccountLoans.accountId = Accounts.accountId WHERE userId = {user.user_id};",
+            fetch=True)[1]
+        account_loans = []
+        for record in account_loans_records:
+            account_loans.append(AccountLoan(*record))
         if user.type == 'customer':
             context = {
                 'user': user,
                 'accounts': accounts,
                 'transactions': transactions,
-                'loans': loans
+                'loans': loans,
+                'account_loans': account_loans,
             }
             return render_template('./customer_dashboard.html', **context)
         else:  # user is not customer
@@ -516,7 +542,8 @@ def check_transaction():
                 return jsonify(
                     {'status': 'NEB', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
                      'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
-                     'src_account_owner': src_account_obj.get_owner().__repr__(), 'src_account': src_account_obj.__repr__()})
+                     'src_account_owner': src_account_obj.get_owner().__repr__(),
+                     'src_account': src_account_obj.__repr__()})
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
     else:  # user not authenticated
@@ -561,36 +588,70 @@ def new_transaction():
 
 @app.route('/check_loan', methods=['POST'])
 def check_loan():
-    loan_id = request.json['loan_id']
-    account_id = request.json['account_id']
-    amount = int(request.json['loan_amount'])
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'customer':
+            loan_id = request.json['loan_id']
+            account_id = request.json['account_id']
+            amount = int(request.json['loan_amount'])
 
-    loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
-    account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
-    today = datetime.datetime.today().date()
-    if today.month == 1:
-        last_month_date = today.replace(month=12)
-    else:
-        last_month_date = today.replace(month=today.month - 1)
-    sum_of_settlements = db.exact_exec(
-        f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt <= TIMESTAMP '{last_month_date}';",
-        fetch=True)[1][0][0]
-    print(sum_of_settlements)
-    try:
-        sum_of_settlements = int(sum_of_settlements)
-    except TypeError:
-        sum_of_settlements = 0
+            loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
+            account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+            today = datetime.datetime.today().date()
+            if today.month == 1:
+                last_month_date = today.replace(month=12)
+            else:
+                last_month_date = today.replace(month=today.month - 1)
+            sum_of_settlements = db.exact_exec(
+                f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt <= TIMESTAMP '{last_month_date}';",
+                fetch=True)[1][0][0]
+            try:
+                sum_of_settlements = int(sum_of_settlements)
+            except TypeError:
+                sum_of_settlements = 0
 
-    if sum_of_settlements >= loan.at_least_income and amount <= 2 * sum_of_settlements:
-        return jsonify({'status': 'Ok', 'loan': loan.__repr__(), 'account_number': account.account_number, 'amount': amount,
-                        'amount_with_profit': (100 + loan.profit) * amount / 100, 'owner': account.get_owner().__repr__()})
-    elif sum_of_settlements < loan.at_least_income:
-        return jsonify(
-            {'status': 'NEI', 'at_least_income': loan.at_least_income, 'sum_of_settlements': sum_of_settlements,
-             'account': account.__repr__()})
-    elif amount > 2 * sum_of_settlements:
-        return jsonify(
-            {'status': 'MLA', 'amount': amount, 'max_amount': 2 * sum_of_settlements, 'account': account.__repr__()})
+            if sum_of_settlements >= loan.at_least_income and amount <= 2 * sum_of_settlements:
+                return jsonify(
+                    {'status': 'Ok', 'loan': loan.__repr__(), 'account_number': account.account_number,
+                     'amount': amount,
+                     'amount_with_profit': (100 + loan.profit) * amount / 100, 'owner': account.get_owner().__repr__(),
+                     'loan_id': loan.loan_id})
+            elif sum_of_settlements < loan.at_least_income:
+                return jsonify(
+                    {'status': 'NEI', 'at_least_income': loan.at_least_income, 'sum_of_settlements': sum_of_settlements,
+                     'account': account.__repr__()})
+            elif amount > 2 * sum_of_settlements:
+                return jsonify(
+                    {'status': 'MLA', 'amount': amount, 'max_amount': 2 * sum_of_settlements,
+                     'account': account.__repr__()})
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/new_loan_request', methods=['POST'])
+def new_loan_request():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'customer':
+            loan_id = request.form['loan_id']
+            loan_amount = int(request.form['loan_amount'])
+            loan_account_number = request.form['loan_account_number']
+            account = db.select('Accounts', filters=f"accountNumber = '{loan_account_number}'", Model=Account)[0][0]
+            res = db.insert('AccountLoans', ('accountId', 'loanId', 'amount', 'paid', 'status'),
+                            (account.account_id, loan_id, loan_amount, 0, 0))
+            if res[0]:
+                flash('درخواست وام با موفقیت ثبت شد', 'success')
+                return redirect(url_for('customer_panel'))
+            else:
+                print(res)
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
 
 
 if __name__ == "__main__":

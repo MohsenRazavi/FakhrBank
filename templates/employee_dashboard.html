@@ -68,8 +68,8 @@
                 <div class="card card_hover">
                     <div class="card-body">
                         <h5 class="card-title">وام ها</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل وام های داده شده</h6>
-                        <p class="card-text display-1 text-center">56+</p>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل وام ها</h6>
+                        <p class="card-text display-1 text-center">{{ account_loans_count }}</p>
                     </div>
                 </div>
             </div>
@@ -685,9 +685,9 @@
                         </div>
                         <div class="modal-body">
                             {% for loan in loans %}
-                            <div class="border-bottom my-2 p-1">
-                                <p>{{ loan }}</p>
-                            </div>
+                                <div class="border-bottom my-2 p-1">
+                                    <p>{{ loan }}</p>
+                                </div>
                             {% endfor %}
                         </div>
                         <div class="modal-footer">
@@ -762,38 +762,64 @@
                     <th scope="col">شماره وام</th>
                     <th scope="col">شماره حساب</th>
                     <th scope="col">مالک</th>
-                    <th scope="col">مبلغ</th>
-                    <th scope="col">مدت</th>
-                    <th scope="col">سود</th>
+                    <th scope="col">نوع</th>
+                    <th scope="col">مبلغ (تومان)</th>
+                    <th scope="col">پرداخت شده(تومان)</th>
+                    <th scope="col">درصد</th>
                     <th scope="col">وضعیت</th>
-                    <th scope="col">زمان درخواست</th>
-                    <th scope="col">پرداخت شده</th>
+                    <th scope="col">تاییدگر</th>
                     <th scope="col">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2652659</td>
-                    <td>6659-5265-1639-1369</td>
-                    <td>مصطفی فخرجنت مسلک</td>
-                    <td>12000000</td>
-                    <td>۱۲ ماه</td>
-                    <td>20 درصد</td>
-                    <td>
-                        <span class="badge text-bg-info">
-                            در حال پرداخت
-                        </span>
-                    </td>
-                    <td>1 ثانیه قبل از بیگ بنگ</td>
-                    <td>200000</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                        <a type="button" class="btn btn-outline-primary btn-sm">تایید</a>
-                    </td>
-                </tr>
+                {% if account_loans %}
+                    {% for account_loan in account_loans %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ account_loan.account_loan_id }}</td>
+                            <td>{{ account_loan.get_account().account_number }}</td>
+                            <td>{{ account_loan.get_account().get_owner() }}</td>
+                            <td>{{ account_loan.get_loan() }}</td>
+                            <td data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                data-bs-title="بدهی کل : {{ account_loan.get_amount_with_profit() }} تومان">{{ account_loan.amount }}</td>
+                            <td>{{ account_loan.paid }}</td>
+                            <td>{{ account_loan.paid // account_loan.amount }}</td>
+                            <td>
+                                {% if account_loan.status == 0 %}
+                                    <span class="badge text-bg-warning">
+                                     در انتظار تایید
+                                </span>
+                                {% elif account_loan.status == 1 %}
+                                    <span class="badge text-bg-info">
+                                     در حال پرداخت
+                                </span>
+                                {% else %}
+                                    <span class="badge text-bg-success">
+                                     پرداخت شده
+                                </span>
+                                {% endif %}
+
+                            </td>
+                            <td>
+                                {{ account_loan.get_acceptor() }}
+                            </td>
+                            <td>
+                                {% if account_loan.status == 0 %}
+                                    <button class="btn btn-outline-primary btn-sm">تایید وام</button>
+
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+
                 </tbody>
             </table>
+
+            {% if not transactions %}
+                <p class="text-center text-muted">وامی یافت نشد !</p>
+            {% endif %}
 
         </div>
 
