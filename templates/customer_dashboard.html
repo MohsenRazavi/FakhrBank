@@ -550,43 +550,67 @@
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">تراکنش جدید</h1>
                         </div>
-                        <form>
-                            <div class="modal-body">
-                                <p>حساب مبدا</p>
-                                <select class="form-select my-3" name="src_account_number" id="srcAccountNum">
-                                    <option selected disabled>انتخاب</option>
-                                    {% for account in accounts %}
-                                        <option value="{{ account.account_id }}">{{ account.account_number }}
-                                            ({{ account.name }})
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="dstAccountNum"
-                                           placeholder="1234-5678-9012-3456"
-                                           name="dst_account_number"
-                                           style="height:2px !important;" required>
-                                    <label for="floatingInput"
-                                           style="right:0; transform-origin: 100% 0;">شماره حساب مقصد(با خط
-                                        تیره)</label>
+
+                        <div class="modal-body">
+                            <p>حساب مبدا</p>
+                            <select class="form-select my-3" name="src_account_number" id="srcAccountNum" required>
+                                <option selected disabled>انتخاب</option>
+                                {% for account in accounts %}
+                                    <option value="{{ account.account_id }}">{{ account.account_number }}
+                                        ({{ account.name }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <p>شماره حساب مقصد:</p>
+                            <div class="row">
+                                <div class="col"><input class="form-control" id="dstAccountNum1" type="number"
+                                                        aria-label="default input example" maxlength="4"
+                                                        minlength="4" required>
                                 </div>
-                                <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="trxAmount"
-                                           placeholder="123456789"
-                                           name="amount"
-                                           style="height:2px !important;" required>
-                                    <label for="floatingInput"
-                                           style="right:0; transform-origin: 100% 0;">مبلغ (تومان)</label>
+                                <div class="col"><input class="form-control" id="dstAccountNum2" type="number"
+                                                        aria-label="default input example" maxlength="4"
+                                                        minlength="4" required>
+                                </div>
+                                <div class="col"><input class="form-control" id="dstAccountNum3" type="number"
+                                                        aria-label="default input example" maxlength="4"
+                                                        minlength="4" required>
+                                </div>
+                                <div class="col"><input class="form-control" id="dstAccountNum4" type="number"
+                                                        aria-label="default input example" maxlength="4"
+                                                        minlength="4" required>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                                <button type="button" class="btn btn-primary" onclick="checkTransactionData()"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#payModal">بررسی
-                                </button>
+
+                            {#                            <div class="form-floating my-3">#}
+                            {#                                <input type="text" class="form-control"#}
+                            {#                                       id="dstAccountNum"#}
+                            {#                                       placeholder="1234-5678-9012-3456"#}
+                            {#                                       name="dst_account_number"#}
+                            {#                                       style="height:2px !important;" required>#}
+                            {#                                <label for="floatingInput"#}
+                            {#                                       style="right:0; transform-origin: 100% 0;">شماره#}
+                            {#                                    حساب مقصد(با خط#}
+                            {#                                    تیره)</label>#}
+                            {#                            </div>#}
+                            <div class="form-floating my-3">
+                                <input type="text" class="form-control" id="trxAmount"
+                                       placeholder="123456789"
+                                       name="amount"
+                                       style="height:2px !important;" required>
+                                <label for="floatingInput"
+                                       style="right:0; transform-origin: 100% 0;">مبلغ (تومان)</label>
                             </div>
-                        </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="emptyInputs()">انصراف
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="checkTransactionData()"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#payModal">بررسی
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -614,7 +638,8 @@
                                 <p>به نام <span id="trxDstAccountOwner"></span></p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                        onclick="emptyInputs()">انصراف
                                 </button>
                                 <button type="submit" class="btn btn-success">انجام تراکنش</button>
                             </div>
@@ -772,25 +797,48 @@
 
 {% block custom_script %}
     <script>
+
+        function emptyInputs() {
+            let srcAccountField = document.getElementById('srcAccountNum');
+            let dstAccount1Field = document.getElementById('dstAccountNum1');
+            let dstAccount2Field = document.getElementById('dstAccountNum2');
+            let dstAccount3Field = document.getElementById('dstAccountNum3');
+            let dstAccount4Field = document.getElementById('dstAccountNum4');
+            let amountField = document.getElementById('trxAmount');
+
+            srcAccountField.selectedIndex = 0;
+            dstAccount1Field.value = "";
+            dstAccount2Field.value = "";
+            dstAccount3Field.value = "";
+            dstAccount4Field.value = "";
+            amountField.value = "";
+        }
+
         function checkTransactionData() {
             let src_account_field = document.getElementById('srcAccountNum');
             let src_account = src_account_field.options[src_account_field.selectedIndex].text;
-            let dst_account = document.getElementById('dstAccountNum');
-            let amount = document.getElementById('trxAmount');
+            let dst_account1 = document.getElementById('dstAccountNum1').value;
+            let dst_account2 = document.getElementById('dstAccountNum2').value;
+            let dst_account3 = document.getElementById('dstAccountNum3').value;
+            let dst_account4 = document.getElementById('dstAccountNum4').value;
+            let dst_account = dst_account1 + "-" + dst_account2 + "-" + dst_account3 + "-" + dst_account4;
+            {#let dst_account = document.getElementById('dstAccountNum').value;#}
+            let amount = document.getElementById('trxAmount').value;
 
-            fetch("/check_transaction", {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    "src_account": src_account,
-                    "dst_account": dst_account.value,
-                    "amount": amount.value
+            if (src_account && dst_account && amount) {
+                fetch("/check_transaction", {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        "src_account": src_account,
+                        "dst_account": dst_account,
+                        "amount": amount
+                    })
                 })
-            })
-                .then(function (response) {
-                    return response.json();
-                }).then(function (resp) {
-                if (resp['status'] == 'Ok') {
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (resp) {
+                    if (resp['status'] == 'Ok') {
                         let amountTag = document.getElementById('trxAmountConfirm');
                         let srcAccountTag = document.getElementById('trxSrcAccount');
                         let dstAccountTag = document.getElementById('trxDstAccount');
@@ -802,8 +850,9 @@
                         dstAccountTag.value = resp['dst_account_number'];
                         srcAccountOwner.innerHTML = resp['src_account_owner'];
                         dstAccountOwner.innerHTML = resp['dst_account_owner'];
-                }
-            });
+                    }
+                });
+            }
 
         }
     </script>

@@ -468,15 +468,22 @@ def check_transaction():
             amount = int(request.json['amount'])
             src_account_obj = \
                 db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
-            dst_account_obj = \
-                db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0][0]
+            dst_account = \
+                db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0]
+            if dst_account:
+                dst_account_obj = dst_account[0]
+            else:
+                flash('حساب مقصد یافت نشد', 'danger')
+                return redirect(url_for('customer_panel'))
             if src_account_obj.balance >= amount:
                 return jsonify(
                     {'status': 'Ok', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
                      'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
                      'src_account_owner': src_account_obj.get_owner().__repr__()})
             else:
-                return jsonify({'status': 'Sorry!', 'src_account_owner': dst_account_obj.get_owner().__repr__()})
+                flash('موجودی حساب انتخاب شده کافی نیست', 'danger')
+                return redirect(url_for('customer_panel'))
+
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
     else:  # user not authenticated
