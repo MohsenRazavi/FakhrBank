@@ -140,7 +140,7 @@ if res0 and res1 and res2 and res3 and res4:
     creation_time = datetime.now()
     res_admin = db.insert('Users', ('username', 'passwordHash', 'createdAt', 'type'),
                     (admin_username, pswd_hash, creation_time, 'admin'))
-    admin_id = int(db.select('Users', ('userId',))[0][0][0])
+    admin_id = int(db.select('Users', ('userId',), filters=f"username = '{admin_username}'")[0][0][0])
     if res_admin[0]:
         print(f'{CGRN}Admin {admin_username} created successfully. Now you can login to your account !{CEND}')
         res_account = db.insert('Accounts',

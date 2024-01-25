@@ -214,8 +214,7 @@
                                 </h5>
                             </td>
                         {% endif %}
-                        <td>{% if account.name and account.name != 'None' %}{{ account.name }}{% else %}بی
-                            نام{% endif %}</td>
+                        <td>{{ account }}</td>
                         <td>{{ account.get_owner() }}</td>
                         <td>{{ account.balance }}</td>
                         <td>{{ account.get_created_at_date() }}</td>
@@ -360,7 +359,7 @@
                 <h4 class="mt-4">لیست وام ها</h4>
             </div>
             <div class="col-2 pt-3" style="padding-right: 1.5%;">
-                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addLoanModal"
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addLoanModal"
                         style="display: inline;">ثبت درخواست وام
                 </button>
             </div>
@@ -373,64 +372,80 @@
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">ثبت درخواست وام</h1>
                         </div>
-                        <form action="">
-                            <div class="modal-body">
-                                <div class="input-group-sm mb-3">
-                                    <select class="form-select form-select-sm">
-                                        <option selected>درصد سود</option>
-                                        <option value="1">20 درصد</option>
-                                        <option value="2">40 درصد</option>
-                                    </select>
-                                </div>
-                                <div class="input-group-sm mb-3">
-                                    <select class="form-select form-select-sm">
-                                        <option selected>حساب</option>
-                                        <option value="1">حساب ۱</option>
-                                        <option value="2">حساب ۲</option>
-                                    </select>
-                                </div>
-                                <div class="form-floating my-3">
-                                    <input type="number" class="form-control" id="loanAmount"
-                                           placeholder="loanAmount">
-                                    <label for="loanAmount" style="right:0; transform-origin: 100% 0;">مبلغ</label>
-                                </div>
+                        <div class="modal-body">
+                            <p class="mb-0">نوع وام</p>
+                            <div class="input-group mb-3">
+                                <select class="form-select" id="loanType">
+                                    <option selected disabled>انتخاب</option>
+                                    {% for loan in loans %}
+                                        <option value="{{ loan.loan_id }}">{{ loan }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <p class="mb-0 mt-3">حساب</p>
+                            <div class="input-group mb-3">
+                                <select class="form-select" id="accountLoan">
+                                    <option selected disabled>انتخاب</option>
+                                    {% for account in accounts %}
+                                        <option value="{{ account.account_id }}">{{ account }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-floating my-3">
+                                <input type="number" class="form-control" id="loanAmount"
+                                       placeholder="loanAmount">
+                                <label for="loanAmount"
+                                       style="right:0; transform-origin: 100% 0;">مبلغ(تومان)</label>
+                            </div>
 
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                            <button type="button" class="btn btn-primary" onclick="checkLoan()"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#loanModal">بررسی
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="loanModal" data-bs-backdrop="static"
+                 data-bs-keyboard="false"
+                 tabindex="-1"
+                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">نتیجه بررسی</h1>
+                        </div>
+                        <form method="POST" action="/new_loan">
+                            <div id="loanConfirmModalBody" class="modal-body">
+                                <p id="loanMessage" class="mt-1 mb-3" style="display: none;"></p>
+                                <p class="my-3" id="loanMessage" style="display: none;"></p>
+                                <p id="loanAmountTitle">مبلغ(تومان)</p>
+                                <input class="form-control" id='loanAmountConfirm' type="text" value=""
+                                       name="loan_amount"
+                                       aria-label="Disabled input example" readonly>
+                                <p class="mt-3 mb-0" id="loanTypeTitle">وام</p>
+                                <input class="form-control" type="text" value="" id="loanTypeConfirm"
+                                       name="loan_type"
+                                       aria-label="Disabled input example" readonly>
+                                <p class="mt-3 mb-0" id="loanAccountTitle">به حساب</p>
+                                <input class="form-control mt-0" id="loanAccountConfirm" type="text" value=""
+                                       name="loan_account"
+                                       aria-label="Disabled input example" readonly>
+                                <p id="loanOwner">به نام <span id="loanOwnerName"></span></p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                                <button type="button" class="btn btn-success">افزودن</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                        onclick="emptyInputs()">انصراف
+                                </button>
+                                <button type="submit" id="creatLoan" class="btn btn-success">ثبت درخواست</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="checkLoansModal" data-bs-backdrop="static" data-bs-keyboard="false"
-                 tabindex="-1"
-                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">مشاهده وام ها</h1>
-                        </div>
-                        <div class="modal-body">
-                            <div class="border-bottom my-2 p-1">
-                                <div class="row">
-                                    <div class="col-10">
-                                        <p>مشتی</p>
-                                    </div>
-                                    <div class="col-2">
-                                        <button type="button" class="btn btn-outline-danger btn-sm">حذف</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
         </div>
         <div class="row my-2">
@@ -460,7 +475,7 @@
                 </div>
                 <div class="col">
                     <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="loanAmount"
+                        <input type="number" class="form-control"
                                placeholder="loanAmount">
                         <label for="loanAmount" style="right:0; transform-origin: 100% 0;">مبلغ</label>
                     </div>
@@ -557,7 +572,7 @@
                                 <option selected disabled>انتخاب</option>
                                 {% for account in accounts %}
                                     <option value="{{ account.account_id }}">{{ account.account_number }}
-                                        ({{ account.name }})
+                                        ({{ account }})
                                     </option>
                                 {% endfor %}
                             </select>
@@ -622,8 +637,8 @@
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">تایید تراکنش</h1>
                         </div>
                         <form method="POST" action="/new_transaction">
-                            <div class="modal-body">
-                                <p id="amountTitle">مبلغ(تومان)</p>
+                            <div class="modal-body" id="trxConfirmModalBody">
+                                <p id="amountTitle">مبلغ (تومان)</p>
                                 <input class="form-control" id='trxAmountConfirm' type="text" value="" name="amount"
                                        aria-label="Disabled input example" readonly>
                                 <p class="mt-3 mb-0" id="fromAccount">از حساب</p>
@@ -715,7 +730,7 @@
                                 {% if user.user_id == transaction.get_src_account().get_owner().user_id %}
                                     <h5><span class="badge bg-warning">برداشت</span></h5>
                                 {% elif user.user_id == transaction.get_dst_account().get_owner().user_id %}
-                                    <h5><span class="badge bg-warning">واریز</span></h5>
+                                    <h5><span class="badge bg-primary">واریز</span></h5>
                                 {% endif %}
                             </td>
                             <td {% if transaction.get_src_account() %} data-bs-toggle="tooltip"
@@ -816,23 +831,66 @@
 
 {% block custom_script %}
     <script>
+        function checkLoan() {
+            let account_loan_field = document.getElementById('accountLoan');
+            let account_id = account_loan_field.options[account_loan_field.selectedIndex].value;
+            let loan_type_field = document.getElementById('loanType');
+            let loan_id = loan_type_field.options[loan_type_field.selectedIndex].value;
+            let loan_amount = document.getElementById('loanAmount').value;
+
+            fetch("/check_loan", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    'account_id': account_id,
+                    'loan_id': loan_id,
+                    'loan_amount': loan_amount,
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                }).then(function (resp) {
+                if (resp['status'] == 'Ok') {
+                    document.getElementById('loanAmountConfirm').value = resp['amount'];
+                    document.getElementById('loanTypeConfirm').value = resp['loan'] + "  (" + resp['amount_with_profit'] + " تومان )  ";
+                    document.getElementById('loanAccountConfirm').value = resp['account_number'];
+                    document.getElementById('loanOwnerName').innerHTML = resp['owner'];
+                    let message = document.getElementById('loanMessage');
+                    message.innerHTML = "شما شرایط دریافت وام را دارا هستید !";
+                    message.style.display = 'block';
+                } else if (resp['status'] == 'NEI') {
+                    document.getElementById('loanConfirmModalBody').innerHTML = "جهت ثبت درخواست گرفتن این وام،‌ حداقل واریزی یک ماه اخیر به حساب " + resp['account'] + " باید " + resp['at_least_income'] + " تومان باشد. این مقدار در حال حاضر " + resp['sum_of_settlements'] + " تومان است.";
+                    document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
+                    document.getElementById('creatLoan').classList.remove('btn-success');
+                    document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
+                } else if (resp['status'] == 'MLA') {
+                    document.getElementById('loanConfirmModalBody').innerHTML = "حداکثر مقداری که میتوانید از این وام درخواست دهید " + resp['max_amount'] + " تومان است. مبلغ مورد درخواست شما " + resp['amount'] + " تومان میباشد.";
+                    document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
+                    document.getElementById('creatLoan').classList.remove('btn-success');
+                    document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
+                }
+
+            });
+        }
 
         function emptyInputs() {
-            let srcAccountField = document.getElementById('srcAccountNum');
-            let dstAccount1Field = document.getElementById('dstAccountNum1');
-            let dstAccount2Field = document.getElementById('dstAccountNum2');
-            let dstAccount3Field = document.getElementById('dstAccountNum3');
-            let dstAccount4Field = document.getElementById('dstAccountNum4');
-            let amountField = document.getElementById('trxAmount');
-            let password = document.getElementById('trxPassword');
+            document.getElementById('srcAccountNum').selectedIndex = 0;
+            document.getElementById('dstAccountNum1').value = "";
+            document.getElementById('dstAccountNum2').value = "";
+            document.getElementById('dstAccountNum3').value = "";
+            document.getElementById('dstAccountNum4').value = "";
+            document.getElementById('trxAmount').value = "";
+            document.getElementById('trxPassword').value = "";
 
-            srcAccountField.selectedIndex = 0;
-            dstAccount1Field.value = "";
-            dstAccount2Field.value = "";
-            dstAccount3Field.value = "";
-            dstAccount4Field.value = "";
-            amountField.value = "";
-            password.value = "";
+            document.getElementById('loanType').selectedIndex = 0;
+            document.getElementById('accountLoan').selectedIndex = 0;
+            document.getElementById('loanAmount').value = "";
+            document.getElementById('loanMessage').style.display = 'none';
+            document.getElementById('loanAmountConfirm').value = "";
+            document.getElementById('loanTypeConfirm').value = "";
+            document.getElementById('loanAccountConfirm').value = "";
+            document.getElementById('loanOwnerName').innerHTML = "";
+
         }
 
         function checkTransactionData() {
@@ -851,6 +909,7 @@
             let dstAccountTag = document.getElementById('trxDstAccount');
             let dstAccountOwner = document.getElementById('trxDstAccountOwner');
             let srcAccountOwner = document.getElementById('trxSrcAccountOwner');
+            let createTrxButton = document.getElementById('createTrx');
 
             if (src_account != 'انتخاب' && dst_account1 && dst_account2 && dst_account3 && dst_account4 && amount && password) {
                 fetch("/check_transaction", {
@@ -874,37 +933,27 @@
                     dstAccountOwner.innerHTML = resp['dst_account_owner'];
 
                     if (resp['status'] == 'NEB') {
-                        let createTrxButton = document.getElementById('createTrx');
-                        createTrxButton.innerHTML = 'موجودی این حساب کافی نیست';
+                        document.getElementById('trxConfirmModalBody').innerHTML = "موجودی حساب " + resp['src_account'] + " کافی نمیباشد.";
+                        createTrxButton.innerHTML = 'خطا';
                         createTrxButton.classList.remove('btn-success');
                         createTrxButton.classList.add('btn-secondary', 'disabled');
                     } else if (resp['status'] == 'DNF') {
-                        let createTrxButton = document.getElementById('createTrx');
-                        createTrxButton.innerHTML = 'حساب مقصد وجود ندارد';
+                        document.getElementById('trxConfirmModalBody').innerHTML = "حساب مقصد وجود ندارد.";
+                        createTrxButton.innerHTML = 'خطا';
                         createTrxButton.classList.remove('btn-success');
                         createTrxButton.classList.add('btn-secondary', 'disabled');
                     } else if (resp['status'] == 'WP') {
-                        let createTrxButton = document.getElementById('createTrx');
-                        createTrxButton.innerHTML = 'کلمه عبور اشتباه است';
+                        document.getElementById('trxConfirmModalBody').innerHTML = "کلمه عبور اشتباه است.";
+                        createTrxButton.innerHTML = 'خطا';
                         createTrxButton.classList.remove('btn-success');
                         createTrxButton.classList.add('btn-secondary', 'disabled');
                     }
 
                 });
             } else {
-                amountTag.style.display = 'none';
-                srcAccountTag.style.display = 'none';
-                dstAccountTag.style.display = 'none';
-                dstAccountOwner.style.display = 'none';
-                srcAccountOwner.style.display = 'none';
-                document.getElementById('amountTitle').style.display = 'none';
-                document.getElementById('fromAccount').style.display = 'none';
-                document.getElementById('srcOwner').style.display = 'none';
-                document.getElementById('toAccount').style.display = 'none';
-                document.getElementById('dstOwner').style.display = 'none';
-
+                document.getElementById('trxConfirmModalBody').innerHTML = "اطلاعات وارد شده نادرست و یا ناقص است.";
                 let createTrxButton = document.getElementById('createTrx');
-                createTrxButton.innerHTML = 'اطلاعات وارد شده ناقص است';
+                createTrxButton.innerHTML = 'خطا';
                 createTrxButton.classList.remove('btn-success');
                 createTrxButton.classList.add('btn-secondary', 'disabled');
 

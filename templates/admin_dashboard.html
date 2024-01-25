@@ -1052,16 +1052,18 @@
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">مشاهده وام ها</h1>
                         </div>
                         <div class="modal-body">
-                            <div class="border-bottom my-2 p-1">
-                                <div class="row">
-                                    <div class="col-10">
-                                        <p>مشتی</p>
-                                    </div>
-                                    <div class="col-2">
-                                        <button type="button" class="btn btn-outline-danger btn-sm">حذف</button>
+                            {% for loan in loans %}
+                                <div class="border-bottom my-2 p-1">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <p>{{ loan }}</p>
+                                        </div>
+                                        <div class="col-2">
+                                            <button type="button" class="btn btn-outline-danger btn-sm">حذف</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>

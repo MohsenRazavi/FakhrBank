@@ -5,7 +5,7 @@ import random
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 
 from DatabaseHandler import Database
-from DatabaseHandler.models import User, Account, Transaction
+from DatabaseHandler.models import User, Account, Transaction, Loan
 from constants import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 
 app = Flask(__name__)
@@ -141,6 +141,7 @@ def admin_panel():
             customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
             accounts = db.select('Accounts', Model=Account)[0]
             transactions = db.select('Transactions', Model=Transaction)[0]
+            loans = db.select('Loans', Model=Loan)[0]
             context = {
                 'user': user,
                 'employees': employees,
@@ -150,7 +151,8 @@ def admin_panel():
                 'accounts': accounts,
                 'accounts_count': len(accounts),
                 'transactions': transactions,
-                'transactions_count': len(transactions)
+                'transactions_count': len(transactions),
+                'loans': loans,
             }
             return render_template('./admin_dashboard.html', **context)
         else:  # user is not admin
@@ -169,6 +171,7 @@ def employee_panel():
         customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
         accounts = db.select('Accounts', Model=Account)[0]
         transactions = db.select('Transactions', Model=Transaction)[0]
+        loans = db.select('Loans', Model=Loan)[0]
         if user.type == 'employee':
             context = {
                 'user': user,
@@ -177,7 +180,8 @@ def employee_panel():
                 'accounts': accounts,
                 'accounts_count': len(accounts),
                 'transactions': transactions,
-                'transactions_count': len(transactions)
+                'transactions_count': len(transactions),
+                'loans': loans
             }
             return render_template('./employee_dashboard.html', **context)
         else:  # user is not employee
@@ -197,6 +201,7 @@ def customer_panel():
         transaction_records = db.exact_exec(
             f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId OR Transactions.dstAccount = Accounts.accountId WHERE userId = {user.user_id};",
             fetch=True)[1]
+        loans = db.select('Loans', Model=Loan)[0]
         transactions = []
         for record in transaction_records:
             transactions.append(Transaction(*record))
@@ -205,7 +210,8 @@ def customer_panel():
             context = {
                 'user': user,
                 'accounts': accounts,
-                'transactions': transactions
+                'transactions': transactions,
+                'loans': loans
             }
             return render_template('./customer_dashboard.html', **context)
         else:  # user is not customer
@@ -486,6 +492,7 @@ def check_transaction():
                 db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
             dst_account = \
                 db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0]
+
             if dst_account:
                 dst_account_obj = dst_account[0]
             else:
@@ -509,7 +516,7 @@ def check_transaction():
                 return jsonify(
                     {'status': 'NEB', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
                      'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
-                     'src_account_owner': src_account_obj.get_owner().__repr__()})
+                     'src_account_owner': src_account_obj.get_owner().__repr__(), 'src_account': src_account_obj.__repr__()})
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
     else:  # user not authenticated
@@ -550,6 +557,40 @@ def new_transaction():
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
+
+
+@app.route('/check_loan', methods=['POST'])
+def check_loan():
+    loan_id = request.json['loan_id']
+    account_id = request.json['account_id']
+    amount = int(request.json['loan_amount'])
+
+    loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
+    account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+    today = datetime.datetime.today().date()
+    if today.month == 1:
+        last_month_date = today.replace(month=12)
+    else:
+        last_month_date = today.replace(month=today.month - 1)
+    sum_of_settlements = db.exact_exec(
+        f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt <= TIMESTAMP '{last_month_date}';",
+        fetch=True)[1][0][0]
+    print(sum_of_settlements)
+    try:
+        sum_of_settlements = int(sum_of_settlements)
+    except TypeError:
+        sum_of_settlements = 0
+
+    if sum_of_settlements >= loan.at_least_income and amount <= 2 * sum_of_settlements:
+        return jsonify({'status': 'Ok', 'loan': loan.__repr__(), 'account_number': account.account_number, 'amount': amount,
+                        'amount_with_profit': (100 + loan.profit) * amount / 100, 'owner': account.get_owner().__repr__()})
+    elif sum_of_settlements < loan.at_least_income:
+        return jsonify(
+            {'status': 'NEI', 'at_least_income': loan.at_least_income, 'sum_of_settlements': sum_of_settlements,
+             'account': account.__repr__()})
+    elif amount > 2 * sum_of_settlements:
+        return jsonify(
+            {'status': 'MLA', 'amount': amount, 'max_amount': 2 * sum_of_settlements, 'account': account.__repr__()})
 
 
 if __name__ == "__main__":

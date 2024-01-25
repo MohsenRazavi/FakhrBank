@@ -94,7 +94,7 @@ class Account:
         if self.name and self.name != 'None':
             return self.name
         else:
-            return ''
+            return f"{self.type}-{self.account_number[15:]}"
 
     def get_owner(self):
         from DatabaseHandler import Database
@@ -159,15 +159,15 @@ class Transaction:
         return account
 
 
-class Loans:
+class Loan:
     def __init__(self, loan_id, profit, dead_line, at_least_income):
         self.loan_id = loan_id
         self.profit = profit
         self.dead_line = dead_line
         self.at_least_income = at_least_income
 
-    def __str__(self):
-        return f"{self.dead_line} - {self.profit}"
+    def __repr__(self):
+        return f"{self.dead_line} ماهه با {self.profit} درصد سود"
 
 
 class LoansAccounts:
