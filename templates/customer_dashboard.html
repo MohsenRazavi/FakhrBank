@@ -623,18 +623,20 @@
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">تایید تراکنش</h1>
                         </div>
-                        <form method="POST" action="">
+                        <form method="POST" action="/new_transaction">
                             <div class="modal-body">
-                                <p>مبلغ</p>
-                                <input class="form-control" id='trxAmountConfirm' type="text" value=""
-                                       aria-label="Disabled input example" disabled readonly>
+                                <p>مبلغ(تومان)</p>
+                                <input class="form-control" id='trxAmountConfirm' type="text" value="" name="amount"
+                                       aria-label="Disabled input example" readonly>
                                 <p>از حساب</p>
                                 <input class="form-control" type="text" value="" id="trxSrcAccount"
-                                       aria-label="Disabled input example" disabled readonly>
+                                       name="src_account_number"
+                                       aria-label="Disabled input example" readonly>
                                 <p>به نام <span id="trxSrcAccountOwner"></span></p>
                                 <p>به حساب</p>
                                 <input class="form-control" id="trxDstAccount" type="text" value=""
-                                       aria-label="Disabled input example" disabled readonly>
+                                       name="dst_account_number"
+                                       aria-label="Disabled input example" readonly>
                                 <p>به نام <span id="trxDstAccountOwner"></span></p>
                             </div>
                             <div class="modal-footer">
@@ -697,31 +699,50 @@
                 <tr>
                     <th scope="col">ردیف</th>
                     <th scope="col">شماره تراکنش</th>
+                    <th scope="col">نوع</th>
                     <th scope="col">شماره حساب مبدا</th>
                     <th scope="col">شماره حساب مقصد</th>
-                    <th scope="col">مبلغ</th>
+                    <th scope="col">مبلغ (تومان)</th>
                     <th scope="col">زمان</th>
                     <th scope="col">وضعیت</th>
-                    <th scope="col">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2652659</td>
-                    <td>6659-5265-1639-1369</td>
-                    <td>6659-5265-1639-1369</td>
-                    <td>12000000</td>
-                    <td>سالروز فرار شاه</td>
-                    <td>موفق</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
-                        <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                    </td>
-                </tr>
+                {% if transactions %}
+                    {% for transaction in transactions %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ transaction.transaction_id }}</td>
+                            <td>
+                                {% if user.user_id == transaction.get_src_account().get_owner().user_id %}
+                                    <h5><span class="badge bg-warning">برداشت</span></h5>
+                                {% elif user.user_id == transaction.get_dst_account().get_owner().user_id %}
+                                    <h5><span class="badge bg-warning">واریز</span></h5>
+                                {% endif %}
+                            </td>
+                            <td {% if transaction.get_src_account() %} data-bs-toggle="tooltip"
+                                                                       data-bs-placement="top"
+                                                                       data-bs-title="{{ transaction.get_src_account().name }}"{% endif %}>{{ transaction.get_src_account().account_number }}
+                            </td>
+                            <td data-bs-toggle="tooltip" data-bs-placement="top"
+                                data-bs-title="به نام {{ transaction.get_dst_account().get_owner() }}">{{ transaction.get_dst_account().account_number }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.get_created_at() }}</td>
+                            <td>
+                                {% if transaction.status %}
+                                    <h5><span class="badge bg-success">موفق</span></h5>
+                                {% else %}
+                                    <h5><span class="badge bg-danger">ناموفق</span></h5>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
-
+            {% if not transactions %}
+                <p class="text-center text-muted">تراکنشی یافت نشد. یک تراکنش جدید انجام دهید !</p>
+            {% endif %}
         </div>
 
     </div>

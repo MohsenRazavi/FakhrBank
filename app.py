@@ -5,7 +5,7 @@ import random
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 
 from DatabaseHandler import Database
-from DatabaseHandler.models import User, Account
+from DatabaseHandler.models import User, Account, Transaction
 from constants import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 
 app = Flask(__name__)
@@ -188,10 +188,16 @@ def customer_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
         accounts = db.select('Accounts', filters=f"userId = {user.user_id}", Model=Account)[0]
+        transaction_records = db.exact_exec(f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId WHERE userId = {user.user_id};", fetch=True)[1]
+        transactions = []
+        for record in transaction_records:
+            transactions.append(Transaction(*record))
+
         if user.type == 'customer':
             context = {
                 'user': user,
                 'accounts': accounts,
+                'transactions': transactions
             }
             return render_template('./customer_dashboard.html', **context)
         else:  # user is not customer
@@ -484,6 +490,41 @@ def check_transaction():
                 flash('موجودی حساب انتخاب شده کافی نیست', 'danger')
                 return redirect(url_for('customer_panel'))
 
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/new_transaction', methods=['POST'])
+def new_transaction():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'customer':
+            src_account_number = request.form['src_account_number']
+            dst_account_number = request.form['dst_account_number']
+            amount = int(request.form['amount'])
+
+            src_account = db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
+            dst_account = db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0][0]
+
+            src_account.balance -= amount
+            dst_account.balance += amount
+
+            src_account.save()
+            dst_account.save()
+
+            created_at = datetime.datetime.now()
+            status = True
+
+            res = db.insert('Transactions', ('srcAccount', 'dstAccount', 'amount', 'status', 'createdAt'),
+                            (src_account.account_id, dst_account.account_id, amount, status, created_at))
+            if res[0]:
+                flash('تراکنش با موفقیت انجام شد', 'success')
+                return redirect(url_for('customer_panel'))
+            else:
+                print(res)
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
     else:  # user not authenticated

@@ -69,8 +69,8 @@ else:
 """
 Transactions Table
 
-transactionId | srcAccount | dstAccount | amount | status 
-==============|============|============|========|==========
+transactionId | srcAccount | dstAccount | amount | createdAt | status 
+==============|============|============|========|===========|==========
               |            |            |        |
 """
 transaction_fields = {
@@ -78,6 +78,7 @@ transaction_fields = {
     'srcAccount': 'INTEGER REFERENCES Accounts(accountId)',
     'dstAccount': 'INTEGER REFERENCES Accounts(accountId)',
     'amount': 'BIGINT',
+    'createdAt': 'TIMESTAMP',
     'status': 'BOOLEAN'
 }
 res2 = db.create_table('Transactions', transaction_fields)

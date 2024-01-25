@@ -131,17 +131,32 @@ class Account:
             print(res)
 
 
-class Transactions:
-    def __init__(self, transaction_id, src_account, dst_account, amount, transaction_dt, status):
+class Transaction:
+    def __init__(self, transaction_id, src_account, dst_account, amount, created_at, status):
         self.transaction_id = transaction_id
         self.src_account = src_account
         self.dst_account = dst_account
         self.amount = amount
-        self.date_time = transaction_dt
+        self.created_at = created_at
         self.status = status
 
     def __str__(self):
         return f"{self.src_account} to {self.dst_account} at {self.date_time} ({self.status})"
+
+    def get_created_at(self):
+        return self.created_at.strftime('%Y/%m/%d %H:%M:%S')
+
+    def get_src_account(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        account = db.select('Accounts', filters=f"accountId = '{self.src_account}'", Model=Account)[0][0]
+        return account
+
+    def get_dst_account(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        account = db.select('Accounts', filters=f"accountId = '{self.dst_account}'", Model=Account)[0][0]
+        return account
 
 
 class Loans:
