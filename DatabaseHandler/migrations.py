@@ -1,7 +1,10 @@
-from db import Database
 import hashlib
 from datetime import datetime
-from constants import CGRN, CRED, CEND, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
+
+from constants import CGRN, CRED, CEND, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS, BANK_ACCOUNT_NAME, \
+    BANK_ACCOUNT_TYPE, BANK_ACCOUNT_BALANCE, BANK_ACCOUNT_NUMBER, BASE_LOAN_PROFIT, BASE_LOAN_DEADLINE, \
+    BASE_LOAN_ATLEAST_INCOME
+from db import Database
 
 print('Fakhr Bank Database Configuration')
 print(f'Connecting to database {DB_NAME} on {DB_HOST}:{DB_PORT} with {DB_USER}')
@@ -135,22 +138,48 @@ if res0 and res1 and res2 and res3 and res4:
     admin_password = input('Enter admin password: ')
     pswd_hash = hashlib.sha256(admin_password.encode('utf-8')).hexdigest()
     creation_time = datetime.now()
-    res = db.insert('Users', ('username', 'passwordHash', 'createdAt', 'type'),
+    res_admin = db.insert('Users', ('username', 'passwordHash', 'createdAt', 'type'),
                     (admin_username, pswd_hash, creation_time, 'admin'))
-
-    if res[0]:
+    admin_id = int(db.select('Users', ('userId',))[0][0][0])
+    if res_admin[0]:
         print(f'{CGRN}Admin {admin_username} created successfully. Now you can login to your account !{CEND}')
+        res_account = db.insert('Accounts',
+                                 ('account_number', 'user_id', 'balance', 'type', 'created_at', 'name', 'status',), (
+                                     BANK_ACCOUNT_NUMBER, admin_id, BANK_ACCOUNT_BALANCE, BANK_ACCOUNT_TYPE,
+                                     creation_time,
+                                     BANK_ACCOUNT_NAME, True))
+        if res_account[0]:
+            print(f'{CGRN}Bank account created successfully.{CEND}')
+        else:
+            print(f'{CRED}Bank account creation failed. more details:\n{res_account}{CEND}')
+
+    else:
+        res_account = None, None
+        print(f'{CRED}Admin creation failed. more details:\n{res_admin}{CEND}')
+
+    res_loan = db.insert('Loans', ('profit', 'deadline', 'atLeastIncome'),
+                    (BASE_LOAN_PROFIT, BASE_LOAN_DEADLINE, BASE_LOAN_ATLEAST_INCOME))
+    if res_loan[0]:
+        print(f'{CGRN}Base loan created successfully.{CEND}')
+    else:
+        print(f'{CRED}Base loan creation failed. more details:\n{res_loan}{CEND}')
+
+    if res_admin[0] and res_account[0] and res_loan[0]:
+
         with open('FakhrBank.log', 'w') as file:
             text = f"""
 FAKHR BANK PROJECT REPORT
 
 The project is started at {creation_time}
+
+Bank account name: {BANK_ACCOUNT_NAME}
+Bank account number: {BANK_ACCOUNT_NUMBER}
+Bank account balance: {BANK_ACCOUNT_BALANCE}
+
 Admin: {admin_username}
 Password: {'*' * len(admin_password)} :)
 Password hash: {pswd_hash}
 
 have a good day 😉😉
-            """
+                """
             file.write(text)
-    else:
-        print(f'{CRED}Admin creation failed. more details:\n{res}{CEND}')
