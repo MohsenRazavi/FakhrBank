@@ -581,17 +581,6 @@
                                 </div>
                             </div>
 
-                            {#                            <div class="form-floating my-3">#}
-                            {#                                <input type="text" class="form-control"#}
-                            {#                                       id="dstAccountNum"#}
-                            {#                                       placeholder="1234-5678-9012-3456"#}
-                            {#                                       name="dst_account_number"#}
-                            {#                                       style="height:2px !important;" required>#}
-                            {#                                <label for="floatingInput"#}
-                            {#                                       style="right:0; transform-origin: 100% 0;">شماره#}
-                            {#                                    حساب مقصد(با خط#}
-                            {#                                    تیره)</label>#}
-                            {#                            </div>#}
                             <div class="form-floating my-3">
                                 <input type="text" class="form-control" id="trxAmount"
                                        placeholder="123456789"
@@ -599,6 +588,15 @@
                                        style="height:2px !important;" required>
                                 <label for="floatingInput"
                                        style="right:0; transform-origin: 100% 0;">مبلغ (تومان)</label>
+                            </div>
+
+                            <div class="form-floating my-3">
+                                <input type="password" class="form-control" id="trxPassword"
+                                       placeholder="123456789"
+                                       name="password"
+                                       style="height:2px !important;" required>
+                                <label for="password"
+                                       style="right:0; transform-origin: 100% 0;">کلمه عبور</label>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -625,25 +623,25 @@
                         </div>
                         <form method="POST" action="/new_transaction">
                             <div class="modal-body">
-                                <p>مبلغ(تومان)</p>
+                                <p id="amountTitle">مبلغ(تومان)</p>
                                 <input class="form-control" id='trxAmountConfirm' type="text" value="" name="amount"
                                        aria-label="Disabled input example" readonly>
-                                <p>از حساب</p>
+                                <p class="mt-3 mb-0" id="fromAccount">از حساب</p>
                                 <input class="form-control" type="text" value="" id="trxSrcAccount"
-                                       name="src_account_number"
+                                       name="src_account_number" style="margin-top: 0;"
                                        aria-label="Disabled input example" readonly>
-                                <p>به نام <span id="trxSrcAccountOwner"></span></p>
-                                <p>به حساب</p>
-                                <input class="form-control" id="trxDstAccount" type="text" value=""
-                                       name="dst_account_number"
+                                <p id="srcOwner">به نام <span id="trxSrcAccountOwner"></span></p>
+                                <p class="mt-3 mb-0" id="toAccount">به حساب</p>
+                                <input class="form-control mt-0" id="trxDstAccount" type="text" value=""
+                                       name="dst_account_number" style="margin-top: 0;"
                                        aria-label="Disabled input example" readonly>
-                                <p>به نام <span id="trxDstAccountOwner"></span></p>
+                                <p id="dstOwner">به نام <span id="trxDstAccountOwner"></span></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                         onclick="emptyInputs()">انصراف
                                 </button>
-                                <button type="submit" class="btn btn-success">انجام تراکنش</button>
+                                <button type="submit" id="createTrx" class="btn btn-success">انجام تراکنش</button>
                             </div>
                         </form>
                     </div>
@@ -826,6 +824,7 @@
             let dstAccount3Field = document.getElementById('dstAccountNum3');
             let dstAccount4Field = document.getElementById('dstAccountNum4');
             let amountField = document.getElementById('trxAmount');
+            let password = document.getElementById('trxPassword');
 
             srcAccountField.selectedIndex = 0;
             dstAccount1Field.value = "";
@@ -833,6 +832,7 @@
             dstAccount3Field.value = "";
             dstAccount4Field.value = "";
             amountField.value = "";
+            password.value = "";
         }
 
         function checkTransactionData() {
@@ -843,36 +843,71 @@
             let dst_account3 = document.getElementById('dstAccountNum3').value;
             let dst_account4 = document.getElementById('dstAccountNum4').value;
             let dst_account = dst_account1 + "-" + dst_account2 + "-" + dst_account3 + "-" + dst_account4;
-            {#let dst_account = document.getElementById('dstAccountNum').value;#}
             let amount = document.getElementById('trxAmount').value;
+            let password = document.getElementById('trxPassword').value;
 
-            if (src_account && dst_account && amount) {
+            let amountTag = document.getElementById('trxAmountConfirm');
+            let srcAccountTag = document.getElementById('trxSrcAccount');
+            let dstAccountTag = document.getElementById('trxDstAccount');
+            let dstAccountOwner = document.getElementById('trxDstAccountOwner');
+            let srcAccountOwner = document.getElementById('trxSrcAccountOwner');
+
+            if (src_account != 'انتخاب' && dst_account1 && dst_account2 && dst_account3 && dst_account4 && amount && password) {
                 fetch("/check_transaction", {
                     method: "POST",
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         "src_account": src_account,
                         "dst_account": dst_account,
-                        "amount": amount
+                        "amount": amount,
+                        "password": password,
                     })
                 })
                     .then(function (response) {
                         return response.json();
                     }).then(function (resp) {
-                    if (resp['status'] == 'Ok') {
-                        let amountTag = document.getElementById('trxAmountConfirm');
-                        let srcAccountTag = document.getElementById('trxSrcAccount');
-                        let dstAccountTag = document.getElementById('trxDstAccount');
-                        let dstAccountOwner = document.getElementById('trxDstAccountOwner');
-                        let srcAccountOwner = document.getElementById('trxSrcAccountOwner');
 
-                        amountTag.value = resp['amount'];
-                        srcAccountTag.value = resp['src_account_number'];
-                        dstAccountTag.value = resp['dst_account_number'];
-                        srcAccountOwner.innerHTML = resp['src_account_owner'];
-                        dstAccountOwner.innerHTML = resp['dst_account_owner'];
+                    amountTag.value = resp['amount'];
+                    srcAccountTag.value = resp['src_account_number'];
+                    dstAccountTag.value = resp['dst_account_number'];
+                    srcAccountOwner.innerHTML = resp['src_account_owner'];
+                    dstAccountOwner.innerHTML = resp['dst_account_owner'];
+
+                    if (resp['status'] == 'NEB') {
+                        let createTrxButton = document.getElementById('createTrx');
+                        createTrxButton.innerHTML = 'موجودی این حساب کافی نیست';
+                        createTrxButton.classList.remove('btn-success');
+                        createTrxButton.classList.add('btn-secondary', 'disabled');
+                    } else if (resp['status'] == 'DNF') {
+                        let createTrxButton = document.getElementById('createTrx');
+                        createTrxButton.innerHTML = 'حساب مقصد وجود ندارد';
+                        createTrxButton.classList.remove('btn-success');
+                        createTrxButton.classList.add('btn-secondary', 'disabled');
+                    } else if (resp['status'] == 'WP') {
+                        let createTrxButton = document.getElementById('createTrx');
+                        createTrxButton.innerHTML = 'کلمه عبور اشتباه است';
+                        createTrxButton.classList.remove('btn-success');
+                        createTrxButton.classList.add('btn-secondary', 'disabled');
                     }
+
                 });
+            } else {
+                amountTag.style.display = 'none';
+                srcAccountTag.style.display = 'none';
+                dstAccountTag.style.display = 'none';
+                dstAccountOwner.style.display = 'none';
+                srcAccountOwner.style.display = 'none';
+                document.getElementById('amountTitle').style.display = 'none';
+                document.getElementById('fromAccount').style.display = 'none';
+                document.getElementById('srcOwner').style.display = 'none';
+                document.getElementById('toAccount').style.display = 'none';
+                document.getElementById('dstOwner').style.display = 'none';
+
+                let createTrxButton = document.getElementById('createTrx');
+                createTrxButton.innerHTML = 'اطلاعات وارد شده ناقص است';
+                createTrxButton.classList.remove('btn-success');
+                createTrxButton.classList.add('btn-secondary', 'disabled');
+
             }
 
         }

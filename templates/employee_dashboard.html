@@ -78,7 +78,7 @@
                     <div class="card-body">
                         <h5 class="card-title">تراکنش ها</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary">تعداد کل تراکنش های انجام شده</h6>
-                        <p class="card-text display-1 text-center">256+</p>
+                        <p class="card-text display-1 text-center">{{ transactions_count }}</p>
                     </div>
                 </div>
             </div>
@@ -803,8 +803,13 @@
         </div>
 
     </div>
-    <div id="Transactions" style="display: none;">
-        <h4 class="mt-4">لیست تراکنش ها</h4>
+     <div id="Transactions" style="display: none;">
+        <div class="row">
+            <div class="col-10">
+                <h4 class="mt-4">لیست تراکنش ها</h4>
+            </div>
+        </div>
+
         <div class="row my-2">
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
@@ -854,33 +859,44 @@
                     <th scope="col">شماره تراکنش</th>
                     <th scope="col">شماره حساب مبدا</th>
                     <th scope="col">شماره حساب مقصد</th>
-                    <th scope="col">مبلغ</th>
+                    <th scope="col">مبلغ (تومان)</th>
                     <th scope="col">زمان</th>
                     <th scope="col">وضعیت</th>
-                    <th scope="col">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2652659</td>
-                    <td>6659-5265-1639-1369</td>
-                    <td>6659-5265-1639-1369</td>
-                    <td>12000000</td>
-                    <td>سالروز فرار شاه</td>
-                    <td>موفق</td>
-                    <td>
-                        <a type="button" class="btn btn-outline-primary btn-sm">مشاهده</a>
-                        <a type="button" class="btn btn-outline-danger btn-sm">حذف</a>
-                    </td>
-                </tr>
+                {% if transactions %}
+                    {% for transaction in transactions %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ transaction.transaction_id }}</td>
+                            <td {% if transaction.get_src_account() %} data-bs-toggle="tooltip"
+                                                                       data-bs-placement="top"
+                                                                       data-bs-title="به نام {{ transaction.get_src_account().get_owner() }}"{% endif %}>{{ transaction.get_src_account().account_number }}
+                            </td>
+                            <td data-bs-toggle="tooltip" data-bs-placement="top"
+                                data-bs-title="به نام {{ transaction.get_dst_account().get_owner() }}">{{ transaction.get_dst_account().account_number }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.get_created_at() }}</td>
+                            <td>
+                                {% if transaction.status %}
+                                    <h5><span class="badge bg-success">موفق</span></h5>
+                                {% else %}
+                                    <h5><span class="badge bg-danger">ناموفق</span></h5>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
-
+            {% if not transactions %}
+                <p class="text-center text-muted">تراکنشی یافت نشد !</p>
+            {% endif %}
         </div>
 
     </div>
-    <div id="Profile" style="display: none;">
+   <div id="Profile" style="display: none;">
         <h5>مشخصات مدیر</h5>
         <form method="POST" action="/update_profile/">
             <div class="form-floating mb-3">

@@ -140,6 +140,7 @@ def admin_panel():
             employees = db.select('Users', filters="type = 'employee'", Model=User)[0]
             customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
             accounts = db.select('Accounts', Model=Account)[0]
+            transactions = db.select('Transactions', Model=Transaction)[0]
             context = {
                 'user': user,
                 'employees': employees,
@@ -148,6 +149,8 @@ def admin_panel():
                 'customers_count': len(customers),
                 'accounts': accounts,
                 'accounts_count': len(accounts),
+                'transactions': transactions,
+                'transactions_count': len(transactions)
             }
             return render_template('./admin_dashboard.html', **context)
         else:  # user is not admin
@@ -165,6 +168,7 @@ def employee_panel():
         user = User.from_dict(session['user'])
         customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
         accounts = db.select('Accounts', Model=Account)[0]
+        transactions = db.select('Transactions', Model=Transaction)[0]
         if user.type == 'employee':
             context = {
                 'user': user,
@@ -172,6 +176,8 @@ def employee_panel():
                 'customers_count': len(customers),
                 'accounts': accounts,
                 'accounts_count': len(accounts),
+                'transactions': transactions,
+                'transactions_count': len(transactions)
             }
             return render_template('./employee_dashboard.html', **context)
         else:  # user is not employee
@@ -188,7 +194,9 @@ def customer_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
         accounts = db.select('Accounts', filters=f"userId = {user.user_id}", Model=Account)[0]
-        transaction_records = db.exact_exec(f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId WHERE userId = {user.user_id};", fetch=True)[1]
+        transaction_records = db.exact_exec(
+            f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId OR Transactions.dstAccount = Accounts.accountId WHERE userId = {user.user_id};",
+            fetch=True)[1]
         transactions = []
         for record in transaction_records:
             transactions.append(Transaction(*record))
@@ -472,6 +480,8 @@ def check_transaction():
             src_account_number = request.json['src_account'].split(' ')[0]
             dst_account_number = request.json['dst_account']
             amount = int(request.json['amount'])
+            password = request.json['password']
+            user_password = db.select('Users', columns=('passwordHash',), filters=f"userId = {user.user_id}")[0][0][0]
             src_account_obj = \
                 db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
             dst_account = \
@@ -479,17 +489,27 @@ def check_transaction():
             if dst_account:
                 dst_account_obj = dst_account[0]
             else:
-                flash('حساب مقصد یافت نشد', 'danger')
-                return redirect(url_for('customer_panel'))
+                return jsonify(
+                    {'status': 'DNF', 'dst_account_owner': None, 'amount': amount,
+                     'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
+                     'src_account_owner': src_account_obj.get_owner().__repr__()})
+
+            if hashlib.sha256(password.encode('utf-8')).hexdigest() != user_password:
+                return jsonify(
+                    {'status': 'WP', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
+                     'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
+                     'src_account_owner': src_account_obj.get_owner().__repr__()})
+
             if src_account_obj.balance >= amount:
                 return jsonify(
                     {'status': 'Ok', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
                      'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
                      'src_account_owner': src_account_obj.get_owner().__repr__()})
             else:
-                flash('موجودی حساب انتخاب شده کافی نیست', 'danger')
-                return redirect(url_for('customer_panel'))
-
+                return jsonify(
+                    {'status': 'NEB', 'dst_account_owner': dst_account_obj.get_owner().__repr__(), 'amount': amount,
+                     'src_account_number': src_account_number, 'dst_account_number': dst_account_number,
+                     'src_account_owner': src_account_obj.get_owner().__repr__()})
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
     else:  # user not authenticated
