@@ -145,7 +145,7 @@ if res0 and res1 and res2 and res3 and res4:
     if res_admin[0]:
         print(f'{CGRN}Admin {admin_username} created successfully. Now you can login to your account !{CEND}')
         res_account = db.insert('Accounts',
-                                 ('accountNumber', 'userId', 'balance', 'type', 'created_at', 'name', 'status',), (
+                                 ('accountNumber', 'userId', 'balance', 'type', 'createdAt', 'name', 'status',), (
                                      BANK_ACCOUNT_NUMBER, admin_id, BANK_ACCOUNT_BALANCE, BANK_ACCOUNT_TYPE,
                                      creation_time,
                                      BANK_ACCOUNT_NAME, True))
