@@ -76,38 +76,24 @@
         </div>
         <div class="row">
             <p class="h3 mx-3 mt-4">وام ها :</p>
-            <div class="col-4">
-                <div class="card card_hover">
-                    <div class="card-body">
-                        <h5 class="card-title">۱۲۰ میلیون تومان | ۱۲ قسط</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">۵ قسط پرداخت شده</h6>
-                        <span>تصفیه شده : </span>
-                        <p class="card-text h3 text-center">20 میلیون تومان</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example"
-                             aria-valuenow="75"
-                             aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                 style="width: {{ 20/120*100 }}%"></div>
+            {% for account_loan in account_loans %}
+                <div class="col-4">
+                    <div class="card card_hover">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ account_loan.get_loan() }}</h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary">{{ (account_loan.paid / account_loan.amount * account_loan.get_loan().dead_line)|int }} قسط پرداخت شده</h6>
+                            <span>مبلغ کل وام:</span>
+                            <p class="card-text h3 text-center" data-bs-toggle="tooltip" data-bs-title="مبلغ کل وام با احتساب {{ account_loan.get_loan().profit }} سود : {{ ((100+account_loan.get_loan().profit)/100 * account_loan.amount)|int }}">{{ account_loan.amount }} تومان</p>
+                            <div class="progress" role="progressbar" aria-label="Animated striped example"
+                                 aria-valuenow="75" data-bs-toggle="tooltip" data-bs-title="مبلغ کل پرداخت شده تا کنون: {{ account_loan.paid }} تومان" data-bs-placement="bottom"
+                                 aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                     style="width: {{ (account_loan.paid / account_loan.amount * account_loan.get_loan().dead_line)*100 + 1 }}%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-4">
-                <div class="card card_hover">
-                    <div class="card-body">
-                        <h5 class="card-title">150 میلیون تومان | ۱۲ قسط</h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">۵ قسط پرداخت شده</h6>
-                        <span>تصفیه شده : </span>
-                        <p class="card-text h3 text-center">20 میلیون تومان</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example"
-                             aria-valuenow="75"
-                             aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                 style="width: {{ 20/120*100 }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
         <div class="row">
             <div class="col">
@@ -376,7 +362,7 @@
                             <p class="mb-0">نوع وام</p>
                             <div class="input-group mb-3">
                                 <select class="form-select" id="loanType">
-                                    <option selected disabled>انتخاب</option>
+                                    <option value="0" selected disabled>انتخاب</option>
                                     {% for loan in loans %}
                                         <option value="{{ loan.loan_id }}">{{ loan }}</option>
                                     {% endfor %}
@@ -385,7 +371,7 @@
                             <p class="mb-0 mt-3">حساب</p>
                             <div class="input-group mb-3">
                                 <select class="form-select" id="accountLoan">
-                                    <option selected disabled>انتخاب</option>
+                                    <option value="0" selected disabled>انتخاب</option>
                                     {% for account in accounts %}
                                         <option value="{{ account.account_id }}">{{ account }}</option>
                                     {% endfor %}
@@ -398,9 +384,18 @@
                                        style="right:0; transform-origin: 100% 0;">مبلغ(تومان)</label>
                             </div>
 
+                            <div class="form-floating my-3">
+                                <input type="password" class="form-control" id="loanPassword"
+                                       placeholder="loanAmount">
+                                <label for="loanPassword"
+                                       style="right:0; transform-origin: 100% 0;">کلمه عبور</label>
+                            </div>
+
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="emptyInputs()">انصراف
+                            </button>
                             <button type="button" class="btn btn-primary" onclick="checkLoan()"
                                     data-bs-toggle="modal"
                                     data-bs-target="#loanModal">بررسی
@@ -534,7 +529,7 @@
                                 data-bs-placement="top"
                                 data-bs-title="بدهی کل : {{ account_loan.get_amount_with_profit() }} تومان">{{ account_loan.amount }}</td>
                             <td>{{ account_loan.paid }}</td>
-                            <td>{{ account_loan.paid // account_loan.amount }}</td>
+                            <td>{{ '%0.2f'| format(account_loan.paid *100 / account_loan.amount|float) }}</td>
                             <td>
                                 {% if account_loan.status == 0 %}
                                     <span class="badge text-bg-warning">
@@ -556,7 +551,66 @@
                             </td>
                             <td>
                                 {% if account_loan.status == 1 %}
-                                    <button class="btn btn-outline-primary btn-sm">پرداخت قسط</button>
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#payInstalmentModal{{ account_loan.account_loan_id }}">
+                                        پرداخت قسط
+                                    </button>
+                                    <div class="modal fade" id="payInstalmentModal{{ account_loan.account_loan_id }}"
+                                         data-bs-backdrop="static"
+                                         data-bs-keyboard="false"
+                                         tabindex="-1"
+                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">پرداخت
+                                                        قسط</h1>
+                                                </div>
+                                                <form method="POST" action="/pay_instalment">
+                                                    <div class="modal-body" id="trxConfirmModalBody">
+                                                        <p id="amountTitle">مبلغ (تومان)</p>
+                                                        <input class="form-control" type="text"
+                                                               value="{{ account_loan.get_instalment() }}"
+                                                               aria-label="Disabled input example" readonly>
+                                                        <p class="mt-3 mb-0" id="fromAccount">از حساب</p>
+                                                        <input class="form-control" type="text"
+                                                               value="{{ account_loan.get_account().account_number }}"
+                                                               style="margin-top: 0;"
+                                                               aria-label="Disabled input example" readonly>
+                                                        <p>به نام
+                                                            <span>{{ account_loan.get_account().get_owner() }}</span>
+                                                        </p>
+                                                        <p class="mt-3 mb-0"> بابت وام "{{ account_loan.get_loan() }}"
+                                                            به مبلغ : </p>
+                                                        <input class="form-control mt-0" type="text"
+                                                               value="{{ account_loan.amount }} تومان"
+                                                               style="margin-top: 0;"
+                                                               aria-label="Disabled input example" readonly>
+                                                        <input type="hidden" name="account_loan_id"
+                                                               value="{{ account_loan.account_loan_id }}">
+                                                        <p>
+                                                        </p>
+                                                        <p class="mt-3 mb-0">کلمه عبور</p>
+                                                        <input class="form-control mt-0" type="password"
+                                                               name="instalmentPassword"
+                                                               style="margin-top: 0;"
+                                                        >
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal"
+                                                                onclick="emptyInputs()">انصراف
+                                                        </button>
+                                                        <button type="submit" id="payInstalment"
+                                                                class="btn btn-success">
+                                                            پرداخت قسط
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                                 {% endif %}
                             </td>
@@ -863,62 +917,87 @@
             let loan_type_field = document.getElementById('loanType');
             let loan_id = loan_type_field.options[loan_type_field.selectedIndex].value;
             let loan_amount = document.getElementById('loanAmount').value;
+            let loan_password = document.getElementById('loanPassword').value;
 
-            fetch("/check_loan", {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    'account_id': account_id,
-                    'loan_id': loan_id,
-                    'loan_amount': loan_amount,
+            if (account_id != '0' && loan_id != '0' && loan_amount && loan_password) {
+                fetch("/check_loan", {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        'account_id': account_id,
+                        'loan_id': loan_id,
+                        'loan_amount': loan_amount,
+                        'loan_password': loan_password
+                    })
                 })
-            })
-                .then(function (response) {
-                    return response.json();
-                }).then(function (resp) {
-                if (resp['status'] == 'Ok') {
-                    document.getElementById('loanAmountConfirm').value = resp['amount'];
-                    document.getElementById('loanTypeConfirm').value = resp['loan'] + "  (" + resp['amount_with_profit'] + " تومان )  ";
-                    document.getElementById('loanTypeConfirmH').value = resp['loan_id'];
-                    document.getElementById('loanAccountConfirm').value = resp['account_number'];
-                    document.getElementById('loanOwnerName').innerHTML = resp['owner'];
-                    let message = document.getElementById('loanMessage');
-                    message.innerHTML = "شما شرایط دریافت وام را دارا هستید !";
-                    message.style.display = 'block';
-                } else if (resp['status'] == 'NEI') {
-                    document.getElementById('loanConfirmModalBody').innerHTML = "جهت ثبت درخواست گرفتن این وام،‌ حداقل واریزی یک ماه اخیر به حساب " + resp['account'] + " باید " + resp['at_least_income'] + " تومان باشد. این مقدار در حال حاضر " + resp['sum_of_settlements'] + " تومان است.";
-                    document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
-                    document.getElementById('creatLoan').classList.remove('btn-success');
-                    document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
-                } else if (resp['status'] == 'MLA') {
-                    document.getElementById('loanConfirmModalBody').innerHTML = "حداکثر مقداری که میتوانید از این وام درخواست دهید " + resp['max_amount'] + " تومان است. مبلغ مورد درخواست شما " + resp['amount'] + " تومان میباشد.";
-                    document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
-                    document.getElementById('creatLoan').classList.remove('btn-success');
-                    document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
-                }
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (resp) {
+                    if (resp['status'] == 'Ok') {
+                        document.getElementById('loanAmountConfirm').value = resp['amount'];
+                        document.getElementById('loanTypeConfirm').value = resp['loan'] + "  (" + resp['amount_with_profit'] + " تومان )  ";
+                        document.getElementById('loanTypeConfirmH').value = resp['loan_id'];
+                        document.getElementById('loanAccountConfirm').value = resp['account_number'];
+                        document.getElementById('loanOwnerName').innerHTML = resp['owner'];
+                        let message = document.getElementById('loanMessage');
+                        message.innerHTML = "شما شرایط دریافت وام را دارا هستید !";
+                        message.style.display = 'block';
+                    } else if (resp['status'] == 'NEI') {
+                        document.getElementById('loanConfirmModalBody').innerHTML = "جهت ثبت درخواست گرفتن این وام،‌ حداقل واریزی یک ماه اخیر به حساب " + resp['account'] + " باید " + resp['at_least_income'] + " تومان باشد. این مقدار در حال حاضر " + resp['sum_of_settlements'] + " تومان است.";
+                        document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
+                        document.getElementById('creatLoan').classList.remove('btn-success');
+                        document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
+                        emptyInputs()
+                    } else if (resp['status'] == 'MLA') {
+                        document.getElementById('loanConfirmModalBody').innerHTML = "حداکثر مقداری که میتوانید از این وام درخواست دهید " + resp['max_amount'] + " تومان است. مبلغ مورد درخواست شما " + resp['amount'] + " تومان میباشد.";
+                        document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
+                        document.getElementById('creatLoan').classList.remove('btn-success');
+                        document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
+                        emptyInputs()
+                    } else if (resp['status'] == 'WP') {
+                        document.getElementById('loanConfirmModalBody').innerHTML = "کلمه عبور اشتباه است";
+                        document.getElementById('creatLoan').innerHTML = 'خطا';
+                        document.getElementById('creatLoan').classList.remove('btn-success');
+                        document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
+                        emptyInputs()
+                    }
+                });
+            } else {
+                document.getElementById('loanConfirmModalBody').innerHTML = "اطلاعات وارد شده ناقص و یا اشتباه است";
+                document.getElementById('creatLoan').innerHTML = 'خطا';
+                document.getElementById('creatLoan').classList.remove('btn-success');
+                document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
+                emptyInputs()
+            }
 
-            });
         }
 
         function emptyInputs() {
-            document.getElementById('srcAccountNum').selectedIndex = 0;
-            document.getElementById('dstAccountNum1').value = "";
-            document.getElementById('dstAccountNum2').value = "";
-            document.getElementById('dstAccountNum3').value = "";
-            document.getElementById('dstAccountNum4').value = "";
-            document.getElementById('trxAmount').value = "";
-            document.getElementById('trxPassword').value = "";
+            location.reload()
+            /*
+            try {
+                document.getElementById('srcAccountNum').selectedIndex = 0;
+                document.getElementById('dstAccountNum1').value = "";
+                document.getElementById('dstAccountNum2').value = "";
+                document.getElementById('dstAccountNum3').value = "";
+                document.getElementById('dstAccountNum4').value = "";
+                document.getElementById('trxAmount').value = "";
+                document.getElementById('trxPassword').value = "";
 
-            document.getElementById('loanType').selectedIndex = 0;
-            document.getElementById('accountLoan').selectedIndex = 0;
-            document.getElementById('loanAmount').value = "";
-            document.getElementById('loanMessage').style.display = 'none';
-            document.getElementById('loanAmountConfirm').value = "";
-            document.getElementById('loanTypeConfirm').value = "";
-            document.getElementById('loanTypeConfirmH').value = "";
-            document.getElementById('loanAccountConfirm').value = "";
-            document.getElementById('loanOwnerName').innerHTML = "";
-
+                document.getElementById('loanType').selectedIndex = 0;
+                document.getElementById('accountLoan').selectedIndex = 0;
+                document.getElementById('loanAmount').value = "";
+                document.getElementById('loanPassword').value = "";
+                document.getElementById('loanMessage').style.display = 'none';
+                document.getElementById('loanAmountConfirm').value = "";
+                document.getElementById('loanTypeConfirm').value = "";
+                document.getElementById('loanTypeConfirmH').value = "";
+                document.getElementById('loanAccountConfirm').value = "";
+                document.getElementById('loanOwnerName').innerHTML = "";
+            } catch (e) {
+            }
+            console.log('all inputs cleared');
+*/
         }
 
         function checkTransactionData() {

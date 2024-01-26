@@ -247,3 +247,7 @@ class AccountLoan:
             return True
         else:
             print(res)
+
+    def get_instalment(self):
+        loan = self.get_loan()
+        return int((100+loan.profit)/100 * self.amount // loan.dead_line)

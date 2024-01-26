@@ -58,7 +58,7 @@
                     <div class="card-body">
                         <h5 class="card-title">حساب ها</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary">تعداد حساب های بانکی فعال</h6>
-                        <p class="card-text display-1 text-center">{{ accounts_count }}</p>
+                        <p class="card-text display-1 text-center">{{ active_accounts_count }}</p>
                     </div>
                 </div>
             </div>
@@ -84,6 +84,16 @@
             </div>
         </div>
 
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card card_hover my-3">
+                <div class="card-body">
+                    <p class="card-text" style="display: inline;">موجودی حساب بانک : {{ bank_account.balance }}
+                        تومان</p>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="Customers" style="display: none;">
         <div class="row">

@@ -143,17 +143,20 @@ def admin_panel():
             transactions = db.select('Transactions', Model=Transaction)[0]
             loans = db.select('Loans', Model=Loan)[0]
             account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
-            bank_account = db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
+            bank_account = db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][
+                0]
             try:
                 debtors_count = \
-                    db.exact_exec(f"SELECT COUNT(DISTINCT(accountId)) FROM AccountLoans WHERE status = 1", fetch=True)[1][0][
+                    db.exact_exec(f"SELECT COUNT(DISTINCT(accountId)) FROM AccountLoans WHERE status = 1", fetch=True)[
+                        1][0][
                         0]
                 print(debtors_count)
             except IndexError:
                 debtors_count = 0
             try:
                 sum_of_debts = \
-                    db.exact_exec(f"SELECT SUM(amount-paid) AS Debt FROM AccountLoans WHERE status = 1", fetch=True)[1][0][0]
+                    db.exact_exec(f"SELECT SUM(amount-paid) AS Debt FROM AccountLoans WHERE status = 1", fetch=True)[1][
+                        0][0]
             except IndexError:
                 sum_of_debts = 0
 
@@ -172,7 +175,8 @@ def admin_panel():
                 'account_loans_count': len(account_loans),
                 'debtors_count': debtors_count,
                 'sum_of_debts': sum_of_debts,
-                'bank_account': bank_account
+                'bank_account': bank_account,
+                'active_accounts_count': len([account for account in accounts if account.status])
             }
             return render_template('./admin_dashboard.html', **context)
         else:  # user is not admin
@@ -193,6 +197,8 @@ def employee_panel():
         transactions = db.select('Transactions', Model=Transaction)[0]
         loans = db.select('Loans', Model=Loan)[0]
         account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
+        bank_account = db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][
+            0]
         if user.type == 'employee':
             context = {
                 'user': user,
@@ -204,7 +210,9 @@ def employee_panel():
                 'transactions_count': len(transactions),
                 'loans': loans,
                 'account_loans': account_loans,
-                'account_loans_count': len(account_loans)
+                'account_loans_count': len(account_loans),
+                'bank_account': bank_account,
+                'active_accounts_count': len([account for account in accounts if account.status])
             }
             return render_template('./employee_dashboard.html', **context)
         else:  # user is not employee
@@ -598,17 +606,24 @@ def check_loan():
             loan_id = request.json['loan_id']
             account_id = request.json['account_id']
             amount = int(request.json['loan_amount'])
-
-            loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
-            account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
-            today = datetime.datetime.today().date()
-            if today.month == 1:
-                last_month_date = today.replace(month=12)
-            else:
-                last_month_date = today.replace(month=today.month - 1)
-            sum_of_settlements = db.exact_exec(
-                f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt <= TIMESTAMP '{last_month_date}';",
+            password = request.json['loan_password']
+            pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            customer_password = db.exact_exec(
+                f"SELECT passwordHash FROM Users INNER JOIN Accounts ON Users.userId = Accounts.userId WHERE accountId = '{account_id}';",
                 fetch=True)[1][0][0]
+            if customer_password != pswd_hash:
+                return jsonify({'status': 'WP'})
+            else:
+                loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
+                account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
+                today = datetime.datetime.today().date()
+                if today.month == 1:
+                    last_month_date = today.replace(month=12)
+                else:
+                    last_month_date = today.replace(month=today.month - 1)
+                sum_of_settlements = db.exact_exec(
+                    f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt <= TIMESTAMP '{last_month_date}';",
+                    fetch=True)[1][0][0]
             try:
                 sum_of_settlements = int(sum_of_settlements)
             except TypeError:
@@ -731,17 +746,18 @@ def accept_loan():
         if user.type in ('admin', 'employee'):
             account_loan_id = request.form['account_loan_id']
             account_loan = \
-            db.select('AccountLoans', filters=f"accountLoanId = '{account_loan_id}'", Model=AccountLoan)[0][0]
+                db.select('AccountLoans', filters=f"accountLoanId = '{account_loan_id}'", Model=AccountLoan)[0][0]
             if account_loan.status == 0:
                 account_loan.status = 1
                 account_loan.acceptor = user.user_id
                 account_loan.save()
                 bank_account = \
-                db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
-                customer_account = db.select('Accounts', filters=f"accountId = '{account_loan.account_id}'", Model=Account)[0][0]
+                    db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
+                customer_account = \
+                    db.select('Accounts', filters=f"accountId = '{account_loan.account_id}'", Model=Account)[0][0]
 
                 bank_account.balance -= account_loan.amount
-                customer_account.balance -= account_loan.amount
+                customer_account.balance += account_loan.amount
 
                 bank_account.save()
                 customer_account.save()
@@ -750,7 +766,8 @@ def accept_loan():
                 status = True
 
                 res = db.insert('Transactions', ('srcAccount', 'dstAccount', 'amount', 'status', 'createdAt'),
-                                (bank_account.account_id, customer_account.account_id, account_loan.amount, status, created_at))
+                                (bank_account.account_id, customer_account.account_id, account_loan.amount, status,
+                                 created_at))
                 if res[0]:
                     flash('وام با موفقیت تایید شد', 'success')
                     if user.type == 'admin':
@@ -768,6 +785,59 @@ def accept_loan():
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
 
+
+@app.route('/pay_instalment', methods=['POST'])
+def pay_instalment():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'customer':
+            account_loan_id = request.form['account_loan_id']
+            password = request.form['instalmentPassword']
+            account_loan = \
+                db.select('AccountLoans', filters=f"accountLoanId = '{account_loan_id}'", Model=AccountLoan)[0][0]
+            customer_password = db.exact_exec(
+                f"SELECT passwordHash FROM Users INNER JOIN Accounts ON Users.userId = Accounts.userId WHERE accountId = '{account_loan.get_account().account_id}';",
+                fetch=True)[1][0][0]
+            pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            if pswd_hash == customer_password:
+                instalment_amount = account_loan.get_instalment()
+                bank_account = \
+                    db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
+                customer_account = \
+                    db.select('Accounts', filters=f"accountId = '{account_loan.account_id}'", Model=Account)[0][0]
+
+                bank_account.balance += instalment_amount
+                customer_account.balance -= instalment_amount
+                account_loan.paid += instalment_amount
+
+                if account_loan.paid == account_loan.amount:
+                    account_loan.status = 2
+
+                bank_account.save()
+                customer_account.save()
+                account_loan.save()
+
+                created_at = datetime.datetime.now()
+                status = True
+
+                res = db.insert('Transactions', ('srcAccount', 'dstAccount', 'amount', 'status', 'createdAt'),
+                                (bank_account.account_id, customer_account.account_id, instalment_amount, status,
+                                 created_at))
+                if res[0]:
+                    flash('با موفقیت پرداخت شد', 'success')
+                    return redirect(url_for('customer_panel'))
+                else:
+                    print(res)
+            else:
+                flash('کلمه عبور اشتباه است', 'danger')
+                return redirect(url_for('customer_panel'))
+
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(debug=True)
