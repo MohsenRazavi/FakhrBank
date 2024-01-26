@@ -116,7 +116,7 @@
                 <div class="card card_hover my-3">
                     <div class="card-body">
                         <p class="card-text" style="display: inline;">تعداد مشتریان بدهکار : {{ debtors_count }}
-                            </p>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1204,9 +1204,9 @@
                             <td>{{ account_loan.get_loan() }}</td>
                             <td data-bs-toggle="tooltip"
                                 data-bs-placement="top"
-                                data-bs-title="بدهی کل : {{ account_loan.get_amount_with_profit() }} تومان">{{ account_loan.amount }}</td>
+                                data-bs-title="مبلغ کل وام با احتساب {{ account_loan.get_loan().profit }} سود : {{ account_loan.get_amount_with_profit() }}">{{ account_loan.amount }}</td>
                             <td>{{ account_loan.paid }}</td>
-                            <td>{{ account_loan.paid // account_loan.amount }}</td>
+                            <td>{{ '%0.2f'| format(account_loan.paid *100 / account_loan.get_amount_with_profit()|float) }}</td>
                             <td>
                                 {% if account_loan.status == 0 %}
                                     <span class="badge text-bg-warning">
@@ -1243,7 +1243,7 @@
                 </tbody>
             </table>
 
-            {% if not transactions %}
+            {% if not account_loans %}
                 <p class="text-center text-muted">وامی یافت نشد !</p>
             {% endif %}
 

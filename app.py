@@ -155,8 +155,11 @@ def admin_panel():
                 debtors_count = 0
             try:
                 sum_of_debts = \
-                    db.exact_exec(f"SELECT SUM(amount-paid) AS Debt FROM AccountLoans WHERE status = 1", fetch=True)[1][
-                        0][0]
+                    sum_of_debts = db.exact_exec(
+                    f"SELECT SUM(amount*(100+profit)/100-paid) AS Debt FROM AccountLoans INNER JOIN Loans ON AccountLoans.loanId = Loans.loanId WHERE AccountLoans.status = 1;",
+                    fetch=True)[1][0][0]
+                if not sum_of_debts:
+                    sum_of_debts = 0
             except IndexError:
                 sum_of_debts = 0
 
@@ -233,6 +236,12 @@ def customer_panel():
             f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId OR Transactions.dstAccount = Accounts.accountId WHERE userId = {user.user_id};",
             fetch=True)[1]
         loans = db.select('Loans', filters=f"status = 'true'", Model=Loan)[0]
+        sum_of_debts = db.exact_exec(
+            f"SELECT SUM(amount*(100+profit)/100-paid) AS Debt FROM AccountLoans INNER JOIN Loans ON AccountLoans.loanId = Loans.loanId WHERE AccountLoans.status = 1 AND accountId IN (SELECT accountId FROM Accounts WHERE userId = {user.user_id});",
+            fetch=True)[1][0][0]
+        print(sum_of_debts)
+        if not sum_of_debts:
+            sum_of_debts = 0
         transactions = []
         for record in transaction_records:
             transactions.append(Transaction(*record))
@@ -240,9 +249,13 @@ def customer_panel():
         account_loans_records = db.exact_exec(
             f"SELECT AccountLoans.* FROM AccountLoans INNER JOIN Accounts ON AccountLoans.accountId = Accounts.accountId WHERE userId = {user.user_id};",
             fetch=True)[1]
+        paying_account_loans = []
         account_loans = []
         for record in account_loans_records:
-            account_loans.append(AccountLoan(*record))
+            if record[-1] == 1:
+                paying_account_loans.append(AccountLoan(*record))
+            else:
+                account_loans.append(AccountLoan(*record))
         if user.type == 'customer':
             context = {
                 'user': user,
@@ -250,6 +263,8 @@ def customer_panel():
                 'transactions': transactions,
                 'loans': loans,
                 'account_loans': account_loans,
+                'sum_of_debts': sum_of_debts,
+                'paying_account_loans': paying_account_loans
             }
             return render_template('./customer_dashboard.html', **context)
         else:  # user is not customer
@@ -629,7 +644,8 @@ def check_loan():
             except TypeError:
                 sum_of_settlements = 0
 
-            if sum_of_settlements >= loan.at_least_income and amount <= 2 * sum_of_settlements:
+            if (sum_of_settlements >= loan.at_least_income and amount <= 2 * sum_of_settlements) or (
+                    loan.at_least_income == 0):
                 return jsonify(
                     {'status': 'Ok', 'loan': loan.__repr__(), 'account_number': account.account_number,
                      'amount': amount,
@@ -810,7 +826,7 @@ def pay_instalment():
                 customer_account.balance -= instalment_amount
                 account_loan.paid += instalment_amount
 
-                if account_loan.paid == account_loan.amount:
+                if account_loan.paid == account_loan.get_amount_with_profit():
                     account_loan.status = 2
 
                 bank_account.save()
@@ -838,6 +854,7 @@ def pay_instalment():
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

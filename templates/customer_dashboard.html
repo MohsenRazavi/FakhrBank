@@ -40,6 +40,9 @@
     <div id="Dashboard">
         <div class="row mb-3">
             <p class="h3 mx-3">حساب ها :</p>
+            {% if not accounts %}
+                <p class="text-muted">حسابی یافت نشد</p>
+            {% endif %}
             {% for account in accounts %}
                 <div class="col-5 my-2">
                     <div class="credit_card card_hover"
@@ -76,34 +79,43 @@
         </div>
         <div class="row">
             <p class="h3 mx-3 mt-4">وام ها :</p>
-            {% for account_loan in account_loans %}
-                <div class="col-4">
-                    <div class="card card_hover">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ account_loan.get_loan() }}</h5>
-                            <h6 class="card-subtitle mb-2 text-body-secondary">{{ (account_loan.paid / account_loan.amount * account_loan.get_loan().dead_line)|int }} قسط پرداخت شده</h6>
-                            <span>مبلغ کل وام:</span>
-                            <p class="card-text h3 text-center" data-bs-toggle="tooltip" data-bs-title="مبلغ کل وام با احتساب {{ account_loan.get_loan().profit }} سود : {{ ((100+account_loan.get_loan().profit)/100 * account_loan.amount)|int }}">{{ account_loan.amount }} تومان</p>
-                            <div class="progress" role="progressbar" aria-label="Animated striped example"
-                                 aria-valuenow="75" data-bs-toggle="tooltip" data-bs-title="مبلغ کل پرداخت شده تا کنون: {{ account_loan.paid }} تومان" data-bs-placement="bottom"
-                                 aria-valuemin="0" aria-valuemax="100">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                     style="width: {{ (account_loan.paid / account_loan.amount * account_loan.get_loan().dead_line)*100 + 1 }}%"></div>
+            {% if  paying_account_loans %}
+                {% for account_loan in paying_account_loans %}
+                        <div class="col-4">
+                            <div class="card card_hover">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ account_loan.get_loan() }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ (account_loan.paid / account_loan.amount * account_loan.get_loan().dead_line)|int }}
+                                        قسط پرداخت شده</h6>
+                                    <span>مبلغ کل وام:</span>
+                                    <p class="card-text h3 text-center" data-bs-toggle="tooltip"
+                                       data-bs-title="مبلغ کل وام با احتساب {{ account_loan.get_loan().profit }} سود : {{ account_loan.get_amount_with_profit() }}">{{ account_loan.amount }}
+                                        تومان</p>
+                                    <div class="progress" role="progressbar" aria-label="Animated striped example"
+                                         aria-valuenow="75" data-bs-toggle="tooltip"
+                                         data-bs-title="مبلغ کل پرداخت شده تا کنون: {{ account_loan.paid }} تومان"
+                                         data-bs-placement="bottom"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                             style="width: {{ (account_loan.paid / account_loan.get_amount_with_profit() )*100 + 0.5 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                {% endfor %}
+                <div class="row">
+                    <div class="col">
+
+                        <div class="card card_hover my-3">
+                            <div class="card-body">
+                                <p class="card-text" style="display: inline;">مجموع مبلغ بدهی : {{ sum_of_debts }} تومان</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-        <div class="row">
-            <div class="col">
-
-                <div class="card card_hover my-3">
-                    <div class="card-body">
-                        <p class="card-text" style="display: inline;">مجموع مبلغ بدهی : 12,500,659,380</p>
-                    </div>
-                </div>
-            </div>
+            {% else %}
+                <p class=" text-muted">وامی یافت نشد !</p>
+            {% endif %}
         </div>
     </div>
     <div id="Accounts" style="display: none;">
@@ -527,9 +539,9 @@
                             <td>{{ account_loan.get_loan() }}</td>
                             <td data-bs-toggle="tooltip"
                                 data-bs-placement="top"
-                                data-bs-title="بدهی کل : {{ account_loan.get_amount_with_profit() }} تومان">{{ account_loan.amount }}</td>
+                                data-bs-title="مبلغ کل وام با احتساب {{ account_loan.get_loan().profit }} سود : {{ account_loan.get_amount_with_profit() }}">{{ account_loan.amount }}</td>
                             <td>{{ account_loan.paid }}</td>
-                            <td>{{ '%0.2f'| format(account_loan.paid *100 / account_loan.amount|float) }}</td>
+                            <td>{{ '%0.2f'| format(account_loan.paid *100 / account_loan.get_amount_with_profit()|float) }}</td>
                             <td>
                                 {% if account_loan.status == 0 %}
                                     <span class="badge text-bg-warning">
@@ -621,8 +633,8 @@
                 </tbody>
             </table>
 
-            {% if not transactions %}
-                <p class="text-center text-muted">وامی یافت نشد. یک درخواست وام ایجاد کنید !</p>
+            {% if not account_loans %}
+                <p class="text-center text-muted">وامی یافت نشد !</p>
             {% endif %}
 
         </div>
@@ -947,19 +959,16 @@
                         document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
                         document.getElementById('creatLoan').classList.remove('btn-success');
                         document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
-                        emptyInputs()
                     } else if (resp['status'] == 'MLA') {
                         document.getElementById('loanConfirmModalBody').innerHTML = "حداکثر مقداری که میتوانید از این وام درخواست دهید " + resp['max_amount'] + " تومان است. مبلغ مورد درخواست شما " + resp['amount'] + " تومان میباشد.";
                         document.getElementById('creatLoan').innerHTML = 'نقض شرایط';
                         document.getElementById('creatLoan').classList.remove('btn-success');
                         document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
-                        emptyInputs()
                     } else if (resp['status'] == 'WP') {
                         document.getElementById('loanConfirmModalBody').innerHTML = "کلمه عبور اشتباه است";
                         document.getElementById('creatLoan').innerHTML = 'خطا';
                         document.getElementById('creatLoan').classList.remove('btn-success');
                         document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
-                        emptyInputs()
                     }
                 });
             } else {
@@ -967,7 +976,6 @@
                 document.getElementById('creatLoan').innerHTML = 'خطا';
                 document.getElementById('creatLoan').classList.remove('btn-success');
                 document.getElementById('creatLoan').classList.add('btn-secondary', 'disabled');
-                emptyInputs()
             }
 
         }
