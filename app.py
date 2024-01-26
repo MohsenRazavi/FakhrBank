@@ -254,8 +254,8 @@ def customer_panel():
         for record in account_loans_records:
             if record[-1] == 1:
                 paying_account_loans.append(AccountLoan(*record))
-            else:
-                account_loans.append(AccountLoan(*record))
+
+            account_loans.append(AccountLoan(*record))
         if user.type == 'customer':
             context = {
                 'user': user,
@@ -761,39 +761,49 @@ def accept_loan():
         user = User.from_dict(session['user'])
         if user.type in ('admin', 'employee'):
             account_loan_id = request.form['account_loan_id']
-            account_loan = \
-                db.select('AccountLoans', filters=f"accountLoanId = '{account_loan_id}'", Model=AccountLoan)[0][0]
-            if account_loan.status == 0:
-                account_loan.status = 1
-                account_loan.acceptor = user.user_id
-                account_loan.save()
-                bank_account = \
-                    db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
-                customer_account = \
-                    db.select('Accounts', filters=f"accountId = '{account_loan.account_id}'", Model=Account)[0][0]
+            password = request.form['password']
+            user_password = db.select('Users', columns=('passwordHash',), filters=f"userId = '{user.user_id}'")[0][0][0]
+            pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            if pswd_hash == user_password:
+                account_loan = \
+                    db.select('AccountLoans', filters=f"accountLoanId = '{account_loan_id}'", Model=AccountLoan)[0][0]
+                if account_loan.status == 0:
+                    account_loan.status = 1
+                    account_loan.acceptor = user.user_id
+                    account_loan.save()
+                    bank_account = \
+                        db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
+                    customer_account = \
+                        db.select('Accounts', filters=f"accountId = '{account_loan.account_id}'", Model=Account)[0][0]
 
-                bank_account.balance -= account_loan.amount
-                customer_account.balance += account_loan.amount
+                    bank_account.balance -= account_loan.amount
+                    customer_account.balance += account_loan.amount
 
-                bank_account.save()
-                customer_account.save()
+                    bank_account.save()
+                    customer_account.save()
 
-                created_at = datetime.datetime.now()
-                status = True
+                    created_at = datetime.datetime.now()
+                    status = True
 
-                res = db.insert('Transactions', ('srcAccount', 'dstAccount', 'amount', 'status', 'createdAt'),
-                                (bank_account.account_id, customer_account.account_id, account_loan.amount, status,
-                                 created_at))
-                if res[0]:
-                    flash('وام با موفقیت تایید شد', 'success')
-                    if user.type == 'admin':
-                        return redirect(url_for('admin_panel'))
-                    elif user.type == 'employee':
-                        return redirect(url_for('employee_panel'))
+                    res = db.insert('Transactions', ('srcAccount', 'dstAccount', 'amount', 'status', 'createdAt'),
+                                    (bank_account.account_id, customer_account.account_id, account_loan.amount, status,
+                                     created_at))
+                    if res[0]:
+                        flash('وام با موفقیت تایید شد', 'success')
+                        if user.type == 'admin':
+                            return redirect(url_for('admin_panel'))
+                        elif user.type == 'employee':
+                            return redirect(url_for('employee_panel'))
+                    else:
+                        print(res)
                 else:
-                    print(res)
+                    return "<h1>این درخواست قبلا تایید شده</h1>", 403
             else:
-                return "<h1>این درخواست قبلا تایید شده</h1>", 403
+                flash('کلمه عبور اشتباه است', 'danger')
+                if user.type == 'admin':
+                    return redirect(url_for('admin_panel'))
+                elif user.type == 'employee':
+                    return redirect(url_for('employee_panel'))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -837,7 +847,7 @@ def pay_instalment():
                 status = True
 
                 res = db.insert('Transactions', ('srcAccount', 'dstAccount', 'amount', 'status', 'createdAt'),
-                                (bank_account.account_id, customer_account.account_id, instalment_amount, status,
+                                (customer_account.account_id, bank_account.account_id, instalment_amount, status,
                                  created_at))
                 if res[0]:
                     flash('با موفقیت پرداخت شد', 'success')

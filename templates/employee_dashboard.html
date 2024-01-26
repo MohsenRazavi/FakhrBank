@@ -819,7 +819,43 @@
                                     <form action="/accept_loan" method="POST">
                                         <input name="account_loan_id" value="{{ account_loan.account_loan_id }}"
                                                type="hidden">
-                                        <button type="submit" class="btn btn-outline-primary btn-sm">تایید وام</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#acceptLoan{{ account_loan.account_loan_id }}Modal">تایید وام
+                                        </button>
+
+                                        <div class="modal fade" id="acceptLoan{{ account_loan.account_loan_id }}Modal" data-bs-backdrop="static"
+                                             data-bs-keyboard="false"
+                                             tabindex="-1"
+                                             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">تایید
+                                                            وام</h1>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>جهت تایید وام، کلمه عبور را وارد کنید</p>
+                                                        <div class="form-floating my-3">
+                                                            <input type="password" class="form-control" name="password"
+                                                                   id="acceptLoanPassword"
+                                                                   placeholder="accountnum" required>
+                                                            <label for="acceptLoanPassword"
+                                                                   style="right:0; transform-origin: 100% 0;">کلمه
+                                                                عبور</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">بستن
+                                                        </button>
+                                                        <button type="submit" class="btn btn-success">
+                                                            تایید وام
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </form>
                                 {% endif %}
                             </td>
