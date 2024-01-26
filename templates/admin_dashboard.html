@@ -115,14 +115,25 @@
             <div class="col">
                 <div class="card card_hover my-3">
                     <div class="card-body">
-                        <p class="card-text" style="display: inline;">تعداد مشتریان بدهکار : {{ debtors_count }}</p>
+                        <p class="card-text" style="display: inline;">تعداد مشتریان بدهکار : {{ debtors_count }}
+                            </p>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="card card_hover my-3">
                     <div class="card-body">
-                        <p class="card-text" style="display: inline;">مجموع مبلغ بدهکاران : {{ sum_of_debts }}</p>
+                        <p class="card-text" style="display: inline;">مجموع مبلغ بدهکاران : {{ sum_of_debts }} تومان</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card card_hover my-3">
+                    <div class="card-body">
+                        <p class="card-text" style="display: inline;">موجودی حساب بانک : {{ bank_account.balance }}
+                            تومان</p>
                     </div>
                 </div>
             </div>
@@ -1091,7 +1102,8 @@
                                                 {% if loan.is_deletable() %}
                                                     <button type='submit' class="btn btn-danger btn-sm">حذف</button>
                                                 {% else %}
-                                                    <button type='submit' class="btn btn-danger btn-sm" disabled>حذف</button>
+                                                    <button type='submit' class="btn btn-danger btn-sm" disabled>حذف
+                                                    </button>
                                                 {% endif %}
                                             </form>
                                         </div>
@@ -1217,8 +1229,9 @@
                             <td>
                                 {% if account_loan.status == 0 %}
                                     <form action="/accept_loan" method="POST">
-                                        <input name="account_loan_id" value="{{ account_loan.account_loan_id }}" type="hidden">
-                                    <button type="submit" class="btn btn-outline-primary btn-sm">تایید وام</button>
+                                        <input name="account_loan_id" value="{{ account_loan.account_loan_id }}"
+                                               type="hidden">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">تایید وام</button>
                                     </form>
 
                                 {% endif %}
