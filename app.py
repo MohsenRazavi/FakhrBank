@@ -53,6 +53,44 @@ def login():
             return render_template('./login.html')
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == "GET":
+        if 'user' in session:  # user already logged in !
+            user = User.from_dict(session['user'])
+            if user.type == "admin":
+                return redirect(url_for('admin_panel'))
+            elif user.type == "employee":
+                return redirect(url_for('employee_panel'))
+            elif user.type == "customer":
+                return redirect(url_for('customer_panel'))
+            else:
+                return "<h1>Invalid usertype</h1>"
+        return render_template('./register.html')
+    else:  # POST
+        username = request.form['username']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        gender = request.form['gender']
+        records = db.select('Users', ['username'])[0]
+        usernames = [record[0] for record in records]
+        if username in usernames:
+            flash('این نام کاربری قبلا استفاده شده', 'danger')
+            return render_template('./register.html')
+        if password1 == password2:
+            pswd_hash = hashlib.sha256(password1.encode('utf-8')).hexdigest()
+            res = db.insert('Users', ('username', 'passwordHash', 'gender', 'type'), (username, pswd_hash, gender, 'customer'))
+            if res[0]:
+                flash('حساب کاربری شما با موفقیت ایجاد شد. وارد شوید', 'success')
+                return redirect(url_for('login'))
+            else:
+                flash('حساب شما ایجاد نشد.', 'danger')
+                return redirect(url_for('register'))
+        else:
+            flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
+            return redirect(url_for('register'))
+
+
 @app.route('/logout')
 def logout():
     if 'user' in session:
@@ -150,12 +188,11 @@ def admin_panel():
                     db.exact_exec(f"SELECT COUNT(DISTINCT(accountId)) FROM AccountLoans WHERE status = 1", fetch=True)[
                         1][0][
                         0]
-                print(debtors_count)
+
             except IndexError:
                 debtors_count = 0
             try:
-                sum_of_debts = \
-                    sum_of_debts = db.exact_exec(
+                sum_of_debts = db.exact_exec(
                     f"SELECT SUM(amount*(100+profit)/100-paid) AS Debt FROM AccountLoans INNER JOIN Loans ON AccountLoans.loanId = Loans.loanId WHERE AccountLoans.status = 1;",
                     fetch=True)[1][0][0]
                 if not sum_of_debts:
@@ -239,7 +276,6 @@ def customer_panel():
         sum_of_debts = db.exact_exec(
             f"SELECT SUM(amount*(100+profit)/100-paid) AS Debt FROM AccountLoans INNER JOIN Loans ON AccountLoans.loanId = Loans.loanId WHERE AccountLoans.status = 1 AND accountId IN (SELECT accountId FROM Accounts WHERE userId = {user.user_id});",
             fetch=True)[1][0][0]
-        print(sum_of_debts)
         if not sum_of_debts:
             sum_of_debts = 0
         transactions = []
