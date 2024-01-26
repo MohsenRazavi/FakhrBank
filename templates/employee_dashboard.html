@@ -84,13 +84,13 @@
             </div>
         </div>
 
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="card card_hover my-3">
-                <div class="card-body">
-                    <p class="card-text" style="display: inline;">موجودی حساب بانک : {{ bank_account.balance }}
-                        تومان</p>
+        <div class="row">
+            <div class="col">
+                <div class="card card_hover my-3">
+                    <div class="card-body">
+                        <p class="card-text" style="display: inline;">موجودی حساب بانک : {{ bank_account.balance }}
+                            تومان</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -820,10 +820,13 @@
                                         <input name="account_loan_id" value="{{ account_loan.account_loan_id }}"
                                                type="hidden">
                                         <button type="button" class="btn btn-outline-primary btn-sm"
-                                                data-bs-toggle="modal" data-bs-target="#acceptLoan{{ account_loan.account_loan_id }}Modal">تایید وام
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#acceptLoan{{ account_loan.account_loan_id }}Modal">
+                                            تایید وام
                                         </button>
 
-                                        <div class="modal fade" id="acceptLoan{{ account_loan.account_loan_id }}Modal" data-bs-backdrop="static"
+                                        <div class="modal fade" id="acceptLoan{{ account_loan.account_loan_id }}Modal"
+                                             data-bs-backdrop="static"
                                              data-bs-keyboard="false"
                                              tabindex="-1"
                                              aria-labelledby="staticBackdropLabel" aria-hidden="true">
