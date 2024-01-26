@@ -79,7 +79,8 @@ def register():
             return render_template('./register.html')
         if password1 == password2:
             pswd_hash = hashlib.sha256(password1.encode('utf-8')).hexdigest()
-            res = db.insert('Users', ('username', 'passwordHash', 'gender', 'type'), (username, pswd_hash, gender, 'customer'))
+            created_at = datetime.datetime.now()
+            res = db.insert('Users', ('username', 'passwordHash', 'gender', 'type', 'createdAt'), (username, pswd_hash, gender, 'customer', created_at))
             if res[0]:
                 flash('حساب کاربری شما با موفقیت ایجاد شد. وارد شوید', 'success')
                 return redirect(url_for('login'))
@@ -411,6 +412,12 @@ def add_account():
     if 'user' in session:
         user = User.from_dict(session['user'])
         if user.type in ('admin', 'employee'):
+            if 'user_id' not in request.form:
+                flash('خطا در ایجاد حساب', 'danger')
+                if user.type == 'admin':
+                    return redirect(url_for('admin_panel'))
+                elif user.type == 'employee':
+                    return redirect(url_for('employee_panel'))
             user_id = request.form['user_id']
             account_type = request.form['type']
             account_number = []

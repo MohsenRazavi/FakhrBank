@@ -164,7 +164,7 @@
                                 <div class="form-floating my-3">
                                     <input type="text" class="form-control" id="floatingInput"
                                            placeholder="یک نام‌کاربری انگلیسی" name="username"
-                                           {% if emp_username %}value="{{ emp_username }}"{% endif %}>
+                                           {% if emp_username %}value="{{ emp_username }}"{% endif %} required>
                                     <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام
                                         کاربری</label>
                                 </div>
@@ -738,11 +738,15 @@
                         <form method="POST" action="/add_account">
                             <div class="modal-body">
                                 <p>کاربر حساب را انتخاب کنید</p>
-                                <select class="form-select my-3" name="user_id">
-                                    <option selected disabled>کاربر</option>
+                                <select class="form-select my-3" name="user_id" required>
+                                {% if customers %}
+                                    <option selected disabled>انتخاب</option>
                                     {% for customer in customers %}
                                         <option value="{{ customer.user_id }}">{{ customer }}</option>
                                     {% endfor %}
+                                	{% else %}
+                                    <option disabled>مشتری وجود ندارد</option>
+                                {% endif %}
                                 </select>
                                 <p>نوع حساب :</p>
                                 <div class="form-check form-check-inline">

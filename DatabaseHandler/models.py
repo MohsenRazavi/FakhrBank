@@ -24,8 +24,9 @@ class User:
 
     def get_age(self):
         today = date.today().year
-        age = today - int(self.birthdate.split('-')[0])
-        return age
+        if self.birthdate:
+            age = today - int(self.birthdate.split('-')[0])
+            return age
 
     def get_created_at(self):
         return self.created_at.strftime('%Y/%m/%d %H:%M:%S')
