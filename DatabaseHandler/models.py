@@ -196,7 +196,6 @@ class Loan:
         return True
 
 
-
 class AccountLoan:
     def __init__(self, loan_account_id, account_id, loan_id, amount, paid, acceptor, status):
         self.account_loan_id = loan_account_id
@@ -230,3 +229,21 @@ class AccountLoan:
             return acceptor
         else:
             return "-"
+
+    def save(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        updates = {
+            'accountLoanId': self.account_loan_id,
+            'loanId': self.loan_id,
+            'accountId': self.account_id,
+            'amount': self.amount,
+            'paid': self.paid,
+            'acceptor': self.acceptor,
+            'status': self.status,
+        }
+        res = db.update('AccountLoans', filters=f"accountLoanId = '{self.account_loan_id}'", updates=updates)[0]
+        if res:
+            return True
+        else:
+            print(res)

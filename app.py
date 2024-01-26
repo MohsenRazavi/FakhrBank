@@ -694,6 +694,8 @@ def switch_loan_status():
             if res:
                 flash('تغییر وضعیت وام با موفقیت انجام شد', 'success')
                 return redirect(url_for('admin_panel'))
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
@@ -712,6 +714,34 @@ def delete_loan():
                 return redirect(url_for('admin_panel'))
             else:
                 print(res)
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/accept_loan', methods=['POST'])
+def accept_loan():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type in ('admin', 'employee'):
+            account_loan_id = request.form['account_loan_id']
+            account_loan = db.select('AccountLoans', filters=f"accountLoanId = '{account_loan_id}'", Model=AccountLoan)[0][0]
+            if account_loan.status == 0:
+                account_loan.status = 1
+                account_loan.acceptor = user.user_id
+                account_loan.save()
+                flash('وام با موفقیت تایید شد', 'success')
+                if user.type == 'admin':
+                    return redirect(url_for('admin_panel'))
+                elif user.type == 'employee':
+                    return redirect(url_for('employee_panel'))
+            else:
+                return "<h1>این درخواست قبلا تایید شده</h1>", 403
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
