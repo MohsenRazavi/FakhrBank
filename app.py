@@ -148,14 +148,11 @@ def admin_panel():
             try:
                 debtors_count = \
                     db.exact_exec(f"SELECT COUNT(DISTINCT(accountId)) FROM AccountLoans WHERE status = 1", fetch=True)[
-                        1][0][
-                        0]
-                print(debtors_count)
+                        1][0][0]
             except IndexError:
                 debtors_count = 0
             try:
-                sum_of_debts = \
-                    sum_of_debts = db.exact_exec(
+                sum_of_debts = db.exact_exec(
                     f"SELECT SUM(amount*(100+profit)/100-paid) AS Debt FROM AccountLoans INNER JOIN Loans ON AccountLoans.loanId = Loans.loanId WHERE AccountLoans.status = 1;",
                     fetch=True)[1][0][0]
                 if not sum_of_debts:
@@ -239,7 +236,6 @@ def customer_panel():
         sum_of_debts = db.exact_exec(
             f"SELECT SUM(amount*(100+profit)/100-paid) AS Debt FROM AccountLoans INNER JOIN Loans ON AccountLoans.loanId = Loans.loanId WHERE AccountLoans.status = 1 AND accountId IN (SELECT accountId FROM Accounts WHERE userId = {user.user_id});",
             fetch=True)[1][0][0]
-        print(sum_of_debts)
         if not sum_of_debts:
             sum_of_debts = 0
         transactions = []
