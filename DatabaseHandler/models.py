@@ -160,14 +160,41 @@ class Transaction:
 
 
 class Loan:
-    def __init__(self, loan_id, profit, dead_line, at_least_income):
+    def __init__(self, loan_id, profit, dead_line, at_least_income, status):
         self.loan_id = loan_id
         self.profit = profit
         self.dead_line = dead_line
         self.at_least_income = at_least_income
+        self.status = status
 
     def __repr__(self):
         return f"{self.dead_line} ماهه با {self.profit} درصد سود و حداقل مقدار واریز در ماه {self.at_least_income} تومان"
+
+    def save(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        updates = {
+            'loanId': self.loan_id,
+            'profit': self.profit,
+            'deadline': self.dead_line,
+            'atLeastIncome': self.at_least_income,
+            'status': self.status
+        }
+        res = db.update('Loans', updates=updates, filters=f"loanId = '{self.loan_id}'")
+
+        if res[0]:
+            return True
+        else:
+            print(res)
+
+    def is_deletable(self):
+        from DatabaseHandler import Database
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        res = db.select('AccountLoans', filters=f"loanId = '{self.loan_id}'")[0]
+        if len(res) > 0:
+            return False
+        return True
+
 
 
 class AccountLoan:
@@ -193,7 +220,7 @@ class AccountLoan:
         return loan
 
     def get_amount_with_profit(self):
-        return int((100 + self.get_loan().profit)/100 * self.amount)
+        return int((100 + self.get_loan().profit) / 100 * self.amount)
 
     def get_acceptor(self):
         from DatabaseHandler import Database

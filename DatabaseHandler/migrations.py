@@ -93,15 +93,16 @@ else:
 """
 Loans Table
 
-loanId | profit | deadline | atLeastIncome 
-=======|========|==========|====================
-       |        |          |          
+loanId | profit | deadline | atLeastIncome | status 
+=======|========|==========|===============|===========
+       |        |          |               |      
 """
 loan_fields = {
     'loanId': 'SERIAL PRIMARY KEY',
     'profit': 'SMALLINT',
     'deadline': 'SMALLINT',
-    'atLeastIncome': 'BIGINT'
+    'atLeastIncome': 'BIGINT',
+    'status': 'BOOLEAN',
 }
 res3 = db.create_table('Loans', loan_fields)
 if res3[0]:
@@ -157,8 +158,8 @@ if res0 and res1 and res2 and res3 and res4:
         res_account = None, None
         print(f'{CRED}Admin creation failed. more details:\n{res_admin}{CEND}')
 
-    res_loan = db.insert('Loans', ('profit', 'deadline', 'atLeastIncome'),
-                    (BASE_LOAN_PROFIT, BASE_LOAN_DEADLINE, BASE_LOAN_ATLEAST_INCOME))
+    res_loan = db.insert('Loans', ('profit', 'deadline', 'atLeastIncome', 'status'),
+                    (BASE_LOAN_PROFIT, BASE_LOAN_DEADLINE, BASE_LOAN_ATLEAST_INCOME, True))
     if res_loan[0]:
         print(f'{CGRN}Base loan created successfully.{CEND}')
     else:

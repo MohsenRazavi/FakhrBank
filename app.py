@@ -145,7 +145,8 @@ def admin_panel():
             account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
             try:
                 debtors_count = \
-                    db.exact_exec(f"SELECT COUNT(accountLoanId) FROM AccountLoans WHERE status = 2", fetch=True)[1][0][0]
+                    db.exact_exec(f"SELECT COUNT(accountLoanId) FROM AccountLoans WHERE status = 2", fetch=True)[1][0][
+                        0]
             except IndexError:
                 debtors_count = 0
             try:
@@ -220,7 +221,7 @@ def customer_panel():
         transaction_records = db.exact_exec(
             f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId OR Transactions.dstAccount = Accounts.accountId WHERE userId = {user.user_id};",
             fetch=True)[1]
-        loans = db.select('Loans', Model=Loan)[0]
+        loans = db.select('Loans', filters=f"status = 'true'", Model=Loan)[0]
         transactions = []
         for record in transaction_records:
             transactions.append(Transaction(*record))
@@ -649,6 +650,68 @@ def new_loan_request():
                 print(res)
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/new_loan_type', methods=['POST'])
+def new_loan_type():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'admin':
+            profit = request.form['profit']
+            deadline = request.form['deadline']
+            at_least_income = request.form['at_least_income']
+
+            res = db.insert('Loans', ('profit', 'deadline', 'atLeastIncome', 'status'),
+                            (profit, deadline, at_least_income, True))
+            if res[0]:
+                flash('وام با موفقیت اضافه شد', 'success')
+                return redirect(url_for('admin_panel'))
+            else:
+                print(res)
+        else:
+            return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/switch_loan_status', methods=['POST'])
+def switch_loan_status():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'admin':
+            loan_id = request.form['loan_id']
+            loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
+            if loan.status:
+                loan.status = False
+            else:
+                loan.status = True
+
+            res = loan.save()
+            if res:
+                flash('تغییر وضعیت وام با موفقیت انجام شد', 'success')
+                return redirect(url_for('admin_panel'))
+
+    else:  # user not authenticated
+        flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
+        return redirect(url_for('login'))
+
+
+@app.route('/delete_loan', methods=['POST'])
+def delete_loan():
+    if 'user' in session:
+        user = User.from_dict(session['user'])
+        if user.type == 'admin':
+            loan_id = request.form['loan_id']
+            res = db.delete('Loans', filters=f"loanId = '{loan_id}'")[0]
+            if res:
+                flash('وام با موفقیت حذف شد', 'success')
+                return redirect(url_for('admin_panel'))
+            else:
+                print(res)
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
