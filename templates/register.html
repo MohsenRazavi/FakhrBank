@@ -46,31 +46,51 @@
             </div>
 
             <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                <form method="POST" action="/">
+                <form method="POST" action="/register">
 
-                    <h2 class="text-center mb-1">ورود</h2>
+                    <h2 class="text-center mb-1">ثبت نام مشتری</h2>
 
                     <!-- Email input -->
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form3Example3">نام کاربری</label>
                         <input type="text" id="form3Example3" class="form-control form-control-lg"
-                               placeholder="نام کاربری را وارد کنید" name="username"/>
+                               placeholder="نام کاربری را وارد کنید" name="username" required/>
                     </div>
 
                     <!-- Password input -->
                     <div class="form-outline mb-3">
                         <label class="form-label" for="form3Example4">کلمه عبور</label>
+                        <input type="password" id="form3Example4"  class="form-control form-control-lg"
+                               placeholder="کلمه عبور" name="password1" required/>
+                    </div>
+                    <div class="form-outline mb-3">
+                        <label class="form-label" for="form3Example4">تکرار کلمه عبور</label>
                         <input type="password" id="form3Example4" class="form-control form-control-lg"
-                               placeholder="کلمه عبور را وارد کنید" name="password"/>
+                               placeholder="تکرار کلمه عبور" name="password2" required/>
                     </div>
 
+                    <div>
+                        <p style="display: inline;">جنسیت :</p>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" value="آقا" id="flexRadioDisabled" checked>
+                            <label class="form-check-label" for="flexRadioDisabled">
+                                آقا
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" value="خانم"
+                                   id="flexRadioCheckedDisabled">
+                            <label class="form-check-label" for="flexRadioCheckedDisabled">
+                                خانم
+                            </label>
+                        </div>
+                    </div>
                     <div class="text-center text-lg-start mt-4 pt-2">
                         <button type="submit" class="btn btn-primary btn-lg"
-                                style="padding-left: 2.5rem; padding-right: 2.5rem;">ورود
+                                style="padding-left: 2.5rem; padding-right: 2.5rem;">ثبت نام
                         </button>
-                        <a type="button" class="btn btn-info btn-lg" href="/register">ثبت نام مشتری</a>
+                        <a type="button" class="btn btn-info btn-lg" href="/">بازگشت به صفحه ورود</a>
                     </div>
-
                 </form>
             </div>
         </div>

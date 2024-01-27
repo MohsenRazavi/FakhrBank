@@ -53,6 +53,45 @@ def login():
             return render_template('./login.html')
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == "GET":
+        if 'user' in session:  # user already logged in !
+            user = User.from_dict(session['user'])
+            if user.type == "admin":
+                return redirect(url_for('admin_panel'))
+            elif user.type == "employee":
+                return redirect(url_for('employee_panel'))
+            elif user.type == "customer":
+                return redirect(url_for('customer_panel'))
+            else:
+                return "<h1>Invalid usertype</h1>"
+        return render_template('./register.html')
+    else:  # POST
+        username = request.form['username']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        gender = request.form['gender']
+        records = db.select('Users', ['username'])[0]
+        usernames = [record[0] for record in records]
+        if username in usernames:
+            flash('این نام کاربری قبلا استفاده شده', 'danger')
+            return render_template('./register.html')
+        if password1 == password2:
+            pswd_hash = hashlib.sha256(password1.encode('utf-8')).hexdigest()
+            created_at = datetime.datetime.now()
+            res = db.insert('Users', ('username', 'passwordHash', 'gender', 'type', 'createdAt'), (username, pswd_hash, gender, 'customer', created_at))
+            if res[0]:
+                flash('حساب کاربری شما با موفقیت ایجاد شد. وارد شوید', 'success')
+                return redirect(url_for('login'))
+            else:
+                flash('حساب شما ایجاد نشد.', 'danger')
+                return redirect(url_for('register'))
+        else:
+            flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
+            return redirect(url_for('register'))
+
+
 @app.route('/logout')
 def logout():
     if 'user' in session:
@@ -193,7 +232,7 @@ def employee_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
         customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
-        accounts = db.select('Accounts', Model=Account)[0]
+        accounts = db.select('Accounts', Model=Account, filters=f"accountNumber <> '{BANK_ACCOUNT_NUMBER}'")[0]
         transactions = db.select('Transactions', Model=Transaction)[0]
         loans = db.select('Loans', Model=Loan)[0]
         account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
@@ -371,6 +410,12 @@ def add_account():
     if 'user' in session:
         user = User.from_dict(session['user'])
         if user.type in ('admin', 'employee'):
+            if 'user_id' not in request.form:
+                flash('خطا در ایجاد حساب', 'danger')
+                if user.type == 'admin':
+                    return redirect(url_for('admin_panel'))
+                elif user.type == 'employee':
+                    return redirect(url_for('employee_panel'))
             user_id = request.form['user_id']
             account_type = request.form['type']
             account_number = []
