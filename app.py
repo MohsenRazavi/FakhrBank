@@ -187,9 +187,7 @@ def admin_panel():
             try:
                 debtors_count = \
                     db.exact_exec(f"SELECT COUNT(DISTINCT(accountId)) FROM AccountLoans WHERE status = 1", fetch=True)[
-                        1][0][
-                        0]
-
+                        1][0][0]
             except IndexError:
                 debtors_count = 0
             try:
