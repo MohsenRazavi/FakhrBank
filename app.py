@@ -232,7 +232,7 @@ def employee_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
         customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
-        accounts = db.select('Accounts', Model=Account)[0]
+        accounts = db.select('Accounts', Model=Account, filters=f"accountNumber <> '{BANK_ACCOUNT_NUMBER}'")[0]
         transactions = db.select('Transactions', Model=Transaction)[0]
         loans = db.select('Loans', Model=Loan)[0]
         account_loans = db.select('AccountLoans', Model=AccountLoan)[0]
