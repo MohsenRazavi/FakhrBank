@@ -127,54 +127,53 @@
         </div>
         <div class="row my-2">
             <div class="col-11 pt-2">
-                <h6 style="vertical-align: middle;">فیلتر ها:</h6>
-            </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+                <h6 class="text-dark h5" style="vertical-align: middle;" class="text-dark h5" class="text-dark h5">فیلتر ها:</h6>
             </div>
         </div>
-        <form action="">
-            <div class="row">
-                <div class="col">
-
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com"
-                               style="height:2px !important;">
-                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">موجودی</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating">
-                        <input type="date" class="form-control" id="creationTime">
-                        <label for="creationTime" style="right:0; transform-origin: 100% 0;">تاریخ ایجاد</label>
-                    </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInAccountBalances"
+                           placeholder="name@example.com"
+                           style="height:2px !important;"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountBalances', 4)">
+                    <label for="searchInAccountBalances" style="right:0; transform-origin: 100% 0;">موجودی
+                        (تومان)</label>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col my-3">
-
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="account_number"
-                               placeholder="account_number">
-                        <label for="account_number" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
-                    </div>
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInAccountNumbers"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountNumbers', 0)"
+                           placeholder="account_number">
+                    <label for="searchInAccountNumbers" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
                 </div>
-                <div class="col my-auto">
-                    <div class="input-group">
-                        <select class="form-select form-select">
-                            <option selected>نوع حساب</option>
-                            <option value="1">حساب فخر</option>
-                            <option value="2">حساب فاخر</option>
-                            <option value="3">حساب افتخار</option>
-                        </select>
-                    </div>
-                </div>
-
             </div>
-        </form>
+        </div>
+        <div class="row">
+            <div class="col my-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInAccountCreatedAt"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountCreatedAt', 5)" placeholder="12">
+                    <label for="searchInAccountCreatedAt" style="right:0; transform-origin: 100% 0;">زمان
+                        ایجاد</label>
+                </div>
+            </div>
+
+            <div class="col my-3">
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInAccountTypes"
+                           placeholder="account_number"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountTypes', 1)">
+                    <label for="searchInAccountTypes" style="right:0; transform-origin: 100% 0;">نوع حساب</label>
+                </div>
+            </div>
+
+        </div>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="accountsTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
@@ -458,62 +457,60 @@
         </div>
         <div class="row my-2">
             <div class="col-11 pt-2">
-                <h6 style="vertical-align: middle;">فیلتر ها:</h6>
-            </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+                <h6 style="vertical-align: middle;" class="text-dark h5" class="text-dark h5">فیلتر ها:</h6>
             </div>
         </div>
 
-        <form action="">
-            <div class="row">
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="loanNumbrer"
-                               placeholder="loanNum">
-                        <label for="loanNumbrer" style="right:0; transform-origin: 100% 0;">شماره وام</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="accountNumber"
-                               placeholder="accountnum">
-                        <label for="accountNumber" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control"
-                               placeholder="loanAmount">
-                        <label for="loanAmount" style="right:0; transform-origin: 100% 0;">مبلغ</label>
-                    </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInLoanNumbers"
+                           placeholder="loanNum" onkeyup="searchInTable('loansTable', 'searchInLoanNumbers', 0)">
+                    <label for="searchInLoanNumbers" style="right:0; transform-origin: 100% 0;">شماره وام</label>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <div class="input-group-sm mb-3">
-                        <select class="form-select form-select-sm">
-                            <option selected>وضعیت</option>
-                            <option value="1">درحال پرداخت</option>
-                            <option value="2">تصفیه شده</option>
-                            <option value="2">در انتظار تایید</option>
-                        </select>
-                    </div>
-
-                </div>
-                <div class="col">
-                    <div class="input-group-sm mb-3">
-                        <select class="form-select form-select-sm">
-                            <option selected>درصد سود</option>
-                            <option value="1">20 درصد</option>
-                        </select>
-                    </div>
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInLoanAccounts"
+                           placeholder="accountnum"
+                           onkeyup="searchInTable('loansTable', 'searchInLoanAccounts', 1)">
+                    <label for="searchInLoanAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
                 </div>
             </div>
-        </form>
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInLoanAmounts"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanAmounts', 4)">
+                    <label for="searchInLoanAmounts" style="right:0; transform-origin: 100% 0;">مبلغ (تومان)</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanStatus"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanStatus', 7)">
+                    <label for="searchInLoanStatus" style="right:0; transform-origin: 100% 0;">وضعیت</label>
+                </div>
+            </div>
 
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanTypes"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanTypes', 3)">
+                    <label for="searchInLoanTypes" style="right:0; transform-origin: 100% 0;">نوع وام</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanAcceptors"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanAcceptors', 8)">
+                    <label for="searchInLoanAcceptors" style="right:0; transform-origin: 100% 0;">تاییدگر</label>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="loansTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
@@ -765,47 +762,54 @@
 
         <div class="row my-2">
             <div class="col-11 pt-2">
-                <h6 style="vertical-align: middle;">فیلتر ها:</h6>
-            </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+                <h6 style="vertical-align: middle;" class="text-dark h5">فیلتر ها:</h6>
             </div>
         </div>
-
-        <form action="">
-            <div class="row">
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="srcAccountNum"
-                               placeholder="srcAccountNum">
-                        <label for="srcAccountNum" style="right:0; transform-origin: 100% 0;">شماره حساب مبدا</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="dstAccountNum"
-                               placeholder="dstAccountNum">
-                        <label for="dstAccountNum" style="right:0; transform-origin: 100% 0;">شماره حساب مقصد</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="date" class="form-control" id="birthdate">
-                        <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="trxAmount"
-                               placeholder="trx">
-                        <label for="trxAmount" style="right:0; transform-origin: 100% 0;">مبلغ</label>
-                    </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInSrcAccounts"
+                           placeholder="srcAccountNum"
+                           onkeyup="searchInTable('transactionsTable', 'searchInSrcAccounts', 1)">
+                    <label for="searchInSrcAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب مبدا</label>
                 </div>
             </div>
-        </form>
-
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInDstAccounts"
+                           placeholder="dstAccountNum"
+                           onkeyup="searchInTable('transactionsTable', 'searchInDstAccounts', 2)">
+                    <label for="searchInDstAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب مقصد</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInTransactionNumbers" placeholder="12"
+                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionNumbers', 0)">
+                    <label for="searchInTransactionNumbers" style="right:0; transform-origin: 100% 0;">شماره
+                        تراکنش</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInTransactionCreatedAt" placeholder="12"
+                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionCreatedAt', 4)">
+                    <label for="searchInTransactionCreatedAt" style="right:0; transform-origin: 100% 0;">زمان</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="number" class="form-control" id="searchInTransactionAmounts"
+                           placeholder="trx"
+                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionAmounts', 3)">
+                    <label for="searchInTransactionAmounts" style="right:0; transform-origin: 100% 0;">مبلغ</label>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="transactionsTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>

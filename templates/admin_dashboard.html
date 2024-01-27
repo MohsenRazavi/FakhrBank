@@ -234,51 +234,46 @@
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
             </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+        </div>
+        <div class="row">
+            <div class="col my-auto">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInEmployeeName"
+                           onkeyup="searchInTable('employeesTable', 'searchInEmployeeName', 1)"
+                           placeholder="name@example.com">
+                    <label for="searchInEmployeeName" style="right:0; transform-origin: 100% 0;">نام کاربری</label>
+                </div>
+            </div>
+            <div class="col my-auto">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInEmployeeNumber"
+                           onkeyup="searchInTable('employeesTable', 'searchInEmployeeNumber', 0)"
+                           placeholder="name@example.com">
+                    <label for="searchInEmployeeNumber" style="right:0; transform-origin: 100% 0;">شماره کارمندی</label>
+                </div>
+            </div>
+            <div class="col my-auto">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInEmployeePhoneNumber"
+                           onkeyup="searchInTable('employeesTable', 'searchInEmployeePhoneNumber', 6)"
+                           placeholder="123">
+                    <label for="searchInEmployeePhoneNumber" style="right:0; transform-origin: 100% 0;">شماره
+                        تلفن</label>
+                </div>
+            </div>
+            <div class="col my-auto">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="searchInEmployeeAge"
+                               onkeyup="searchInTable('employeesTable', 'searchInEmployeeAge', 5)"
+                               placeholder="name@example.com">
+                        <label for="searchInEmployeeAge" style="right:0; transform-origin: 100% 0;">سن</label>
+                    </div>
+                </div>
             </div>
         </div>
-        <form action="">
-            <div class="row">
-                <div class="col my-auto">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام کاربری</label>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">شماره کارمندی</label>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    <div class="form-floating">
-                        <input type="date" class="form-control" id="register-date">
-                        <label for="register-date" style="right:0; transform-origin: 100% 0;">تاریخ ثبت نام</label>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    <div class="col">
-                        <div class="form-floating">
-                            <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">سن</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row my-3">
-                <div class="col my-auto">
-                    <select class="form-select form-select-sm">
-                        <option selected>جنسیت</option>
-                        <option value="1">آقا</option>
-                        <option value="2">خانم</option>
-                    </select>
-                </div>
-            </div>
-        </form>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="employeesTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
@@ -518,51 +513,44 @@
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
             </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+        </div>
+        <div class="row">
+            <div class="col my-auto">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInCustomerName" placeholder="name@example.com"
+                           onkeyup="searchInTable('customersTable', 'searchInCustomerName', 1)">
+                    <label for="searchInCustomerName" style="right:0; transform-origin: 100% 0;">نام کاربری</label>
+                </div>
+            </div>
+            <div class="col my-auto">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInCustomerNumbers"
+                           placeholder="name@example.com"
+                           onkeyup="searchInTable('customersTable', 'searchInCustomerNumbers', 0)">
+                    <label for="searchInCustomerNumbers" style="right:0; transform-origin: 100% 0;">شماره مشتری</label>
+                </div>
+            </div>
+            <div class="col my-auto">
+                <div class="form-floating">
+                    <input type="number" placeholder="123" class="form-control" id="searchInCustomerPhoneNumbers"
+                           onkeyup="searchInTable('customersTable', 'searchInCustomerPhoneNumbers', 6)">
+                    <label for="searchInCustomerPhoneNumbers" style="right:0; transform-origin: 100% 0;">شماره
+                        تلفن</label>
+                </div>
+            </div>
+            <div class="col my-auto">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="searchInCustomerAges"
+                               placeholder="name@example.com"
+                               onkeyup="searchInTable('customersTable', 'searchInCustomerAges', 4)">
+                        <label for="searchInCustomerAges" style="right:0; transform-origin: 100% 0;">سن</label>
+                    </div>
+                </div>
             </div>
         </div>
-        <form action="">
-            <div class="row">
-                <div class="col my-auto">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">نام کاربری</label>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">شماره مشتری</label>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    <div class="form-floating">
-                        <input type="date" class="form-control" id="register-date">
-                        <label for="register-date" style="right:0; transform-origin: 100% 0;">تاریخ ثبت نام</label>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    <div class="col">
-                        <div class="form-floating">
-                            <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput" style="right:0; transform-origin: 100% 0;">سن</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row my-3">
-                <div class="col my-auto">
-                    <select class="form-select form-select-sm">
-                        <option selected>جنسیت</option>
-                        <option value="1">آقا</option>
-                        <option value="2">خانم</option>
-                    </select>
-                </div>
-            </div>
-        </form>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="customersTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
@@ -739,14 +727,14 @@
                             <div class="modal-body">
                                 <p>کاربر حساب را انتخاب کنید</p>
                                 <select class="form-select my-3" name="user_id" required>
-                                {% if customers %}
-                                    <option selected disabled>انتخاب</option>
-                                    {% for customer in customers %}
-                                        <option value="{{ customer.user_id }}">{{ customer }}</option>
-                                    {% endfor %}
-                                	{% else %}
-                                    <option disabled>مشتری وجود ندارد</option>
-                                {% endif %}
+                                    {% if customers %}
+                                        <option selected disabled>انتخاب</option>
+                                        {% for customer in customers %}
+                                            <option value="{{ customer.user_id }}">{{ customer }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option disabled>مشتری وجود ندارد</option>
+                                    {% endif %}
                                 </select>
                                 <p>نوع حساب :</p>
                                 <div class="form-check form-check-inline">
@@ -785,52 +773,59 @@
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
             </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInAccountBalances"
+                           placeholder="name@example.com"
+                           style="height:2px !important;"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountBalances', 4)">
+                    <label for="searchInAccountBalances" style="right:0; transform-origin: 100% 0;">موجودی
+                        (تومان)</label>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInAccountNumbers"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountNumbers', 0)"
+                           placeholder="account_number">
+                    <label for="searchInAccountNumbers" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
+                </div>
             </div>
         </div>
-        <form action="">
-            <div class="row">
-                <div class="col">
-
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com"
-                               style="height:2px !important;">
-                        <label for="floatingInput" style="right:0; transform-origin: 100% 0;">موجودی</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating">
-                        <input type="date" class="form-control" id="creationTime">
-                        <label for="creationTime" style="right:0; transform-origin: 100% 0;">تاریخ ایجاد</label>
-                    </div>
+        <div class="row">
+            <div class="col my-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInAccountCreatedAt"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountCreatedAt', 5)" placeholder="12">
+                    <label for="searchInAccountCreatedAt" style="right:0; transform-origin: 100% 0;">زمان
+                        ایجاد</label>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col my-3">
+            <div class="col my-3">
 
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="account_number"
-                               placeholder="account_number">
-                        <label for="account_number" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
-                    </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInAccountTypes"
+                           placeholder="account_number"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountTypes', 1)">
+                    <label for="searchInAccountTypes" style="right:0; transform-origin: 100% 0;">نوع حساب</label>
                 </div>
-                <div class="col my-auto">
-                    <div class="input-group">
-                        <select class="form-select form-select">
-                            <option selected>نوع حساب</option>
-                            <option value="1">حساب فخر</option>
-                            <option value="2">حساب فاخر</option>
-                            <option value="3">حساب افتخار</option>
-                        </select>
-                    </div>
-                </div>
-
             </div>
-        </form>
+            <div class="col my-3">
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="searchInAccountOwners"
+                           placeholder="account_number"
+                           onkeyup="searchInTable('accountsTable', 'searchInAccountOwners', 3)">
+                    <label for="searchInAccountOwners" style="right:0; transform-origin: 100% 0;">مالک حساب</label>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="accountsTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
@@ -838,7 +833,7 @@
                     <th scope="col">نوع حساب</th>
                     <th scope="col">نام حساب</th>
                     <th scope="col">مالک</th>
-                    <th scope="col">موجودی</th>
+                    <th scope="col">موجودی (تومان)</th>
                     <th scope="col">زمان ایجاد</th>
                     <th scope="col">وضعیت</th>
                     <th scope="col">عملیات</th>
@@ -1008,9 +1003,7 @@
                         </div>
                     </div>
                 </div>
-
             {% endfor %}
-
         {% endif %}
     </div>
     <div id="Loans" style="display: none;">
@@ -1128,60 +1121,64 @@
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
             </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
-            </div>
         </div>
 
-        <form action="">
-            <div class="row">
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="loanNumbrer"
-                               placeholder="loanNum">
-                        <label for="loanNumbrer" style="right:0; transform-origin: 100% 0;">شماره وام</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="accountNumber"
-                               placeholder="accountnum">
-                        <label for="accountNumber" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="loanAmount"
-                               placeholder="loanAmount">
-                        <label for="loanAmount" style="right:0; transform-origin: 100% 0;">مبلغ</label>
-                    </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInLoanNumbers"
+                           placeholder="loanNum" onkeyup="searchInTable('loansTable', 'searchInLoanNumbers', 0)">
+                    <label for="searchInLoanNumbers" style="right:0; transform-origin: 100% 0;">شماره وام</label>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <div class="input-group-sm mb-3">
-                        <select class="form-select form-select-sm">
-                            <option selected>وضعیت</option>
-                            <option value="1">درحال پرداخت</option>
-                            <option value="2">تصفیه شده</option>
-                            <option value="2">در انتظار تایید</option>
-                        </select>
-                    </div>
-
-                </div>
-                <div class="col">
-                    <div class="input-group-sm mb-3">
-                        <select class="form-select form-select-sm">
-                            <option selected>درصد سود</option>
-                            <option value="1">20 درصد</option>
-                        </select>
-                    </div>
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInLoanAccounts"
+                           placeholder="accountnum"
+                           onkeyup="searchInTable('loansTable', 'searchInLoanAccounts', 1)">
+                    <label for="searchInLoanAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب</label>
                 </div>
             </div>
-        </form>
-
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInLoanAmounts"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanAmounts', 4)">
+                    <label for="searchInLoanAmounts" style="right:0; transform-origin: 100% 0;">مبلغ (تومان)</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanStatus"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanStatus', 7)">
+                    <label for="searchInLoanStatus" style="right:0; transform-origin: 100% 0;">وضعیت</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanOwners"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanOwners', 2)">
+                    <label for="searchInLoanOwners" style="right:0; transform-origin: 100% 0;">مالک</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanTypes"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanTypes', 3)">
+                    <label for="searchInLoanTypes" style="right:0; transform-origin: 100% 0;">نوع وام</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInLoanAcceptors"
+                           placeholder="loanAmount" onkeyup="searchInTable('loansTable', 'searchInLoanAcceptors', 8)">
+                    <label for="searchInLoanAcceptors" style="right:0; transform-origin: 100% 0;">تاییدگر</label>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="loansTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
@@ -1236,10 +1233,13 @@
                                         <input name="account_loan_id" value="{{ account_loan.account_loan_id }}"
                                                type="hidden">
                                         <button type="button" class="btn btn-outline-primary btn-sm"
-                                                data-bs-toggle="modal" data-bs-target="#acceptLoan{{ account_loan.account_loan_id }}Modal">تایید وام
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#acceptLoan{{ account_loan.account_loan_id }}Modal">
+                                            تایید وام
                                         </button>
 
-                                        <div class="modal fade" id="acceptLoan{{ account_loan.account_loan_id }}Modal" data-bs-backdrop="static"
+                                        <div class="modal fade" id="acceptLoan{{ account_loan.account_loan_id }}Modal"
+                                             data-bs-backdrop="static"
                                              data-bs-keyboard="false"
                                              tabindex="-1"
                                              aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -1300,45 +1300,48 @@
             <div class="col-11 pt-2">
                 <h6 style="vertical-align: middle;">فیلتر ها:</h6>
             </div>
-            <div class="col-1">
-                <button class="btn btn-primary btn-small">اعمال</button>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInSrcAccounts"
+                           placeholder="srcAccountNum" onkeyup="searchInTable('transactionsTable', 'searchInSrcAccounts', 1)">
+                    <label for="searchInSrcAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب مبدا</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="searchInDstAccounts"
+                           placeholder="dstAccountNum" onkeyup="searchInTable('transactionsTable', 'searchInDstAccounts', 2)">
+                    <label for="searchInDstAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب مقصد</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInTransactionNumbers" placeholder="12" onkeyup="searchInTable('transactionsTable', 'searchInTransactionNumbers', 0)">
+                    <label for="searchInTransactionNumbers" style="right:0; transform-origin: 100% 0;">شماره تراکنش</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="searchInTransactionCreatedAt" placeholder="12" onkeyup="searchInTable('transactionsTable', 'searchInTransactionCreatedAt', 4)">
+                    <label for="searchInTransactionCreatedAt" style="right:0; transform-origin: 100% 0;">زمان</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating my-3">
+                    <input type="number" class="form-control" id="searchInTransactionAmounts"
+                           placeholder="trx" onkeyup="searchInTable('transactionsTable', 'searchInTransactionAmounts', 3)">
+                    <label for="searchInTransactionAmounts" style="right:0; transform-origin: 100% 0;">مبلغ</label>
+                </div>
             </div>
         </div>
 
-        <form action="">
-            <div class="row">
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="srcAccountNum"
-                               placeholder="srcAccountNum">
-                        <label for="srcAccountNum" style="right:0; transform-origin: 100% 0;">شماره حساب مبدا</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="dstAccountNum"
-                               placeholder="dstAccountNum">
-                        <label for="dstAccountNum" style="right:0; transform-origin: 100% 0;">شماره حساب مقصد</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="date" class="form-control" id="birthdate">
-                        <label for="birthdate" style="right:0; transform-origin: 100% 0;">تاریخ</label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating my-3">
-                        <input type="number" class="form-control" id="trxAmount"
-                               placeholder="trx">
-                        <label for="trxAmount" style="right:0; transform-origin: 100% 0;">مبلغ</label>
-                    </div>
-                </div>
-            </div>
-        </form>
-
         <div class="table-responsive mt-4">
-            <table class="table">
+            <table class="table sortable" id="transactionsTable">
                 <thead>
                 <tr>
                     <th scope="col">ردیف</th>
