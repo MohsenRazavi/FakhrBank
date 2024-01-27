@@ -2,7 +2,9 @@ import datetime
 import hashlib
 import random
 import re
+from functools import wraps
 
+import jwt
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 
 from DatabaseHandler import Database
@@ -16,6 +18,29 @@ app.template_folder = "templates"
 app.secret_key = '1234'
 
 db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+
+
+def token_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        token = request.args.get('token')
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            if 'user' in session:
+                del session['user']
+            return redirect(url_for('login'))
+
+        try:
+            data = jwt.decode(token, app.secret_key, algorithms=['HS256'])
+        except:
+            flash('خطا در احراز هویت رمزی : توکن منقضی شده،‌ دوباره وارد شوید !', 'danger')
+            if 'user' in session:
+                del session['user']
+            return redirect(url_for('login'))
+
+        return f(*args, **kwargs)
+
+    return wrapper
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -39,14 +64,15 @@ def login():
         res = db.select('Users', Model=User, filters=f"username = '{username}' AND passwordHash = '{pswd_hash}'")
         if res[0]:  # login successful !
             obj = res[0][0]
+            token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90)}, app.secret_key, 'HS256')
             session['user'] = obj.to_dict()
             flash(f'{obj}  خوش آمدید !', 'success')
             if obj.type == "admin":
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif obj.type == "employee":
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             elif obj.type == "customer":
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
             else:
                 return "<h1>Invalid usertype</h1>"
         else:  # login failed :(
@@ -81,7 +107,8 @@ def register():
         if password1 == password2:
             pswd_hash = hashlib.sha256(password1.encode('utf-8')).hexdigest()
             created_at = datetime.datetime.now()
-            res = db.insert('Users', ('username', 'passwordHash', 'gender', 'type', 'createdAt'), (username, pswd_hash, gender, 'customer', created_at))
+            res = db.insert('Users', ('username', 'passwordHash', 'gender', 'type', 'createdAt'),
+                            (username, pswd_hash, gender, 'customer', created_at))
             if res[0]:
                 flash('حساب کاربری شما با موفقیت ایجاد شد. وارد شوید', 'success')
                 return redirect(url_for('login'))
@@ -173,6 +200,7 @@ def change_password():
 
 
 @app.route('/admin/')
+@token_required
 def admin_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
