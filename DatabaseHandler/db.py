@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 
 
 class Database:
@@ -11,12 +11,13 @@ class Database:
 
     def __get_conn_cur(self):
         try:
-            conn = psycopg2.connect(host=self._host, port=self._port, user=self._user, password=self._password,
-                                    database=self._name)
+            conn = psycopg.connect(host=self._host, port=self._port, user=self._user, password=self._password,
+                                   dbname=self._name)
             cursor = conn.cursor()
             return conn, cursor
         except Exception as e:
-            return None
+            print(type(e), e)
+            return None, None
 
     def __close_conn_cur(self, conn, cur):
         try:
@@ -87,7 +88,8 @@ class Database:
             command = command[:-1] + f""" WHERE {filters};"""
 
         try:
-            cur.execute(command)
+            print(command)
+            cur.execute(command, prepare=True)
             if Model:
                 objects = []
                 records = cur.fetchall()
