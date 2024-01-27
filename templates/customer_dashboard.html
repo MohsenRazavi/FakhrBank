@@ -434,8 +434,8 @@
                                        name="loan_amount"
                                        aria-label="Disabled input example" readonly>
                                 <p class="mt-3 mb-0" id="loanTypeTitle">وام</p>
-                                <input class="form-control" type="text" value="" id="loanTypeConfirm"
-                                       aria-label="Disabled input example" readonly>
+                                <textarea class="form-control" type="text" value="" id="loanTypeConfirm"
+                                       aria-label="Disabled input example" readonly rows="3"></textarea>
                                 <input type="hidden" id="loanTypeConfirmH" name="loan_id" value="">
                                 <p class="mt-3 mb-0" id="loanAccountTitle">به حساب</p>
                                 <input class="form-control mt-0" id="loanAccountConfirm" type="text" value=""
@@ -580,12 +580,12 @@
                                                     <div class="modal-body" id="trxConfirmModalBody">
                                                         <p id="amountTitle">مبلغ (تومان)</p>
                                                         <input class="form-control" type="text"
-                                                                {% if (account_loan.paid / account_loan.amount * account_loan.get_loan().dead_line)|int == account_loan.get_loan().dead_line - 1 %}
+                                                                {% if (account_loan.paid / account_loan.get_amount_with_profit() * account_loan.get_loan().dead_line)| round | int == account_loan.get_loan().dead_line - 1 %}
                                                                value="{{ account_loan.get_amount_with_profit() - account_loan.paid }}"
                                                                 {% else %}
                                                                value="{{ account_loan.get_instalment() }}"
                                                                 {% endif %}
-
+                                                                name="instalmentAmount"
                                                                aria-label="Disabled input example" readonly>
                                                         <p class="mt-3 mb-0" id="fromAccount">از حساب</p>
                                                         <input class="form-control" type="text"

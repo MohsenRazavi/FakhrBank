@@ -88,7 +88,7 @@ class Database:
             command = command[:-1] + f""" WHERE {filters};"""
 
         try:
-            print(command)
+            # print(command)
             cur.execute(command, prepare=True)
             if Model:
                 objects = []

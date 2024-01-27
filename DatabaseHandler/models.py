@@ -191,7 +191,7 @@ class Loan:
     def is_deletable(self):
         from DatabaseHandler import Database
         db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
-        res = db.select('AccountLoans', filters=f"loanId = '{self.loan_id}'")[0]
+        res = db.select('AccountLoans', filters=f"loanId = '{self.loan_id}' AND status < 2")[0]
         if len(res) > 0:
             return False
         return True

@@ -508,7 +508,7 @@ def delete_user(user_id):
         return redirect(url_for('login'))
 
 
-@app.route('/edit_account/<int:account_id>', methods=['POST'])
+@app.route('/count/<int:account_id>', methods=['POST'])
 def edit_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -867,7 +867,7 @@ def pay_instalment():
                 fetch=True)[1][0][0]
             pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
             if pswd_hash == customer_password:
-                instalment_amount = account_loan.get_instalment()
+                instalment_amount = int(request.form['instalmentAmount'])
                 bank_account = \
                     db.select('Accounts', filters=f"accountNumber = '{BANK_ACCOUNT_NUMBER}'", Model=Account)[0][0]
                 customer_account = \
