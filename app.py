@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import random
+import re
 
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 
@@ -508,7 +509,7 @@ def delete_user(user_id):
         return redirect(url_for('login'))
 
 
-@app.route('/count/<int:account_id>', methods=['POST'])
+@app.route('/edit_account/<int:account_id>', methods=['POST'])
 def edit_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -518,9 +519,23 @@ def edit_account(account_id):
                 name = request.form['name']
                 editing_account.name = name
             else:
+                account_number = request.form['account_number']
+                other_account_numbers = [an[0] for an in db.select('Accounts', columns=('accountNumber',))[0]]
+                if account_number in other_account_numbers:
+                    flash('خطا در تغییر شماره حساب', 'danger')
+                    if user.type == 'admin':
+                        return redirect(url_for('admin_panel'))
+                    elif user.type == 'employee':
+                        return redirect(url_for('employee_panel'))
+                elif not re.match('\d{4}-\d{4}-\d{4}-\d{4}', account_number):
+                    flash('خطا در تغییر شماره حساب', 'danger')
+                    if user.type == 'admin':
+                        return redirect(url_for('admin_panel'))
+                    elif user.type == 'employee':
+                        return redirect(url_for('employee_panel'))
+
                 user_id = request.form['user_id']
                 type = request.form['type']
-                account_number = request.form['account_number']
                 balance = request.form['balance']
                 status = request.form['status']
                 name = request.form['name']
