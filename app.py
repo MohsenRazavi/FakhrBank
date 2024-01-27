@@ -128,6 +128,7 @@ def logout():
 
 
 @app.route('/update_profile/', methods=['POST'])
+@token_required
 def update_profile():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -163,6 +164,7 @@ def update_profile():
 
 
 @app.route('/change_password', methods=['POST'])
+@token_required
 def change_password():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -257,6 +259,7 @@ def admin_panel():
 
 
 @app.route('/employee')
+@token_required
 def employee_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -293,6 +296,7 @@ def employee_panel():
 
 
 @app.route('/customer')
+@token_required
 def customer_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -341,6 +345,7 @@ def customer_panel():
 
 
 @app.route('/add_employee', methods=['POST'])
+@token_required
 def add_employee():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -387,6 +392,7 @@ def add_employee():
 
 
 @app.route('/add_customer', methods=['POST'])
+@token_required
 def add_customer():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -435,6 +441,7 @@ def add_customer():
 
 
 @app.route('/add_account', methods=['POST'])
+@token_required
 def add_account():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -472,6 +479,7 @@ def add_account():
 
 
 @app.route('/edit_user/<int:user_id>/', methods=['POST'])
+@token_required
 def edit_user(user_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -514,6 +522,7 @@ def edit_user(user_id):
 
 
 @app.route('/delete_user/<int:user_id>/', methods=['POST'])
+@token_required
 def delete_user(user_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -538,6 +547,7 @@ def delete_user(user_id):
 
 
 @app.route('/edit_account/<int:account_id>', methods=['POST'])
+@token_required
 def edit_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -591,6 +601,7 @@ def edit_account(account_id):
 
 
 @app.route('/delete_account/<int:account_id>/', methods=['POST'])
+@token_required
 def delete_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -616,6 +627,7 @@ def delete_account(account_id):
 
 
 @app.route('/check_transaction', methods=['POST'])
+@token_required
 def check_transaction():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -663,6 +675,7 @@ def check_transaction():
 
 
 @app.route('/new_transaction', methods=['POST'])
+@token_required
 def new_transaction():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -698,6 +711,7 @@ def new_transaction():
 
 
 @app.route('/check_loan', methods=['POST'])
+@token_required
 def check_loan():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -751,6 +765,7 @@ def check_loan():
 
 
 @app.route('/new_loan_request', methods=['POST'])
+@token_required
 def new_loan_request():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -774,6 +789,7 @@ def new_loan_request():
 
 
 @app.route('/new_loan_type', methods=['POST'])
+@token_required
 def new_loan_type():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -797,6 +813,7 @@ def new_loan_type():
 
 
 @app.route('/switch_loan_status', methods=['POST'])
+@token_required
 def switch_loan_status():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -821,6 +838,7 @@ def switch_loan_status():
 
 
 @app.route('/delete_loan', methods=['POST'])
+@token_required
 def delete_loan():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -840,6 +858,7 @@ def delete_loan():
 
 
 @app.route('/accept_loan', methods=['POST'])
+@token_required
 def accept_loan():
     if 'user' in session:
         user = User.from_dict(session['user'])
@@ -897,6 +916,7 @@ def accept_loan():
 
 
 @app.route('/pay_instalment', methods=['POST'])
+@token_required
 def pay_instalment():
     if 'user' in session:
         user = User.from_dict(session['user'])
