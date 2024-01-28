@@ -76,7 +76,7 @@ class Database:
         self.__close_conn_cur(conn, cur)
         return result
 
-    def select(self, table, columns=None, filters=None, Model=None):
+    def select(self, table, columns=None, filters=None, filter_values=None, Model=None):
         conn, cur = self.__get_conn_cur()
         if columns:
             cols = ', '.join([f'{c}' for c in columns])
@@ -89,7 +89,10 @@ class Database:
 
         try:
             # print(command)
-            cur.execute(command, prepare=True)
+            if filter_values:
+                cur.execute(command, filter_values)
+            else:
+                cur.execute(command)
             if Model:
                 objects = []
                 records = cur.fetchall()
@@ -105,10 +108,13 @@ class Database:
         self.__close_conn_cur(conn, cur)
         return result
 
-    def exact_exec(self, command, fetch=False):
+    def exact_exec(self, command, values=None, fetch=False):
         conn, cur = self.__get_conn_cur()
         try:
-            cur.execute(command)
+            if values:
+                cur.execute(command, values)
+            else:
+                cur.execute(command)
             result = True, command
             if fetch:
                 result = True, cur.fetchall(), command
@@ -121,14 +127,14 @@ class Database:
 
     def insert(self, table, columns, data):
         conn, cur = self.__get_conn_cur()
-        data = ', '.join([f"""'{str(d)}'""" for d in data])
+        place_holders = ('%s, '*len(data))[:-2]
         if columns:
             cols = ', '.join(columns)
-            command = f"""INSERT INTO {table} ({cols}) VALUES ({data});"""
+            command = f"""INSERT INTO {table} ({cols}) VALUES ({place_holders});"""
         else:
-            command = f"""INSERT INTO {table} VALUES ({data});"""
+            command = f"""INSERT INTO {table} VALUES ({place_holders});"""
         try:
-            cur.execute(command)
+            cur.execute(command, data)
             conn.commit()
             result = True, command
         except Exception as e:

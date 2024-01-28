@@ -67,10 +67,12 @@ def login():
         username = request.form['username']
         password = request.form['password']
         pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-        res = db.select('Users', Model=User, filters=f"username = '{username}' AND passwordHash = '{pswd_hash}'")
+        res = db.select('Users', Model=User, filters=f"username = %s AND passwordHash = %s", filter_values=(username, pswd_hash))
+        print(res)
         if res[0]:  # login successful !
             obj = res[0][0]
-            token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90)}, app.secret_key, 'HS256')
+            token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90)},
+                               app.secret_key, 'HS256')
             session['user'] = obj.to_dict()
             session['token'] = token
             flash(f'{obj}  خوش آمدید !', 'success')
@@ -462,7 +464,6 @@ def add_customer():
             'type'),
                         (cstmr_username, pswd_hash, cstmr_firstname, cstmr_lastname, cstmr_birthdate, cstmr_gender,
                          cstmr_phone_number, created_at, 'customer'))
-
         if res[0]:
             flash('مشتری با موفقیت اضافه شد', 'success')
             if user.type == 'admin':
@@ -692,9 +693,9 @@ def check_transaction():
             password = request.json['password']
             user_password = db.select('Users', columns=('passwordHash',), filters=f"userId = {user.user_id}")[0][0][0]
             src_account_obj = \
-                db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
+                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(src_account_number,), Model=Account)[0][0]
             dst_account = \
-                db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0]
+                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(dst_account_number,), Model=Account)[0]
 
             if dst_account:
                 dst_account_obj = dst_account[0]
@@ -741,8 +742,8 @@ def new_transaction():
             dst_account_number = request.form['dst_account_number']
             amount = int(request.form['amount'])
 
-            src_account = db.select('Accounts', filters=f"accountNumber = '{src_account_number}'", Model=Account)[0][0]
-            dst_account = db.select('Accounts', filters=f"accountNumber = '{dst_account_number}'", Model=Account)[0][0]
+            src_account = db.select('Accounts', filters=f"accountNumber = %s", filter_values=(src_account_number,), Model=Account)[0][0]
+            dst_account = db.select('Accounts', filters=f"accountNumber = %s", filter_values=(dst_account_number,), Model=Account)[0][0]
 
             src_account.balance -= amount
             dst_account.balance += amount

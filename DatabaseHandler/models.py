@@ -42,7 +42,6 @@ class User:
             'birthdate': self.birthdate,
             'phoneNumber': self.phone_number,
             'gender': self.gender,
-            'createdAt': self.created_at,
         }
         res = db.update('Users', update_list, f'userId = {self.user_id}')
         if res[0]:
@@ -121,7 +120,6 @@ class Account:
             'userId': self.user_id,
             'balance': self.balance,
             'type': self.type,
-            'createdAt': self.created_at,
             'name': self.name,
             'status': self.status,
         }
