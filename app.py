@@ -25,6 +25,8 @@ def token_required(f):
     def wrapper(*args, **kwargs):
         token = request.args.get('token')
         if not token:
+            token = request.json['token']
+        if not token:
             flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
             if 'user' in session:
                 del session['user']
@@ -48,12 +50,16 @@ def login():
     if request.method == "GET":
         if 'user' in session:  # user already logged in !
             user = User.from_dict(session['user'])
+            token = session['token']
+            if not token:
+                flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+                return redirect(url_for('logout'))
             if user.type == "admin":
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == "employee":
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             elif user.type == "customer":
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
             else:
                 return "<h1>Invalid usertype</h1>"
         return render_template('./login.html')
@@ -66,6 +72,7 @@ def login():
             obj = res[0][0]
             token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90)}, app.secret_key, 'HS256')
             session['user'] = obj.to_dict()
+            session['token'] = token
             flash(f'{obj}  خوش آمدید !', 'success')
             if obj.type == "admin":
                 return redirect(url_for('admin_panel', token=token))
@@ -85,12 +92,16 @@ def register():
     if request.method == "GET":
         if 'user' in session:  # user already logged in !
             user = User.from_dict(session['user'])
+            token = session['token']
+            if not token:
+                flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+                return redirect(url_for('logout'))
             if user.type == "admin":
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == "employee":
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             elif user.type == "customer":
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
             else:
                 return "<h1>Invalid usertype</h1>"
         return render_template('./register.html')
@@ -124,25 +135,29 @@ def register():
 def logout():
     if 'user' in session:
         del session['user']
+        del session['token']
     return redirect(url_for('login'))
 
 
 @app.route('/update_profile/', methods=['POST'])
-@token_required
 def update_profile():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         test_username = request.form['username']
         records = db.select('Users', ['username'])[0]
         usernames = [record[0] for record in records]
         if test_username in usernames and test_username != user.username:
             flash('این نام کاربری قبلا استفاده شده', 'danger')
             if user.type == 'admin':
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == 'employee':
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             else:
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
         else:
             user.username = test_username
             user.first_name = request.form['first_name']
@@ -153,21 +168,24 @@ def update_profile():
             session['user'] = user.to_dict()
             flash('مشخصات کاربری با موفقیت به روز شدند', 'success')
             if user.type == 'admin':
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == 'employee':
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             elif user.type == 'user':
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
     else:  # user not authenticated
         flash('ابتدا به حساب کاربری خود وارد شوید', 'warning')
         return redirect(url_for('login'))
 
 
 @app.route('/change_password', methods=['POST'])
-@token_required
 def change_password():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         old_password = request.form['old_password']
         new_password1 = request.form['password1']
         new_password2 = request.form['password2']
@@ -176,19 +194,19 @@ def change_password():
         if old_pswd_hash != user_pass:
             flash('کلمه عبور فعلی اشتباه است', 'danger')
             if user.type == 'admin':
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == 'employee':
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             else:
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
         if new_password1 != new_password2:
             flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
             if user.type == 'admin':
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == 'employee':
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             else:
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
 
         pswd_hash = hashlib.sha256(new_password1.encode('utf-8')).hexdigest()
         res = db.exact_exec(f"UPDATE Users SET passwordHash = '{pswd_hash}' WHERE username = '{user.username}';")[0]
@@ -206,6 +224,10 @@ def change_password():
 def admin_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'admin':
             employees = db.select('Users', filters="type = 'employee'", Model=User)[0]
             customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
@@ -263,6 +285,10 @@ def admin_panel():
 def employee_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         customers = db.select('Users', filters="type = 'customer'", Model=User)[0]
         accounts = db.select('Accounts', Model=Account, filters=f"accountNumber <> '{BANK_ACCOUNT_NUMBER}'")[0]
         transactions = db.select('Transactions', Model=Transaction)[0]
@@ -300,6 +326,10 @@ def employee_panel():
 def customer_panel():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         accounts = db.select('Accounts', filters=f"userId = {user.user_id}", Model=Account)[0]
         transaction_records = db.exact_exec(
             f"SELECT Transactions.* FROM Transactions INNER JOIN Accounts ON Transactions.srcAccount = Accounts.accountId OR Transactions.dstAccount = Accounts.accountId WHERE userId = {user.user_id};",
@@ -345,10 +375,13 @@ def customer_panel():
 
 
 @app.route('/add_employee', methods=['POST'])
-@token_required
 def add_employee():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type != 'admin':
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -392,10 +425,13 @@ def add_employee():
 
 
 @app.route('/add_customer', methods=['POST'])
-@token_required
 def add_customer():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type != 'admin' and user.type != 'employee':
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
         cstmr_username = request.form['username']
@@ -430,9 +466,9 @@ def add_customer():
         if res[0]:
             flash('مشتری با موفقیت اضافه شد', 'success')
             if user.type == 'admin':
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             else:
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
         else:
             print(res)
     else:  # user not authenticated
@@ -441,17 +477,20 @@ def add_customer():
 
 
 @app.route('/add_account', methods=['POST'])
-@token_required
 def add_account():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type in ('admin', 'employee'):
             if 'user_id' not in request.form:
                 flash('خطا در ایجاد حساب', 'danger')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 elif user.type == 'employee':
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
             user_id = request.form['user_id']
             account_type = request.form['type']
             account_number = []
@@ -465,9 +504,9 @@ def add_account():
             if res:
                 flash('حساب با موفقیت ایجاد شد', 'success')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 else:  # user is employee
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
             else:
                 print(res)
         else:
@@ -479,10 +518,13 @@ def add_account():
 
 
 @app.route('/edit_user/<int:user_id>/', methods=['POST'])
-@token_required
 def edit_user(user_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type in ('admin', 'employee'):
             editing_user = db.select('Users', filters=f"userId = '{user_id}'", Model=User)[0][0]
             username = request.form['username']
@@ -495,9 +537,9 @@ def edit_user(user_id):
             if username in usernames and username != editing_user.username:
                 flash('این نام کاربری قبلا استفاده شده', 'danger')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 elif user.type == 'employee':
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
             else:
                 editing_user.username = username
                 editing_user.first_name = first_name
@@ -510,9 +552,9 @@ def edit_user(user_id):
                 else:
                     flash('مشخصات مشتری با موفقیت به روز شدند', 'success')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 elif user.type == 'employee':
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -522,10 +564,13 @@ def edit_user(user_id):
 
 
 @app.route('/delete_user/<int:user_id>/', methods=['POST'])
-@token_required
 def delete_user(user_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type in ('admin', 'employee'):
             deleted_user = db.select('Users', filters=f"userId = {user_id}", Model=User)[0][0]
             res = db.delete('Users', filters=f"userId = {user_id}")[0]
@@ -535,9 +580,9 @@ def delete_user(user_id):
                 else:
                     flash(f'مشتری "{deleted_user}" با موفقیت حذف شد', 'success')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 elif user.type == 'employee':
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -547,10 +592,13 @@ def delete_user(user_id):
 
 
 @app.route('/edit_account/<int:account_id>', methods=['POST'])
-@token_required
 def edit_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         editing_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
         if user.type in ('admin', 'employee') or (user.type == 'customer' and editing_account.user_id == user.user_id):
             if user.type == 'customer':
@@ -562,15 +610,15 @@ def edit_account(account_id):
                 if account_number in other_account_numbers:
                     flash('خطا در تغییر شماره حساب', 'danger')
                     if user.type == 'admin':
-                        return redirect(url_for('admin_panel'))
+                        return redirect(url_for('admin_panel', token=token))
                     elif user.type == 'employee':
-                        return redirect(url_for('employee_panel'))
+                        return redirect(url_for('employee_panel', token=token))
                 elif not re.match('\d{4}-\d{4}-\d{4}-\d{4}', account_number):
                     flash('خطا در تغییر شماره حساب', 'danger')
                     if user.type == 'admin':
-                        return redirect(url_for('admin_panel'))
+                        return redirect(url_for('admin_panel', token=token))
                     elif user.type == 'employee':
-                        return redirect(url_for('employee_panel'))
+                        return redirect(url_for('employee_panel', token=token))
 
                 user_id = request.form['user_id']
                 type = request.form['type']
@@ -587,11 +635,11 @@ def edit_account(account_id):
 
             flash('حساب با موفقیت به روز شد', 'success')
             if user.type == 'admin':
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             elif user.type == 'employee':
-                return redirect(url_for('employee_panel'))
+                return redirect(url_for('employee_panel', token=token))
             else:
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -601,10 +649,13 @@ def edit_account(account_id):
 
 
 @app.route('/delete_account/<int:account_id>/', methods=['POST'])
-@token_required
 def delete_account(account_id):
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         deleted_account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
         if user.type in ('admin', 'employee') or (user.type == 'customer' and deleted_account.user_id == user.user_id):
             res = db.delete('Accounts', filters=f"accountId = {account_id}")[0]
@@ -613,11 +664,11 @@ def delete_account(account_id):
                     f'حساب "{deleted_account.get_owner()}" با شماره حساب {deleted_account.account_number} با موفقیت حذف شد',
                     'success')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 elif user.type == 'employee':
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
                 else:
-                    return redirect(url_for('customer_panel'))
+                    return redirect(url_for('customer_panel', token=token))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -627,10 +678,13 @@ def delete_account(account_id):
 
 
 @app.route('/check_transaction', methods=['POST'])
-@token_required
 def check_transaction():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'customer':
             src_account_number = request.json['src_account'].split(' ')[0]
             dst_account_number = request.json['dst_account']
@@ -675,10 +729,13 @@ def check_transaction():
 
 
 @app.route('/new_transaction', methods=['POST'])
-@token_required
 def new_transaction():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'customer':
             src_account_number = request.form['src_account_number']
             dst_account_number = request.form['dst_account_number']
@@ -700,7 +757,7 @@ def new_transaction():
                             (src_account.account_id, dst_account.account_id, amount, status, created_at))
             if res[0]:
                 flash('تراکنش با موفقیت انجام شد', 'success')
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
             else:
                 print(res)
         else:
@@ -711,10 +768,13 @@ def new_transaction():
 
 
 @app.route('/check_loan', methods=['POST'])
-@token_required
 def check_loan():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'customer':
             loan_id = request.json['loan_id']
             account_id = request.json['account_id']
@@ -765,10 +825,13 @@ def check_loan():
 
 
 @app.route('/new_loan_request', methods=['POST'])
-@token_required
 def new_loan_request():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'customer':
             loan_id = request.form['loan_id']
             loan_amount = int(request.form['loan_amount'])
@@ -778,7 +841,7 @@ def new_loan_request():
                             (account.account_id, loan_id, loan_amount, 0, 0))
             if res[0]:
                 flash('درخواست وام با موفقیت ثبت شد', 'success')
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
             else:
                 print(res)
         else:
@@ -789,10 +852,13 @@ def new_loan_request():
 
 
 @app.route('/new_loan_type', methods=['POST'])
-@token_required
 def new_loan_type():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'admin':
             profit = request.form['profit']
             deadline = request.form['deadline']
@@ -802,7 +868,7 @@ def new_loan_type():
                             (profit, deadline, at_least_income, True))
             if res[0]:
                 flash('وام با موفقیت اضافه شد', 'success')
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             else:
                 print(res)
         else:
@@ -813,10 +879,13 @@ def new_loan_type():
 
 
 @app.route('/switch_loan_status', methods=['POST'])
-@token_required
 def switch_loan_status():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'admin':
             loan_id = request.form['loan_id']
             loan = db.select('Loans', filters=f"loanId = '{loan_id}'", Model=Loan)[0][0]
@@ -828,7 +897,7 @@ def switch_loan_status():
             res = loan.save()
             if res:
                 flash('تغییر وضعیت وام با موفقیت انجام شد', 'success')
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -838,16 +907,19 @@ def switch_loan_status():
 
 
 @app.route('/delete_loan', methods=['POST'])
-@token_required
 def delete_loan():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'admin':
             loan_id = request.form['loan_id']
             res = db.delete('Loans', filters=f"loanId = '{loan_id}'")[0]
             if res:
                 flash('وام با موفقیت حذف شد', 'success')
-                return redirect(url_for('admin_panel'))
+                return redirect(url_for('admin_panel', token=token))
             else:
                 print(res)
         else:
@@ -858,10 +930,13 @@ def delete_loan():
 
 
 @app.route('/accept_loan', methods=['POST'])
-@token_required
 def accept_loan():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type in ('admin', 'employee'):
             account_loan_id = request.form['account_loan_id']
             password = request.form['password']
@@ -894,9 +969,9 @@ def accept_loan():
                     if res[0]:
                         flash('وام با موفقیت تایید شد', 'success')
                         if user.type == 'admin':
-                            return redirect(url_for('admin_panel'))
+                            return redirect(url_for('admin_panel', token=token))
                         elif user.type == 'employee':
-                            return redirect(url_for('employee_panel'))
+                            return redirect(url_for('employee_panel', token=token))
                     else:
                         print(res)
                 else:
@@ -904,9 +979,9 @@ def accept_loan():
             else:
                 flash('کلمه عبور اشتباه است', 'danger')
                 if user.type == 'admin':
-                    return redirect(url_for('admin_panel'))
+                    return redirect(url_for('admin_panel', token=token))
                 elif user.type == 'employee':
-                    return redirect(url_for('employee_panel'))
+                    return redirect(url_for('employee_panel', token=token))
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403
 
@@ -916,10 +991,13 @@ def accept_loan():
 
 
 @app.route('/pay_instalment', methods=['POST'])
-@token_required
 def pay_instalment():
     if 'user' in session:
         user = User.from_dict(session['user'])
+        token = session['token']
+        if not token:
+            flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
+            return redirect(url_for('logout'))
         if user.type == 'customer':
             account_loan_id = request.form['account_loan_id']
             password = request.form['instalmentPassword']
@@ -955,12 +1033,12 @@ def pay_instalment():
                                  created_at))
                 if res[0]:
                     flash('با موفقیت پرداخت شد', 'success')
-                    return redirect(url_for('customer_panel'))
+                    return redirect(url_for('customer_panel', token=token))
                 else:
                     print(res)
             else:
                 flash('کلمه عبور اشتباه است', 'danger')
-                return redirect(url_for('customer_panel'))
+                return redirect(url_for('customer_panel', token=token))
 
         else:
             return "<h1>این عملیات برای شما مجاز نیست</h1>", 403

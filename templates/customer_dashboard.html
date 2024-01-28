@@ -992,30 +992,6 @@
 
         function emptyInputs() {
             location.reload()
-            /*
-            try {
-                document.getElementById('srcAccountNum').selectedIndex = 0;
-                document.getElementById('dstAccountNum1').value = "";
-                document.getElementById('dstAccountNum2').value = "";
-                document.getElementById('dstAccountNum3').value = "";
-                document.getElementById('dstAccountNum4').value = "";
-                document.getElementById('trxAmount').value = "";
-                document.getElementById('trxPassword').value = "";
-
-                document.getElementById('loanType').selectedIndex = 0;
-                document.getElementById('accountLoan').selectedIndex = 0;
-                document.getElementById('loanAmount').value = "";
-                document.getElementById('loanPassword').value = "";
-                document.getElementById('loanMessage').style.display = 'none';
-                document.getElementById('loanAmountConfirm').value = "";
-                document.getElementById('loanTypeConfirm').value = "";
-                document.getElementById('loanTypeConfirmH').value = "";
-                document.getElementById('loanAccountConfirm').value = "";
-                document.getElementById('loanOwnerName').innerHTML = "";
-            } catch (e) {
-            }
-            console.log('all inputs cleared');
-*/
         }
 
         function checkTransactionData() {
@@ -1028,6 +1004,9 @@
             let dst_account = dst_account1 + "-" + dst_account2 + "-" + dst_account3 + "-" + dst_account4;
             let amount = document.getElementById('trxAmount').value;
             let password = document.getElementById('trxPassword').value;
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            let token = urlParams.get('token')
 
             let amountTag = document.getElementById('trxAmountConfirm');
             let srcAccountTag = document.getElementById('trxSrcAccount');
@@ -1045,6 +1024,7 @@
                         "dst_account": dst_account,
                         "amount": amount,
                         "password": password,
+                        "token": token
                     })
                 })
                     .then(function (response) {
