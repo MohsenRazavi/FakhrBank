@@ -67,7 +67,8 @@ def login():
         username = request.form['username']
         password = request.form['password']
         pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-        res = db.select('Users', Model=User, filters=f"username = %s AND passwordHash = %s", filter_values=(username, pswd_hash))
+        res = db.select('Users', Model=User, filters=f"username = %s AND passwordHash = %s",
+                        filter_values=(username, pswd_hash))
         print(res)
         if res[0]:  # login successful !
             obj = res[0][0]
@@ -607,7 +608,9 @@ def edit_account(account_id):
                 editing_account.name = name
             else:
                 account_number = request.form['account_number']
-                other_account_numbers = [an[0] for an in db.select('Accounts', columns=('accountNumber',))[0]]
+                other_account_numbers = [an[0] for an in db.select('Accounts', filters="accountNumber <> %s",
+                                                                   filter_values=(editing_account.account_number,),
+                                                                   columns=('accountNumber',))[0]]
                 if account_number in other_account_numbers:
                     flash('خطا در تغییر شماره حساب', 'danger')
                     if user.type == 'admin':
@@ -693,12 +696,16 @@ def check_transaction():
             password = request.json['password']
             user_password = db.select('Users', columns=('passwordHash',), filters=f"userId = {user.user_id}")[0][0][0]
             src_account_obj = \
-                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(src_account_number,), Model=Account)[0][0]
+                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(src_account_number,),
+                          Model=Account)[0][0]
             dst_account = \
-                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(dst_account_number,), Model=Account)[0]
+                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(dst_account_number,),
+                          Model=Account)[0]
 
             if dst_account:
                 dst_account_obj = dst_account[0]
+                if not dst_account_obj.status:
+                    return jsonify({'status': 'DAC'})
             else:
                 return jsonify(
                     {'status': 'DNF', 'dst_account_owner': None, 'amount': amount,
@@ -742,8 +749,14 @@ def new_transaction():
             dst_account_number = request.form['dst_account_number']
             amount = int(request.form['amount'])
 
-            src_account = db.select('Accounts', filters=f"accountNumber = %s", filter_values=(src_account_number,), Model=Account)[0][0]
-            dst_account = db.select('Accounts', filters=f"accountNumber = %s", filter_values=(dst_account_number,), Model=Account)[0][0]
+            src_account = \
+                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(src_account_number,),
+                          Model=Account)[0][
+                    0]
+            dst_account = \
+                db.select('Accounts', filters=f"accountNumber = %s", filter_values=(dst_account_number,),
+                          Model=Account)[0][
+                    0]
 
             src_account.balance -= amount
             dst_account.balance += amount

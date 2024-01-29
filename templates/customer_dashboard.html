@@ -127,7 +127,8 @@
         </div>
         <div class="row my-2">
             <div class="col-11 pt-2">
-                <h6 class="text-dark h5" style="vertical-align: middle;" class="text-dark h5" class="text-dark h5">فیلتر ها:</h6>
+                <h6 class="text-dark h5" style="vertical-align: middle;" class="text-dark h5" class="text-dark h5">فیلتر
+                    ها:</h6>
             </div>
         </div>
         <div class="row">
@@ -385,7 +386,7 @@
                                 <select class="form-select" id="accountLoan">
                                     <option value="0" selected disabled>انتخاب</option>
                                     {% for account in accounts %}
-                                        <option value="{{ account.account_id }}">{{ account }}</option>
+                                        <option {% if not account.status %}disabled{% endif %} value="{{ account.account_id }}"> {{ account.account_number }} ({{ account }})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -435,7 +436,7 @@
                                        aria-label="Disabled input example" readonly>
                                 <p class="mt-3 mb-0" id="loanTypeTitle">وام</p>
                                 <textarea class="form-control" type="text" value="" id="loanTypeConfirm"
-                                       aria-label="Disabled input example" readonly rows="3"></textarea>
+                                          aria-label="Disabled input example" readonly rows="3"></textarea>
                                 <input type="hidden" id="loanTypeConfirmH" name="loan_id" value="">
                                 <p class="mt-3 mb-0" id="loanAccountTitle">به حساب</p>
                                 <input class="form-control mt-0" id="loanAccountConfirm" type="text" value=""
@@ -585,7 +586,7 @@
                                                                 {% else %}
                                                                value="{{ account_loan.get_instalment() }}"
                                                                 {% endif %}
-                                                                name="instalmentAmount"
+                                                               name="instalmentAmount"
                                                                aria-label="Disabled input example" readonly>
                                                         <p class="mt-3 mb-0" id="fromAccount">از حساب</p>
                                                         <input class="form-control" type="text"
@@ -666,7 +667,7 @@
                             <select class="form-select my-3" name="src_account_number" id="srcAccountNum" required>
                                 <option selected disabled>انتخاب</option>
                                 {% for account in accounts %}
-                                    <option value="{{ account.account_id }}">{{ account.account_number }}
+                                    <option {% if not account.status %}disabled{% endif %} value="{{ account.account_id }}">{{ account.account_number }}
                                         ({{ account }})
                                     </option>
                                 {% endfor %}
@@ -1049,6 +1050,11 @@
                         createTrxButton.classList.add('btn-secondary', 'disabled');
                     } else if (resp['status'] == 'WP') {
                         document.getElementById('trxConfirmModalBody').innerHTML = "کلمه عبور اشتباه است.";
+                        createTrxButton.innerHTML = 'خطا';
+                        createTrxButton.classList.remove('btn-success');
+                        createTrxButton.classList.add('btn-secondary', 'disabled');
+                    } else if (resp['status'] == 'DAC') {
+                        document.getElementById('trxConfirmModalBody').innerHTML = "حساب مقصد مسدود است.";
                         createTrxButton.innerHTML = 'خطا';
                         createTrxButton.classList.remove('btn-success');
                         createTrxButton.classList.add('btn-secondary', 'disabled');

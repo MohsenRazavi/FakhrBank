@@ -113,7 +113,7 @@ class Account:
 
     def save(self):
         from DatabaseHandler import Database
-        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)
+        db = Database(DB_HOST, DB_PORT, DB_NAME.lower(), DB_USER, DB_PASS)  
         update_list = {
             'accountId': self.account_id,
             'accountNumber': self.account_number,
