@@ -578,7 +578,7 @@
                                                         قسط</h1>
                                                 </div>
                                                 <form method="POST" action="/pay_instalment">
-                                                    <div class="modal-body" id="trxConfirmModalBody">
+                                                    <div class="modal-body" id="payLoanInstalment">
                                                         <p id="amountTitle">مبلغ (تومان)</p>
                                                         <input class="form-control" type="text"
                                                                 {% if (account_loan.paid / account_loan.get_amount_with_profit() * account_loan.get_loan().dead_line)| round | int == account_loan.get_loan().dead_line - 1 %}
