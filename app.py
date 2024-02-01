@@ -24,7 +24,7 @@ def token_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         token = request.args.get('token')
-        if not token:
+        if not token and request.content_type == 'application/json':
             token = request.json['token']
         if not token:
             flash('خطا در احراز هویت رمزی : توکن وجود ندارد !', 'danger')
