@@ -140,7 +140,7 @@ class Transaction:
         self.status = status
 
     def __str__(self):
-        return f"{self.src_account} to {self.dst_account} at {self.date_time} ({self.status})"
+        return f"{self.src_account} to {self.dst_account} at {self.created_at} ({self.status})"
 
     def get_created_at(self):
         return self.created_at.strftime('%Y/%m/%d %H:%M:%S')
