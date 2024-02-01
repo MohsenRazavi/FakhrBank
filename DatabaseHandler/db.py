@@ -127,19 +127,18 @@ class Database:
 
     def insert(self, table, columns, data):
         conn, cur = self.__get_conn_cur()
-        place_holders = ('%s, '*len(data))[:-2]
+        data = ', '.join([f"""'{str(d)}'""" for d in data])
         if columns:
             cols = ', '.join(columns)
-            command = f"""INSERT INTO {table} ({cols}) VALUES ({place_holders});"""
+            command = f"""INSERT INTO {table} ({cols}) VALUES ({data});"""
         else:
-            command = f"""INSERT INTO {table} VALUES ({place_holders});"""
+            command = f"""INSERT INTO {table} VALUES ({data});"""
         try:
-            cur.execute(command, data)
+            cur.execute(command)
             conn.commit()
             result = True, command
         except Exception as e:
             result = None, command, e
-
         self.__close_conn_cur(conn, cur)
         return result
 

@@ -69,7 +69,6 @@ def login():
         pswd_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
         res = db.select('Users', Model=User, filters=f"username = %s AND passwordHash = %s",
                         filter_values=(username, pswd_hash))
-        print(res)
         if res[0]:  # login successful !
             obj = res[0][0]
             token = jwt.encode({'user': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90)},
@@ -404,10 +403,10 @@ def add_employee():
         }
         if emp_username in usernames:
             flash('این نام کاربری قبلا استفاده شده', 'danger')
-            return redirect(url_for('admin_panel', **context))
+            return redirect(url_for('admin_panel', token=token, **context))
         if emp_password1 != emp_password2:
             flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
-            return redirect(url_for('admin_panel', **context))
+            return redirect(url_for('admin_panel', token=token, **context))
         else:
             pswd_hash = hashlib.sha256(emp_password1.encode('utf-8')).hexdigest()
         created_at = datetime.datetime.now()
@@ -419,7 +418,7 @@ def add_employee():
 
         if res[0]:
             flash('کارمند با موفقیت اضافه شد', 'success')
-            return redirect(url_for('admin_panel', **context))
+            return redirect(url_for('admin_panel', token=token, **context))
         else:
             print(res)
     else:  # user not authenticated
@@ -453,10 +452,10 @@ def add_customer():
         }
         if cstmr_username in usernames:
             flash('این نام کاربری قبلا استفاده شده', 'danger')
-            return redirect(url_for('admin_panel', **context))
+            return redirect(url_for('admin_panel', token=token, **context))
         if cstmr_password1 != cstmr_password2:
             flash('کلمه عبور و تکرار آن یکی نیستند', 'danger')
-            return redirect(url_for('admin_panel', **context))
+            return redirect(url_for('admin_panel', token=token, **context))
         else:
             pswd_hash = hashlib.sha256(cstmr_password1.encode('utf-8')).hexdigest()
         created_at = datetime.datetime.now()
@@ -502,8 +501,8 @@ def add_account():
             balance = 0
             created_at = datetime.datetime.now()
             res = db.insert('Accounts', ('userId', 'accountNumber', 'balance', 'type', 'createdAt', 'status'),
-                            (user_id, account_number, balance, account_type, created_at, 1))[0]
-            if res:
+                            (user_id, account_number, balance, account_type, created_at, 1))
+            if res[0]:
                 flash('حساب با موفقیت ایجاد شد', 'success')
                 if user.type == 'admin':
                     return redirect(url_for('admin_panel', token=token))
@@ -809,7 +808,7 @@ def check_loan():
                 else:
                     last_month_date = today.replace(month=today.month - 1)
                 sum_of_settlements = db.exact_exec(
-                    f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt <= TIMESTAMP '{last_month_date}';",
+                    f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt >= TIMESTAMP '{last_month_date}';",
                     fetch=True)[1][0][0]
             try:
                 sum_of_settlements = int(sum_of_settlements)

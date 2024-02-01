@@ -65,7 +65,7 @@
                         <div class="card-details">
                             <div class="name-number">
                                 <h6 class="card_text">شماره حساب</h6>
-                                <h5 class="number card_text">{{ account.get_account_number() }}</h5>
+                                <h5 dir='ltr' class="number card_text">{{ account.get_account_number() }}</h5>
                                 <h5 class="name card_text">{{ account.get_owner() }}</h5>
                             </div>
                             <div class="valid-date">
@@ -771,7 +771,7 @@
                 <div class="form-floating">
                     <input type="number" class="form-control" id="searchInSrcAccounts"
                            placeholder="srcAccountNum"
-                           onkeyup="searchInTable('transactionsTable', 'searchInSrcAccounts', 1)">
+                           onkeyup="searchInTable('transactionsTable', 'searchInSrcAccounts', 2)">
                     <label for="searchInSrcAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب مبدا</label>
                 </div>
             </div>
@@ -779,7 +779,7 @@
                 <div class="form-floating">
                     <input type="number" class="form-control" id="searchInDstAccounts"
                            placeholder="dstAccountNum"
-                           onkeyup="searchInTable('transactionsTable', 'searchInDstAccounts', 2)">
+                           onkeyup="searchInTable('transactionsTable', 'searchInDstAccounts', 3)">
                     <label for="searchInDstAccounts" style="right:0; transform-origin: 100% 0;">شماره حساب مقصد</label>
                 </div>
             </div>
@@ -796,7 +796,7 @@
             <div class="col">
                 <div class="form-floating my-3">
                     <input type="text" class="form-control" id="searchInTransactionCreatedAt" placeholder="12"
-                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionCreatedAt', 4)">
+                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionCreatedAt', 5)">
                     <label for="searchInTransactionCreatedAt" style="right:0; transform-origin: 100% 0;">زمان</label>
                 </div>
             </div>
@@ -804,7 +804,7 @@
                 <div class="form-floating my-3">
                     <input type="number" class="form-control" id="searchInTransactionAmounts"
                            placeholder="trx"
-                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionAmounts', 3)">
+                           onkeyup="searchInTable('transactionsTable', 'searchInTransactionAmounts', 4)">
                     <label for="searchInTransactionAmounts" style="right:0; transform-origin: 100% 0;">مبلغ</label>
                 </div>
             </div>
