@@ -804,9 +804,15 @@ def check_loan():
                 account = db.select('Accounts', filters=f"accountId = '{account_id}'", Model=Account)[0][0]
                 today = datetime.datetime.today().date()
                 if today.month == 1:
-                    last_month_date = today.replace(month=12)
+                    try:
+                        last_month_date = today.replace(month=12)
+                    except ValueError:
+                        last_month_date = today.replace(month=12, day=today.day-1)
                 else:
-                    last_month_date = today.replace(month=today.month - 1)
+                    try:
+                        last_month_date = today.replace(month=today.month - 1)
+                    except ValueError:
+                        last_month_date = today.replace(month=today.month - 1, day=today.day-1)
                 sum_of_settlements = db.exact_exec(
                     f"SELECT SUM(amount) FROM Transactions WHERE dstAccount = {account.account_id} AND createdAt >= TIMESTAMP '{last_month_date}';",
                     fetch=True)[1][0][0]
